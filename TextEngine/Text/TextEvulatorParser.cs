@@ -596,7 +596,7 @@ namespace TextEngine.Text
                             tagElement.Closed = true;
                         }
                         string elname = tagElement.ElemName.ToLowerInvariant();
-                        if (this.Evulator.AutoClosedTags.Any(e => e.ToLowerInvariant() == elname))
+                        if (this.Evulator.TagInfos.HasTagInfo(elname) && this.Evulator.TagInfos[elname].IsAutoClosedTag)
                         {
                         
                             tagElement.Closed = true;

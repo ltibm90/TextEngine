@@ -82,7 +82,7 @@ namespace TextEngineTest
             KeyValues<object> kv = new KeyValues<object>();
             evulator.GloblaParameters = kv;
             evulator.GloblaParameters = new CustomClass();
-            evulator.AutoClosedTags.Add("test"); //ismi yazılan taglar otomatik kapatılır
+            evulator.TagInfos["test"].IsAutoClosedTag = true; //ismi yazılan taglar otomatik kapatılır
             evulator.Aliasses.Add("bb", "strong"); //bb kodu aynı zamanda strong olarakta kullanılabilir.
             evulator.Parse(); //Ayrıştırma işlemi yapılır
             var elems = evulator.Elements; //Ayrıştırılan elemanlar bu sınıfta tutulur.

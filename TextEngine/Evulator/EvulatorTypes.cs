@@ -28,6 +28,7 @@ namespace TextEngine.Evulator
         
         public Type Param { get; set; }
         public Type GeneralType { get; set; }
+        public Type Text { get; set; }
         public void SetType(string name, Type type)
         {
             types[name] = type;

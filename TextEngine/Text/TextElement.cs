@@ -39,7 +39,12 @@ namespace TextEngine.Text
                 elemName = value;
                 if(this.BaseEvulator != null)
                 {
-                    this.NoAttrib = this.BaseEvulator.NoAttributedTags.IndexOf(value.ToLower()) >= 0;
+                    this.NoAttrib = false;
+                    if (this.BaseEvulator.TagInfos.HasTagInfo(value) && this.BaseEvulator.TagInfos[value].IsNoAttributedTag)
+                    {
+                        this.NoAttrib = true;
+                    }
+                    
                 }
             }
         }
@@ -479,6 +484,12 @@ namespace TextEngine.Text
             }
             if (this.ElemName == "#text")
             {
+                if(this.BaseEvulator.EvulatorTypes.Text != null)
+                {
+                    var evulator = Activator.CreateInstance(this.BaseEvulator.EvulatorTypes.Text) as BaseEvulator;
+                    evulator.SetEvulator(this.BaseEvulator);
+                    return evulator.Render(this, vars);
+                }
                 result.TextContent = this.value;
                 return result;
             }
@@ -529,6 +540,8 @@ namespace TextEngine.Text
                     {
                         vresult = subElement.EvulateValue(vresult.Start, vresult.End, vars);
                     }
+                    evulator.RenderFinish(subElement, vars);
+                    
                 }
                 else
                 {

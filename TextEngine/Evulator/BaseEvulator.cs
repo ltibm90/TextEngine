@@ -12,9 +12,10 @@ namespace TextEngine.Evulator
         protected TextEvulator Evulator { get; set; }
         public BaseEvulator()
         {
-          
+
         }
         public abstract TextEvulateResult Render(TextElement tag, object vars);
+        public virtual void RenderFinish(TextElement tag, object vars) { }
         protected object EvulateText(string text, object additionalparams = null)
         {
 		    var pardecoder = new ParDecode(text);

@@ -25,7 +25,6 @@ namespace TextEngine.Text
         public bool NoParseEnabled { get; set; } = true;
         public char ParamChar { get; set; } = '%';
         public Dictionary<string, object> Aliasses { get; private set; }
-        public List<string> AutoClosedTags { get; private set; }
         public object GloblaParameters { get; set; }
         public KeyValues<object> DefineParameters { get; set; }
 
@@ -40,9 +39,8 @@ namespace TextEngine.Text
         public bool TrimMultipleSpaces { get; set; }
         public bool TrimStartEnd { get; set; }
         public Dictionary<string, string> AmpMaps { get; private set; }
-        public List<string> ConditionalTags { get; private set; }
-        public List<string> NoAttributedTags { get; private set; }
         public SavedMacros SavedMacrosList { get; private set; }
+        public TextElementInfos TagInfos { get; private set; }
         private bool isParseMode;
         public bool IsParseMode
         {
@@ -79,7 +77,6 @@ namespace TextEngine.Text
 
             this.EvulatorTypes = new EvulatorTypes();
             this.AmpMaps = new Dictionary<string, string>();
-            this.ConditionalTags = new List<string>();
             this.Aliasses = new Dictionary<string, object>(comparer);
             this.Elements = new TextElement()
             {
@@ -94,38 +91,33 @@ namespace TextEngine.Text
             {
                 this.Text = text;
             }
-
-            this.InitNoAttributedTags();
+            this.TagInfos = new TextElementInfos();
             this.InitEvulator();
-            this.InitAutoClosed();
             this.InitAmpMaps();
-            this.InitConditionalTags();
+            this.InitStockTagOptions();
         }
         public void OnTagClosed(TextElement element)
         {
-            if (!this.AllowParseCondition || !this.IsParseMode || !this.ConditionalTags.Contains(element.ElemName)) return;
+           
+            if (!this.AllowParseCondition || !this.IsParseMode || (!this.TagInfos.HasTagInfo(element.ElemName) || !this.TagInfos[element.ElemName].IsConditionalTag)) return;
             element.Parent.EvulateValue(element.Index, element.Index + 1);
         }
-        private void InitNoAttributedTags()
+        private void InitStockTagOptions()
         {
-            this.NoAttributedTags = new List<string>();
-            this.NoAttributedTags.Add("if");
-        }
-        private void InitConditionalTags()
-        {
-            this.ConditionalTags.Add("if");
-            this.ConditionalTags.Add("include");
-            this.ConditionalTags.Add("set");
-            this.ConditionalTags.Add("unset");
-        }
-        private void InitAutoClosed()
-        {
-
-            //Otomatik kapatılacak taglar.
-            AutoClosedTags = new List<string>()
-           {
-              "elif", "else", "return", "break", "continue", "include", "cm", "set", "unset"
-           };
+            this.TagInfos["elif"].IsAutoClosedTag = true;
+            this.TagInfos["else"].IsAutoClosedTag = true;
+            this.TagInfos["return"].IsAutoClosedTag = true;
+            this.TagInfos["break"].IsAutoClosedTag = true;
+            this.TagInfos["continue"].IsAutoClosedTag = true;
+            this.TagInfos["include"].IsAutoClosedTag = true;
+            this.TagInfos["cm"].IsAutoClosedTag = true;
+            this.TagInfos["set"].IsAutoClosedTag = true;
+            this.TagInfos["unset"].IsAutoClosedTag = true;
+            this.TagInfos["if"].IsNoAttributedTag = true;
+            this.TagInfos["if"].IsConditionalTag = true;
+            this.TagInfos["include"].IsConditionalTag = true;
+            this.TagInfos["set"].IsConditionalTag = true;
+            this.TagInfos["set"].IsConditionalTag = true;
         }
         private void InitEvulator()
         {
