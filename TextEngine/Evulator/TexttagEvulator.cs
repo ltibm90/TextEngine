@@ -9,7 +9,10 @@ namespace TextEngine.Evulator
     {
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
-            throw new NotImplementedException();
+            return new TextEvulateResult()
+            {
+                TextContent = tag.Value
+            };
         }
     }
 }
