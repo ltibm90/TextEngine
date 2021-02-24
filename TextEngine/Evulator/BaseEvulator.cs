@@ -15,7 +15,7 @@ namespace TextEngine.Evulator
 
         }
         public abstract TextEvulateResult Render(TextElement tag, object vars);
-        public virtual void RenderFinish(TextElement tag, object vars) { }
+        public virtual void RenderFinish(TextElement tag, object vars, TextEvulateResult latestResult) { }
         protected object EvulateText(string text, object additionalparams = null)
         {
 		    var pardecoder = new ParDecode(text);

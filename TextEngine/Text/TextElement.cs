@@ -537,14 +537,14 @@ namespace TextEngine.Text
                     vresult = evulator.Render(subElement, vars);
                     if (vresult == null)
                     {
-                        evulator.RenderFinish(subElement, vars);
+                        evulator.RenderFinish(subElement, vars, vresult);
                         continue;
                     }
                     if (vresult.Result == TextEvulateResultEnum.EVULATE_DEPTHSCAN)
                     {
                         vresult = subElement.EvulateValue(vresult.Start, vresult.End, vars);
                     }
-                    evulator.RenderFinish(subElement, vars);
+                    evulator.RenderFinish(subElement, vars, vresult);
                     
                 }
                 else
