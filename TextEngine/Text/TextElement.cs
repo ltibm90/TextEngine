@@ -535,7 +535,11 @@ namespace TextEngine.Text
                     var evulator = Activator.CreateInstance(targetType) as BaseEvulator;
                     evulator.SetEvulator(this.BaseEvulator);
                     vresult = evulator.Render(subElement, vars);
-                    if (vresult == null) continue;
+                    if (vresult == null)
+                    {
+                        evulator.RenderFinish(subElement, vars);
+                        continue;
+                    }
                     if (vresult.Result == TextEvulateResultEnum.EVULATE_DEPTHSCAN)
                     {
                         vresult = subElement.EvulateValue(vresult.Start, vresult.End, vars);
