@@ -41,7 +41,8 @@ namespace TextEngine.Text
         public Dictionary<string, string> AmpMaps { get; private set; }
         public SavedMacros SavedMacrosList { get; private set; }
         public TextElementInfos TagInfos { get; private set; }
-        public Dictionary<string, object> CustomData { get; private set; }
+        public Dictionary<string, object> CustomDataDictionary { get; private set; }
+        public object CustomDataSingle { get; set; }
         private bool isParseMode;
         public bool IsParseMode
         {
@@ -69,7 +70,7 @@ namespace TextEngine.Text
         }
         public TextEvulator(string text = null, bool isfile = false)
         {
-            this.CustomData = new Dictionary<string, object>();
+            this.CustomDataDictionary = new Dictionary<string, object>();
             this.DefineParameters = new KeyValues<object>();
             this.LocalVariables = new KeyValueGroup();
             this.LocalVariables.Add(this.DefineParameters);
