@@ -23,6 +23,7 @@ namespace TextEngineTest
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+
             //TextEngineTest6();
             TextEvulator evulator = new TextEvulator();
             evulator.Text = "{tag}içerik: <b>{%'Mesaj: ' + mesaj + ', Uzunluk: ' + strlen_cw(mesaj) + ':'}</b>{/tag}";
