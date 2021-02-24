@@ -545,6 +545,7 @@ namespace TextEngine.Text
                         vresult = subElement.EvulateValue(vresult.Start, vresult.End, vars);
                     }
                     evulator.RenderFinish(subElement, vars, vresult);
+                    if (vresult == null) continue;
                     
                 }
                 else
