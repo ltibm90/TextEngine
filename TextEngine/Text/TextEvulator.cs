@@ -113,13 +113,11 @@ namespace TextEngine.Text
             this.TagInfos["return"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["break"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["continue"].Flags = TextElementFlags.TEF_AutoClosedTag;
-            this.TagInfos["include"].Flags = TextElementFlags.TEF_AutoClosedTag;
+            this.TagInfos["include"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["cm"].Flags = TextElementFlags.TEF_AutoClosedTag;
-            this.TagInfos["set"].Flags = TextElementFlags.TEF_AutoClosedTag;
-            this.TagInfos["unset"].Flags = TextElementFlags.TEF_AutoClosedTag;
+            this.TagInfos["set"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
+            this.TagInfos["unset"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["if"].Flags = TextElementFlags.TEF_NoAttributedTag | TextElementFlags.TEF_ConditionalTag;
-            this.TagInfos["include"].Flags = TextElementFlags.TEF_ConditionalTag;
-            this.TagInfos["set"].Flags = TextElementFlags.TEF_ConditionalTag;
         }
         private void InitEvulator()
         {
