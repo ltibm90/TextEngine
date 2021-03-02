@@ -34,14 +34,14 @@ namespace TextEngine.Text
         public bool HasAttribute(string attrib, bool cs = false)
         {
             string lower = attrib;
-            if(cs)
+            if (cs)
             {
                 lower = lower.ToLower();
             }
             for (int i = 0; i < this.Count; i++)
             {
                 var attr = this[i];
-                if(cs)
+                if (cs)
                 {
                     if (attr.Name.ToLower() == lower) return true;
 
@@ -115,7 +115,7 @@ namespace TextEngine.Text
 
         public bool Remove(TextElementAttribute item)
         {
-           return  this.inner.Remove(item);
+            return this.inner.Remove(item);
         }
 
         public void RemoveAt(int index)
@@ -153,7 +153,7 @@ namespace TextEngine.Text
         }
         public TextElementAttributes CloneWCS()
         {
-            return (TextElementAttributes) Clone();
+            return (TextElementAttributes)Clone();
         }
     }
 }

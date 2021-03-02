@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace TextEngine.Text
+{
+    [Flags]
+    public enum TextElementFlags
+    {
+        TEF_NONE = 0,
+        TEF_ConditionalTag = 1 << 0,
+        TEF_NoAttributedTag = 1 << 1,
+        TEF_AutoClosedTag = 1 << 2,
+        /// <summary>
+        /// E.G [TAG=ATTRIB=test atrribnext/], returns: ATTRIB=test atrribnext
+        /// </summary>
+        TEF_TagAttribonly =  1 << 3
+
+    }
+}

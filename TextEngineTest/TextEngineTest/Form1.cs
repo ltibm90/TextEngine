@@ -23,7 +23,6 @@ namespace TextEngineTest
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-
             //TextEngineTest6();
             TextEvulator evulator = new TextEvulator();
             evulator.Text = "{tag}içerik: <b>{%'Mesaj: ' + mesaj + ', Uzunluk: ' + strlen_cw(mesaj) + ':'}</b>{/tag}";
@@ -37,6 +36,7 @@ namespace TextEngineTest
             evulator.Parse();
            //var items = evulator.Elements.FindByXPath("(cw/uyeler/uye)[@name]");
             var items = evulator.Elements.FindByXPath("cw/uyeler/uye[@name='xuye' or @name='macmillan'][1]");
+          
             var result = evulator.Elements.EvulateValue();
             MessageBox.Show(result.TextContent);
 
@@ -83,7 +83,7 @@ namespace TextEngineTest
             KeyValues<object> kv = new KeyValues<object>();
             evulator.GloblaParameters = kv;
             evulator.GloblaParameters = new CustomClass();
-            evulator.TagInfos["test"].IsAutoClosedTag = true; //ismi yazılan taglar otomatik kapatılır
+            evulator.TagInfos["test"].Flags =  TextElementFlags.TEF_AutoClosedTag; //ismi yazılan taglar otomatik kapatılır
             evulator.Aliasses.Add("bb", "strong"); //bb kodu aynı zamanda strong olarakta kullanılabilir.
             evulator.Parse(); //Ayrıştırma işlemi yapılır
             var elems = evulator.Elements; //Ayrıştırılan elemanlar bu sınıfta tutulur.

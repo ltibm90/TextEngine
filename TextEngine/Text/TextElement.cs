@@ -40,7 +40,7 @@ namespace TextEngine.Text
                 if(this.BaseEvulator != null)
                 {
                     this.NoAttrib = false;
-                    if (this.BaseEvulator.TagInfos.HasTagInfo(value) && this.BaseEvulator.TagInfos[value].IsNoAttributedTag)
+                    if ((this.BaseEvulator.TagInfos.GetElementFlags(value) & TextElementFlags.TEF_NoAttributedTag) != 0)
                     {
                         this.NoAttrib = true;
                     }

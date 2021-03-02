@@ -7,9 +7,7 @@ namespace TextEngine.Text
     public class TextElementInfo
     {
         public string ElementName { get; set; }
-        public bool IsConditionalTag { get; set; }
-        public bool IsNoAttributedTag { get; set; }
-        public bool IsAutoClosedTag { get; set; }
+        public TextElementFlags Flags { get; set; }
         Dictionary<string, object> CustomData { get; set; }
     }
 }

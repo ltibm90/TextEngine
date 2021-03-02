@@ -57,7 +57,11 @@ namespace TextEngine.Text
         {
             return this[tagName] != null;
         }
-
+        public TextElementFlags GetElementFlags(string tagName)
+        {
+            if (!this.HasTagInfo(tagName)) return TextElementFlags.TEF_NONE;
+            return this[tagName].Flags;
+        }
         public void Add(TextElementInfo item)
         {
             this.inner.Add(item);
