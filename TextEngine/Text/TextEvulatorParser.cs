@@ -563,7 +563,7 @@ namespace TextEngine.Text
                             curFlags = tagElement.GetTagFlags();
                             //currentName.Append("##set_TAG_ATTR##");
                             istagattrib = true;
-                            tagattribonly = (tagElement.GetTagFlags() & TextElementFlags.TEF_TagAttribonly) != 0;
+                            tagattribonly = (curFlags & TextElementFlags.TEF_TagAttribonly) != 0;
                         }
                         continue;
                     }
@@ -629,9 +629,10 @@ namespace TextEngine.Text
                         {
                             namefound = true;
                             tagElement.ElemName = current.ToString();
-                            tagattribonly = (tagElement.GetTagFlags() & TextElementFlags.TEF_TagAttribonly) != 0;
-                            current.Clear();
                             curFlags = tagElement.GetTagFlags();
+                            tagattribonly = (curFlags & TextElementFlags.TEF_TagAttribonly) != 0;
+                            current.Clear();
+
 
                         }
                         else if (namefound)
