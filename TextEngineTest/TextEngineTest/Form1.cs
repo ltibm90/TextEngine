@@ -27,7 +27,6 @@ namespace TextEngineTest
             TextEvulator evulator = new TextEvulator();
             evulator.Text = "{tag}içerik: <b>{%'Mesaj: ' + mesaj + ', Uzunluk: ' + strlen_cw(mesaj) + ':'}</b>{/tag}";
             evulator.Text = "<cw><uyeler><uye name='macmillan'>Üye</uye><uye name='xuye'>XÜye</uye><uye attr='kestane'>YÜye</uye></uyeler></cw>";
-
             //Parametrelerin attirbute alamayacağınıbelirttik aksi halde yukarı kod syntax hatası verecektir.
             evulator.GloblaParameters = new CustomClass();
             evulator.ParamNoAttrib = true;

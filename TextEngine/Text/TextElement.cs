@@ -40,7 +40,7 @@ namespace TextEngine.Text
                 if(this.BaseEvulator != null)
                 {
                     this.NoAttrib = false;
-                    if ((this.BaseEvulator.TagInfos.GetElementFlags(value) & TextElementFlags.TEF_NoAttributedTag) != 0)
+                    if ((this.GetTagFlags() & TextElementFlags.TEF_NoAttributedTag) != 0)
                     {
                         this.NoAttrib = true;
                     }
@@ -857,6 +857,19 @@ namespace TextEngine.Text
             }
 
             return null;
+        }
+        public TextElementInfo GetTagInfo()
+        {
+            if (this.BaseEvulator == null) return null;
+            if (this.BaseEvulator.TagInfos.HasTagInfo(this.ElemName)) return this.BaseEvulator.TagInfos[this.ElemName];
+            if (this.BaseEvulator.TagInfos.HasTagInfo("*")) return this.BaseEvulator.TagInfos["*"];
+            return null;
+        }
+        public TextElementFlags GetTagFlags()
+        {
+            var info = this.GetTagInfo();
+            if (info == null) return TextElementFlags.TEF_NONE;
+            return info.Flags;
         }
     }
 }

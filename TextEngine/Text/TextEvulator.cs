@@ -103,11 +103,13 @@ namespace TextEngine.Text
         {
 
 
-                if (!this.AllowParseCondition || !this.IsParseMode || ((this.TagInfos.GetElementFlags(element.ElemName) & TextElementFlags.TEF_ConditionalTag) != 0)) return;
+                if (!this.AllowParseCondition || !this.IsParseMode || ((element.GetTagFlags() & TextElementFlags.TEF_ConditionalTag) != 0)) return;
             element.Parent.EvulateValue(element.Index, element.Index + 1);
         }
         private void InitStockTagOptions()
         {
+            //* default flags;
+            this.TagInfos["*"].Flags = TextElementFlags.TEF_NONE;
             this.TagInfos["elif"].Flags =  TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["else"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["return"].Flags = TextElementFlags.TEF_AutoClosedTag;

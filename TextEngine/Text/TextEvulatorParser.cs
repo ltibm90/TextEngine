@@ -346,6 +346,7 @@ namespace TextEngine.Text
             bool initial = false;
             bool istagattrib = false;
             bool tagattribonly = false;
+            TextElementFlags curFlags = TextElementFlags.TEF_NONE;
             for (int i = this.pos; i < this.TextLength; i++)
             {
                 var cur = this.Text[i];
@@ -398,6 +399,7 @@ namespace TextEngine.Text
                             tagElement.ElementType = TextElementType.CDATASection;
                             tagElement.ElemName = "#cdata";
                             namefound = true;
+                            curFlags = TextElementFlags.TEF_NONE;
                             i += 7;
                             continue;
                         }
@@ -447,7 +449,7 @@ namespace TextEngine.Text
                 if ((tagElement.ElementType == TextElementType.Parameter && this.Evulator.ParamNoAttrib)
                      || (namefound && tagElement.NoAttrib) || (istagattrib && tagattribonly))
                 {
-                    if (cur != this.Evulator.RightTag && (cur != '/' && next != this.Evulator.RightTag))
+                    if (cur != this.Evulator.RightTag && (cur != '/' && next != this.Evulator.RightTag || (curFlags & TextElementFlags.TEF_DisableLastSlash) != 0))
                     {
                         current.Append(cur);
                         continue;
@@ -513,12 +515,16 @@ namespace TextEngine.Text
                         {
                             namefound = true;
                             tagElement.ElemName = current.ToString();
-                           
                             current.Clear();
+                            curFlags = tagElement.GetTagFlags();
                         }
                         if (namefound)
                         {
-                            lastslashused = true;
+                            if(next == this.Evulator.RightTag && (curFlags & TextElementFlags.TEF_DisableLastSlash) == 0)
+                            {
+                                lastslashused = true;
+                            }
+
                         }
                         else
                         {
@@ -554,9 +560,10 @@ namespace TextEngine.Text
                             tagElement.ElemName = current.ToString();
                             current.Clear();
                             currentName.Clear();
+                            curFlags = tagElement.GetTagFlags();
                             //currentName.Append("##set_TAG_ATTR##");
                             istagattrib = true;
-                            tagattribonly = (this.Evulator.TagInfos.GetElementFlags(tagElement.ElemName) & TextElementFlags.TEF_TagAttribonly) != 0;
+                            tagattribonly = (tagElement.GetTagFlags() & TextElementFlags.TEF_TagAttribonly) != 0;
                         }
                         continue;
                     }
@@ -622,8 +629,9 @@ namespace TextEngine.Text
                         {
                             namefound = true;
                             tagElement.ElemName = current.ToString();
-                            tagattribonly = (this.Evulator.TagInfos.GetElementFlags(tagElement.ElemName) & TextElementFlags.TEF_TagAttribonly) != 0;
+                            tagattribonly = (tagElement.GetTagFlags() & TextElementFlags.TEF_TagAttribonly) != 0;
                             current.Clear();
+                            curFlags = tagElement.GetTagFlags();
 
                         }
                         else if (namefound)
