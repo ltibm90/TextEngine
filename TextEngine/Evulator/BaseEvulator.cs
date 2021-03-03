@@ -73,7 +73,7 @@ namespace TextEngine.Evulator
                 pardecoder = cAttr.ParData;
                 if(pardecoder == null)
                 {
-                   
+                    pardecoder = new ParDecode(tag.Value);
                     pardecoder.Text = cAttr.Value;
                     pardecoder.Decode();
                     cAttr.ParData = pardecoder;
