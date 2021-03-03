@@ -188,6 +188,12 @@ namespace TextEngine.Text
                     if (alias?.ToString().ToUpperInvariant() == this.ElemName.ToUpperInvariant()) return true;
                     return true;
                 }
+                else if(this.BaseEvulator.Aliasses.ContainsKey(this.ElemName))
+                {
+                    var alias = this.BaseEvulator.Aliasses[this.ElemName];
+                    if (alias?.ToString().ToUpperInvariant() == name.ToUpperInvariant()) return true;
+                    return true;
+                }
             }
             return false;
         }
