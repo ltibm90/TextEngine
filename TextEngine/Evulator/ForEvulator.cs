@@ -12,9 +12,9 @@ namespace TextEngine.Evulator
         {
             var varname = tag.GetAttribute("var");
             var startAttr = tag.ElemAttr["start"];
-            var start = startAttr.Value;
+            var start = startAttr?.Value;
             var stepAttr = tag.ElemAttr["step"];
-            var step = stepAttr.Value;
+            var step = stepAttr?.Value;
             if (string.IsNullOrEmpty(start))
             {
                 start = "0";
@@ -24,22 +24,38 @@ namespace TextEngine.Evulator
                 step = "1";
             }
             var toAttr = tag.ElemAttr["to"];
-            if (string.IsNullOrEmpty(varname) && string.IsNullOrEmpty(step) && string.IsNullOrEmpty(toAttr.Value))
+            if (string.IsNullOrEmpty(varname) && string.IsNullOrEmpty(step) && (toAttr == null || string.IsNullOrEmpty(toAttr.Value)))
             {
                 return null;
             }
-            if(startAttr.ParData == null)
+            object startres = null;
+            if(startAttr != null)
             {
-                startAttr.ParData = new ParDecoder.ParDecode(start);
-                startAttr.ParData.Decode();
+                if (startAttr.ParData == null)
+                {
+                    startAttr.ParData = new ParDecoder.ParDecode(start);
+                    startAttr.ParData.Decode();
+                }
+                startres = this.EvulatePar(startAttr.ParData);
             }
-            if (stepAttr.ParData == null)
+            else
             {
-                stepAttr.ParData = new ParDecoder.ParDecode(step);
-                stepAttr.ParData.Decode();
+                startres = 0;
             }
-            var startres = this.EvulatePar(startAttr.ParData);
-            var stepres = this.EvulatePar(stepAttr.ParData);
+            object stepres = null;
+            if (stepAttr != null)
+            {
+                if (stepAttr.ParData == null)
+                {
+                    stepAttr.ParData = new ParDecoder.ParDecode(step);
+                    stepAttr.ParData.Decode();
+                }
+                startres = this.EvulatePar(stepAttr.ParData);
+            }
+            else
+            {
+                stepres = 1;
+            }
             int startnum = 0;
             int stepnum = 0;
             int tonum = 0;
