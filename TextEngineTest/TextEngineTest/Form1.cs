@@ -23,9 +23,12 @@ namespace TextEngineTest
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+
             //TextEngineTest6();
             TextEvulator evulator = new TextEvulator();
-            evulator.Text = "{tag}içerik: <b>{%'Mesaj: ' + mesaj + ', Uzunluk: ' + strlen_cw(mesaj) + ':'}</b>{/tag}";
+            evulator.ParamNoAttrib = true;
+            evulator.Text = "deneme{tag}içerik: <b>{%'Mesaj: ' + mesaj + ', Uzunluk: ' + strlen_cw(mesaj) + ':'}</b>{/tag}";
+            evulator.Parse();
             evulator.Text = "<cw><uyeler><uye name='macmillan'>Üye</uye><uye name='xuye'>XÜye</uye><uye attr='kestane'>YÜye</uye></uyeler></cw>";
             //Parametrelerin attirbute alamayacağınıbelirttik aksi halde yukarı kod syntax hatası verecektir.
             evulator.GloblaParameters = new CustomClass();

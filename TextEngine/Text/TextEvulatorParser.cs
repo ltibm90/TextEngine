@@ -449,7 +449,7 @@ namespace TextEngine.Text
                 if ((tagElement.ElementType == TextElementType.Parameter && this.Evulator.ParamNoAttrib)
                      || (namefound && tagElement.NoAttrib) || (istagattrib && tagattribonly))
                 {
-                    if (cur != this.Evulator.RightTag && (cur != '/' && next != this.Evulator.RightTag || (curFlags & TextElementFlags.TEF_DisableLastSlash) != 0))
+                    if ((cur != this.Evulator.RightTag && tagElement.ElementType == TextElementType.Parameter) || cur != this.Evulator.RightTag && (cur != '/' && next != this.Evulator.RightTag || (curFlags & TextElementFlags.TEF_DisableLastSlash) != 0))
                     {
                         current.Append(cur);
                         continue;

@@ -11,8 +11,10 @@ namespace TextEngine.Evulator
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
             var varname = tag.GetAttribute("var");
-            var start = tag.GetAttribute("start");
-            var step = tag.GetAttribute("step");
+            var startAttr = tag.ElemAttr["start"];
+            var start = startAttr.Value;
+            var stepAttr = tag.ElemAttr["step"];
+            var step = stepAttr.Value;
             if (string.IsNullOrEmpty(start))
             {
                 start = "0";
@@ -21,14 +23,23 @@ namespace TextEngine.Evulator
             {
                 step = "1";
             }
-            var to = tag.GetAttribute("to");
-            if (string.IsNullOrEmpty(varname) && string.IsNullOrEmpty(step) && string.IsNullOrEmpty(to))
+            var toAttr = tag.ElemAttr["to"];
+            if (string.IsNullOrEmpty(varname) && string.IsNullOrEmpty(step) && string.IsNullOrEmpty(toAttr.Value))
             {
                 return null;
             }
-
-            var startres = this.EvulateText(start);
-            var stepres = this.EvulateText(step);
+            if(startAttr.ParData == null)
+            {
+                startAttr.ParData = new ParDecoder.ParDecode(start);
+                startAttr.ParData.Decode();
+            }
+            if (stepAttr.ParData == null)
+            {
+                stepAttr.ParData = new ParDecoder.ParDecode(step);
+                stepAttr.ParData.Decode();
+            }
+            var startres = this.EvulatePar(startAttr.ParData);
+            var stepres = this.EvulatePar(stepAttr.ParData);
             int startnum = 0;
             int stepnum = 0;
             int tonum = 0;
@@ -44,7 +55,7 @@ namespace TextEngine.Evulator
             {
                 startnum = (int)Convert.ChangeType(startres, TypeCode.Int32); ;
             }
-            var tores = this.EvulateText(to);
+            var tores = this.EvulateAttribute(toAttr);
             if (!TypeUtil.IsNumericType(tores))
 		    {
                 return null;

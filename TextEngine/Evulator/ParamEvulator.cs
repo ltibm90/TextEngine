@@ -15,7 +15,12 @@ namespace TextEngine.Evulator
                 result.Result = TextEvulateResultEnum.EVULATE_NOACTION;
                 return result;
             }
-            result.TextContent += this.EvulateText(tag.ElemName, vars);
+            if(tag.ParData == null)
+            {
+                tag.ParData = new ParDecoder.ParDecode(tag.ElemName);
+                tag.ParData.Decode();
+            }
+            result.TextContent += this.EvulatePar(tag.ParData, vars);
             return result;
         }
     }

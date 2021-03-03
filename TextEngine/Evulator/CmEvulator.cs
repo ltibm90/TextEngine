@@ -23,12 +23,12 @@ namespace TextEngine.Evulator
                 for (int i = 0; i < element.ElemAttr.Count; i++)
                 {
                     if (element.ElemAttr[i].Name == "name") continue;
-                    newelement[element.ElemAttr[i].Name] = this.EvulateText(element.ElemAttr[i].Value, vars);
+                    newelement[element.ElemAttr[i].Name] = this.EvulateAttribute(element.ElemAttr[i], vars);
                 }
                 for (int i = 1; i < tag.ElemAttr.Count; i++)
                 {
                     var key = tag.ElemAttr[i];
-                    newelement[key.Name] = this.EvulateText(key.Value, vars);
+                    newelement[key.Name] = this.EvulateAttribute(key, vars);
                 }
                 var result = element.EvulateValue(0, 0, newelement);
                 return result;

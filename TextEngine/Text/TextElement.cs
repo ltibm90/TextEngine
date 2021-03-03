@@ -16,6 +16,7 @@ namespace TextEngine.Text
             this.ElemAttr = new TextElementAttributes();
         }
 
+        public ParDecoder.ParDecode ParData { get; set; }
         public int Depth
         {
             get
@@ -70,12 +71,16 @@ namespace TextEngine.Text
                 }
             }
         }
+
         private string value;
 
         public string Value
         {
             get { return value; }
-            set { this.value = value; }
+            set {
+                this.ParData = null;
+                this.value = value;
+            }
         }
         private TextElements subElements;
         public TextElements SubElements

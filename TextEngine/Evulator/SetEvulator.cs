@@ -20,8 +20,7 @@ namespace TextEngine.Evulator
             {
                 string defname = tag.GetAttribute("name");
                 if (string.IsNullOrEmpty(defname) || !defname.All((c) => char.IsLetterOrDigit(c))) return result;
-                string defvalue = tag.GetAttribute("value");
-                this.Evulator.DefineParameters.Set(defname, this.EvulateText(defvalue));
+                this.Evulator.DefineParameters.Set(defname, this.EvulateAttribute(tag.ElemAttr["value"]));
             }
             return result;
         }

@@ -10,10 +10,8 @@ namespace TextEngine.Evulator
     {
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
-            var total = tag.GetAttribute("count");
-            if (string.IsNullOrEmpty(total)) return null;
-            var toResult = this.EvulateText(total, vars);
-            if(!TypeUtil.IsNumericType(toResult))
+            var toResult = this.EvulateAttribute(tag.ElemAttr["count"], vars);
+            if(toResult == null|| !TypeUtil.IsNumericType(toResult))
             {
                 return null;
             }

@@ -18,7 +18,20 @@ namespace TextEngine.Text
                 name = value;
             }
         }
-        public string Value { get; set; }
+        private string value;
+        public string Value
+        {
+            get
+            {
+                return this.value;
+            }
+            set
+            {
+                this.value = value;
+                this.ParData = null;
+            }
+        }
+        public ParDecoder.ParDecode ParData { get; set; }
         public override string ToString()
         {
             return $"{Name}=\"{Value}\"";

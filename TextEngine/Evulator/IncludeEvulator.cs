@@ -10,8 +10,7 @@ namespace TextEngine.Evulator
     {
         private TextEvulateResult Render_Parse(TextElement tag, object vars)
         {
-            var loc = tag.GetAttribute("name");
-            loc = this.EvulateText(loc)?.ToString();
+            var loc = this.EvulateAttribute(tag.ElemAttr["name"], vars)?.ToString();
             if (!this.ConditionSuccess(tag, "if") || !File.Exists(loc)) return null;
             string xpath = tag.GetAttribute("xpath");
             bool xpathold = false;
@@ -54,8 +53,7 @@ namespace TextEngine.Evulator
         }
         private TextEvulateResult Render_Default(TextElement tag, object vars)
         {
-            var loc = tag.GetAttribute("name");
-            loc = this.EvulateText(loc)?.ToString();
+            var loc = this.EvulateAttribute(tag.ElemAttr["name"])?.ToString();
             var parse = tag.GetAttribute("parse", "true");
             if (!File.Exists(loc) || !this.ConditionSuccess(tag, "if")) return null;
             var content = File.ReadAllText(loc);
