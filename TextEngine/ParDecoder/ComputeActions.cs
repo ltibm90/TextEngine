@@ -255,26 +255,40 @@ namespace TextEngine.ParDecoder
                     }
                 }
             }
-            return null;
+            return item1;
         }
 
         public static object CallMethodSingle(object @object, string name, object[] @params)
         {
             if (@object == null) return null;
-            Type obj_type = @object.GetType();
+            MethodInfo method = null;
+            if(@object is  Dictionary<string, object> dict)
+            {
+                if (!dict.TryGetValue(name, out object obj)) return null;
+                if(obj is Delegate d)
+                {
+                    return CallMethodDirect(d.Target, d.Method, @params, true);
+                }
+                return null;
+            }
+            else
+            {
+                Type obj_type = @object.GetType();
+                method = obj_type.GetMethodByNameWithParams(name, @params);
+            }
 
             //var method = obj_type.GetMethod(name);
-            var method = obj_type.GetMethodByNameWithParams(name, @params);
+
             return CallMethodDirect(@object, method, @params);
 
         }
-        public static object CallMethodDirect(object @object, MethodInfo method, object[] @params)
+        public static object CallMethodDirect(object @object, MethodInfo method, object[] @params, bool isdelegate = false)
         {
             if (method == null) return null;
             var convertedParams = ParamUtil.MatchParams(@params, method.GetParameters());
             if (method != null)
             {
-                if (method.IsPublic)
+                if (method.IsPublic || isdelegate)
                 {
                     return method.Invoke(@object, convertedParams.ToArray());
                 }
@@ -301,7 +315,6 @@ namespace TextEngine.ParDecoder
                         }
                     }
                 }
-
             }
             return CallMethodSingle(vars, name, @params);
         }

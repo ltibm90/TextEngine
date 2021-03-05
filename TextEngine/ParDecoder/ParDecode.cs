@@ -11,6 +11,7 @@ namespace TextEngine.ParDecoder
         private int TextLength { get { return this.Text.Length; } }
         private int pos;
         public ParItem items;
+        public bool SurpressError { get; set; }
         public ParItem Items
         {
             get
@@ -68,7 +69,8 @@ namespace TextEngine.ParDecoder
                         var item = new ParItem
                         {
                             Parent = parentItem,
-                            ParName = "("
+                            ParName = "(",
+                            BaseDecoder = this
                         };
                         parentItem.InnerItems.Add(item);
                         parentItem = item;
@@ -86,6 +88,7 @@ namespace TextEngine.ParDecoder
                     {
                         Parent = parentItem,
                         ParName = cur.ToString(),
+                        BaseDecoder = this
                     };
                     parentItem.InnerItems.Add(item);
                     parentItem = item;
@@ -96,6 +99,11 @@ namespace TextEngine.ParDecoder
                     parentItem = parentItem.Parent;
                     if (parentItem == null)
                     {
+                        if(this.SurpressError)
+                        {
+                            parentItem = this.Items;
+                            continue;
+                        }
                         throw new Exception("Syntax Error");
                     }
                     continue;

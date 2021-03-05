@@ -124,7 +124,7 @@ namespace TextEngine.Text
 
 
                     }
-                    if (prevtag == null && this.Evulator.ThrowExceptionIFPrevIsNull)
+                    if (prevtag == null && this.Evulator.ThrowExceptionIFPrevIsNull && !this.Evulator.SurpressError)
                     {
                         this.Evulator.IsParseMode = false;
                         throw new Exception("Syntax Error");
@@ -236,9 +236,7 @@ namespace TextEngine.Text
                 if (this.Evulator.NoParseEnabled && this.in_noparse)
                 {
                     istextnode = true;
-                    tagElement.ElemName = "#text";
-                    tagElement.ElementType = TextElementType.TextNode;
-                    tagElement.Closed = true;
+                    tagElement.SetTextTag(true);
                 }
                 else
                 {
@@ -249,8 +247,18 @@ namespace TextEngine.Text
                         {
                             if (intag)
                             {
-                                this.Evulator.IsParseMode = false;
-                                throw new Exception("Syntax Error");
+                                if(this.Evulator.SurpressError)
+                                {
+                                    tagElement.SetTextTag(true);
+                                    tagElement.Value = this.Text.Substring(start, i - start);
+                                    this.pos = i - 1;
+                                    return tagElement;
+                                }
+                                else
+                                {
+                                    this.Evulator.IsParseMode = false;
+                                    throw new Exception("Syntax Error");
+                                }
                             }
                             intag = true;
                             continue;
@@ -259,16 +267,16 @@ namespace TextEngine.Text
                         {
                             string ampcode = this.DecodeAmp(i + 1, false);
                             i = this.pos;
-                            if (ampcode.StartsWith("&"))
+                            tagElement.SetTextTag(true);
+                            tagElement.ElementType = TextElementType.EntityReferenceNode;
+                            if (ampcode.StartsWith("&") && this.Evulator.SurpressError)
                             {
                                 this.Evulator.IsParseMode = false;
+                                tagElement.ElementType = TextElementType.TextNode;
                                 throw new Exception("Syntax Error");
                             }
                             tagElement.AutoClosed = true;
-                            tagElement.Closed = true;
                             tagElement.Value = ampcode;
-                            tagElement.ElementType = TextElementType.EntityReferenceNode;
-                            tagElement.ElemName = "#text";
                             return tagElement;
                         }
                         else
@@ -276,9 +284,7 @@ namespace TextEngine.Text
                             if (!intag)
                             {
                                 istextnode = true;
-                                tagElement.ElemName = "#text";
-                                tagElement.ElementType = TextElementType.TextNode;
-                                tagElement.Closed = true;
+                                tagElement.SetTextTag(true);
                             }
                         }
                     }
@@ -286,6 +292,14 @@ namespace TextEngine.Text
                     {
                         if (!intag)
                         {
+                            if(this.Evulator.SurpressError)
+                            {
+                                tagElement.SetTextTag(true);
+                                tagElement.Value = this.Text.Substring(start, i - start);
+                                this.pos = i - 1;
+                                return tagElement;
+
+                            }
                             this.Evulator.IsParseMode = false;
                             throw new Exception("Syntax Error");
                         }
@@ -319,6 +333,7 @@ namespace TextEngine.Text
                 {
                     this.ParseTagHeader(ref tagElement);
                     intag = false;
+                    if (string.IsNullOrEmpty(tagElement.ElemName)) return null;
                     if (this.Evulator.NoParseEnabled && tagElement.ElemName == this.Evulator.NoParseTag)
                     {
                         this.in_noparse = true;
@@ -409,6 +424,7 @@ namespace TextEngine.Text
                 {
                     if (!namefound && tagElement.ElementType != TextElementType.Parameter)
                     {
+                        if (this.Evulator.SurpressError) continue;
                         this.Evulator.IsParseMode = false;
                         throw new Exception("Syntax Error");
                     }
@@ -461,6 +477,7 @@ namespace TextEngine.Text
                     {
                         if (cur == ' ' && next != '\t' && next != ' ')
                         {
+                            if (this.Evulator.SurpressError) continue;
                             this.Evulator.IsParseMode = false;
                             throw new Exception("Syntax Error");
                         }
@@ -470,6 +487,7 @@ namespace TextEngine.Text
                 {
                     if (!namefound || currentName.Length == 0)
                     {
+                        if (this.Evulator.SurpressError) continue;
                         this.Evulator.IsParseMode = false;
                         throw new Exception("Syntax Error");
                     }
@@ -545,6 +563,7 @@ namespace TextEngine.Text
 
                                 if (current.Length == 0)
                                 {
+                                    if (this.Evulator.SurpressError) continue;
                                     this.Evulator.IsParseMode = false;
                                     throw new Exception("Syntax Error");
                                 }
@@ -578,6 +597,8 @@ namespace TextEngine.Text
 
                     if (cur == this.Evulator.LeftTag)
                     {
+                        if (this.Evulator.SurpressError) continue;
+                    
                         this.Evulator.IsParseMode = false;
                         throw new Exception("Syntax Error");
                     }

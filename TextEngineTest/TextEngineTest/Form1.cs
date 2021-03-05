@@ -21,9 +21,22 @@ namespace TextEngineTest
         {
             InitializeComponent();
         }
+        private void ParFormatTest()
+        {
+            ParFormat pf = new ParFormat();
+            Dictionary<string, object> kv = new Dictionary<string, object>();
+            kv["name"] = "MacMillan";
+            kv["grup"] = "AR-GE";
+            kv["random"] = (Func<int>)delegate () {
+                return new Random().Next(1, 100);
+            };
+            pf.SurpressError = true;
+            pf.Text = "Kullanıcı: {%name}, Grup: {%grup}, Random Sayı: {%random()}";
+            string res = pf.Apply(kv);
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            ParFormatTest();
             //TextEngineTest6();
             TextEvulator evulator = new TextEvulator();
             evulator.ParamNoAttrib = true;

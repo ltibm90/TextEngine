@@ -882,5 +882,12 @@ namespace TextEngine.Text
             if (info == null) return TextElementFlags.TEF_NONE;
             return info.Flags;
         }
+        public void SetTextTag(bool closetag = false)
+        {
+            this.ElemName = "#text";
+            this.ElementType = TextElementType.TextNode;
+            if(closetag) this.Closed = true;
+
+        }
     }
 }

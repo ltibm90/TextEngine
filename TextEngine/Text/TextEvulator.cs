@@ -17,6 +17,7 @@ namespace TextEngine.Text
             get { return elements; }
             set { elements = value; }
         }
+        public bool SurpressError { get; set; }
         public bool ThrowExceptionIFPrevIsNull { get; set; }
         private int Depth { get; set; } = 0;
         public char LeftTag { get; set; } = '{';

@@ -19,6 +19,10 @@ namespace TextEngine.Evulator
 
         protected object EvulatePar(ParDecode pardecoder, object additionalparams = null)
         {
+            if(pardecoder.SurpressError != this.Evulator.SurpressError)
+            {
+                pardecoder.SurpressError = this.Evulator.SurpressError;
+            }
             var addpar = additionalparams as KeyValues<object>;
             if (addpar != null)
             {

@@ -17,6 +17,7 @@ namespace TextEngine.ParDecoder
         {
             this.InnerItems = new InnerItemsList();
         }
+        public ParDecode BaseDecoder { get; set; }
         public static EvulatorTypes StaticTypes { get; private set; } = new EvulatorTypes();
         public static List<string> GlobalFunctions { get; set; } = new List<string>();
 
@@ -122,13 +123,31 @@ namespace TextEngine.ParDecoder
 
                         if (paritem.ParName == "(")
                         {
-                            currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars);
+                            if(paritem.BaseDecoder != null && paritem.BaseDecoder.SurpressError)
+                            {
+                                try
+                                {
+                                    currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars);
+                                }
+                                catch
+                                {
+
+                                    currentitemvalue = null;
+                                }
+                            }
+                            else
+                            {
+                                currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars);
+                            }
+
 
                         }
                         else if(paritem.ParName == "[")
                         {
                             var prop = ComputeActions.GetProp(prevvalue, varnew);
-                            if (PhpFuctions.is_array(prop))
+                            if(prop != null)
+                            {
+                                                            if (PhpFuctions.is_array(prop))
                             {
                                 int indis = (int)Convert.ChangeType(subresult.Result[0], TypeCode.Int32);
                                 var aritem = prop as IList;
@@ -146,6 +165,8 @@ namespace TextEngine.ParDecoder
                                 int indis = (int)Convert.ChangeType(subresult.Result[0], TypeCode.Int32);
                                 currentitemvalue = ((string)prop)[indis];
                             }
+                            }
+
 
                         }
                     }
