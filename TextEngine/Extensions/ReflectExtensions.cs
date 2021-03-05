@@ -14,7 +14,7 @@ namespace TextEngine.Extensions
         {
             if (type == null) return null;
             var methods = type.GetMethods().Where((mi) => mi.Name == name).OrderByDescending((m => m.GetParameters().Length));
-            if (parameters == null) parameters = new object[0];
+            if (parameters == null || (parameters.Length == 1 && parameters[0] == null) ) parameters = new object[0];
             foreach (var method in methods)
             {
                 bool matches = true;
