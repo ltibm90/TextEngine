@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TextEngine.Misc;
 
 namespace TextEngine.Text
 {
@@ -15,7 +16,7 @@ namespace TextEngine.Text
     }
     public class TextEvulateResult
     {
-        public string TextContent { get; set; }
+        public StringBuilderExtend TextContent { get; set; }
 	    public TextEvulateResultEnum Result { get; set; }
 	    public int Start { get; set; }
 	    public int End { get; set; }
