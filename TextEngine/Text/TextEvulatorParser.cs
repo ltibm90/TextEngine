@@ -271,9 +271,15 @@ namespace TextEngine.Text
                             tagElement.ElementType = TextElementType.EntityReferenceNode;
                             if (ampcode.StartsWith("&") && this.Evulator.SurpressError)
                             {
-                                this.Evulator.IsParseMode = false;
-                                tagElement.ElementType = TextElementType.TextNode;
-                                throw new Exception("Syntax Error");
+                                if(this.Evulator.SurpressError)
+                                {
+                                    tagElement.ElementType = TextElementType.TextNode;
+                                }
+                                else
+                                {
+                                    this.Evulator.IsParseMode = false;
+                                    throw new Exception("Syntax Error");
+                                }
                             }
                             tagElement.AutoClosed = true;
                             tagElement.Value = ampcode;
