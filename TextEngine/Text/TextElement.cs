@@ -486,9 +486,10 @@ namespace TextEngine.Text
             }
             return text.ToString();
         }
-        public TextEvulateResult EvulateValue(int start = 0, int end = 0, object vars = null)
+        public TextEvulateResult EvulateValue(int start = 0, int end = 0, object vars = null, string senderstr = null)
         {
             var result = new TextEvulateResult();
+            result.TextContent = senderstr;
             if (this.ElementType == TextElementType.CommentNode)
             {
                 return null;
@@ -553,7 +554,7 @@ namespace TextEngine.Text
                     }
                     if (vresult.Result == TextEvulateResultEnum.EVULATE_DEPTHSCAN)
                     {
-                        vresult = subElement.EvulateValue(vresult.Start, vresult.End, vars);
+                        vresult = subElement.EvulateValue(vresult.Start, vresult.End, vars, vresult.TextContent);
                     }
                     evulator.RenderFinish(subElement, vars, vresult);
                     if (vresult == null) continue;
