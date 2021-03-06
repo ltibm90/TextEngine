@@ -45,6 +45,7 @@ namespace TextEngine.Text
         public Dictionary<string, object> CustomDataDictionary { get; private set; }
         public Dictionary<char, string> CharMap { get; set; }
         public object CustomDataSingle { get; set; }
+        public bool AllowCharMap { get; set; }
         private bool isParseMode;
         public bool IsParseMode
         {

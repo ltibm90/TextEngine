@@ -716,7 +716,7 @@ namespace TextEngine.Text
                     inspec = true;
                     continue;
                 }
-                if(this.Evulator.CharMap.Keys.Count > 0 && cur != this.Evulator.LeftTag && cur != this.Evulator.RightTag)
+                if(this.Evulator.AllowCharMap && cur != this.Evulator.LeftTag && cur != this.Evulator.RightTag && this.Evulator.CharMap.Keys.Count > 0)
                 {
                     if(this.Evulator.CharMap.TryGetValue(cur, out string str))
                     {
@@ -730,7 +730,7 @@ namespace TextEngine.Text
                         }
                         continue;
                     }
-                };
+                }
 
                 //if (this.DecodeAmpCode && cur == '&')
                 //{
