@@ -716,6 +716,22 @@ namespace TextEngine.Text
                     inspec = true;
                     continue;
                 }
+                if(this.Evulator.CharMap.Keys.Count > 0 && cur != this.Evulator.LeftTag && cur != this.Evulator.RightTag)
+                {
+                    if(this.Evulator.CharMap.TryGetValue(cur, out string str))
+                    {
+                        if(parfound)
+                        {
+                            nparsetext.Append(str);
+                        }
+                        else
+                        {
+                            text.Append(str);
+                        }
+                        continue;
+                    }
+                };
+
                 //if (this.DecodeAmpCode && cur == '&')
                 //{
                 //    text.Append(this.DecodeAmp(i + 1));

@@ -43,6 +43,7 @@ namespace TextEngine.Text
         public SavedMacros SavedMacrosList { get; private set; }
         public TextElementInfos TagInfos { get; private set; }
         public Dictionary<string, object> CustomDataDictionary { get; private set; }
+        public Dictionary<char, string> CharMap { get; set; }
         public object CustomDataSingle { get; set; }
         private bool isParseMode;
         public bool IsParseMode
@@ -71,6 +72,7 @@ namespace TextEngine.Text
         }
         public TextEvulator(string text = null, bool isfile = false)
         {
+            this.CharMap = new Dictionary<char, string>();
             this.CustomDataDictionary = new Dictionary<string, object>();
             this.DefineParameters = new KeyValues<object>();
             this.LocalVariables = new KeyValueGroup();
