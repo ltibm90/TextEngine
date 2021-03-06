@@ -12,6 +12,7 @@ namespace TextEngine.Evulator
         {
             get
             {
+                if (name == null) return null;
                 return this.GetType(name);
             }
             set

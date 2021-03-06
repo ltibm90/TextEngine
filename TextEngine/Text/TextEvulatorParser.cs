@@ -52,7 +52,7 @@ namespace TextEngine.Text
             for (int i = 0; i < TextLength; i++)
             {
                 TextElement tag = this.ParseTag(i, currenttag);
-                if (tag == null)
+                if (tag == null || string.IsNullOrEmpty(tag.ElemName))
                 {
                     i = this.pos;
                     continue;
