@@ -19,6 +19,10 @@ namespace TextEngine.Text
         /// if set [TAG/], tag not flagged autoclosed, if not set tag flagged autoclosed. 
         /// </summary>
         TEF_DisableLastSlash = 1 << 4,
+        /// <summary>
+        /// İşaretlenen tagın içeriğini ayrıştırmaz.
+        /// </summary>
+        TEF_NoParse = 1 << 5
 
     }
 }

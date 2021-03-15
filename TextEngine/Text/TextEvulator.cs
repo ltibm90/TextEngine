@@ -22,7 +22,8 @@ namespace TextEngine.Text
         private int Depth { get; set; } = 0;
         public char LeftTag { get; set; } = '{';
         public char RightTag { get; set; } = '}';
-        public string NoParseTag { get; set; } = "noparse";
+
+        //public string NoParseTag { get; set; } = "noparse";
         public bool NoParseEnabled { get; set; } = true;
         public char ParamChar { get; set; } = '%';
         public Dictionary<string, object> Aliasses { get; private set; }
@@ -124,6 +125,7 @@ namespace TextEngine.Text
             this.TagInfos["set"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["unset"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["if"].Flags = TextElementFlags.TEF_NoAttributedTag | TextElementFlags.TEF_ConditionalTag;
+            this.TagInfos["noparse"].Flags = TextElementFlags.TEF_NoParse;
         }
         private void InitEvulator()
         {

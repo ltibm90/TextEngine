@@ -21,6 +21,16 @@ namespace TextEngineTest
         {
             InitializeComponent();
         }
+        private void NoParseTest()
+        {
+            TextEvulator evulator = new TextEvulator();
+            evulator.ParamNoAttrib = true;
+            evulator.LeftTag = '[';
+            evulator.RightTag = ']';
+            evulator.NoParseEnabled = true;
+            evulator.Text = "[NOPARSE]Deneme [B]Test[/B][/NOPARSE][B]Deneme[/B]";
+            evulator.Parse();
+        }
         private void ParFormatTest()
         {
             //Uzun kullanımı
@@ -43,6 +53,7 @@ namespace TextEngineTest
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+            NoParseTest();
             ParFormatTest();
             //TextEngineTest6();
             TextEvulator evulator = new TextEvulator();
@@ -90,7 +101,7 @@ namespace TextEngineTest
             evulator.ParamChar = '%'; //Parametre karakteri {%variant} olarak kullanılır.
             evulator.LeftTag = '{'; //{tag} içerisindeki sol kısım
             evulator.RightTag = '}'; //{tag} içersinideki {tag} sağ kısım.
-            evulator.NoParseTag = "NOPARSE"; //{NOPARSE}{/NOPARSE} içerisindeki kodlar ayrıştırılmaz.
+            //evulator.NoParseTag = "NOPARSE"; //{NOPARSE}{/NOPARSE} içerisindeki kodlar ayrıştırılmaz.
             evulator.ApplyXMLSettings(); //XML Ayrıştırıcı olarak kullanacaksınız bu fonksiyonu çağırın öncelikle
             evulator.DecodeAmpCode = true; //&nbsp; gibi komutları çevirir.
             evulator.ParamNoAttrib = true; //Parametlerin attribute kullanıp kullanamayacağını belirler.

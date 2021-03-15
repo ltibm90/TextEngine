@@ -10,6 +10,7 @@ namespace TextEngine.Text
         public string Text { get; set; }
         private int pos = 0;
         private bool in_noparse = false;
+        private string noparse_tag = "";
        
         public int TextLength
         {
@@ -140,6 +141,7 @@ namespace TextEngine.Text
             }
             this.pos = 0;
             this.in_noparse = false;
+            this.noparse_tag = "";
             this.Evulator.IsParseMode = false;
         }
         private TextElements GetNotClosedPrevTagUntil(TextElement tag, string name)
@@ -327,9 +329,10 @@ namespace TextEngine.Text
                         var elem = new TextElement
                         {
                             Parent = parent,
-                            ElemName = this.Evulator.NoParseTag,
+                            ElemName = this.noparse_tag,
                             SlashUsed = true
                         };
+                        this.noparse_tag = "";
                         this.in_noparse = false;
                         return elem;
                     }
@@ -340,9 +343,10 @@ namespace TextEngine.Text
                     this.ParseTagHeader(ref tagElement);
                     intag = false;
                     if (string.IsNullOrEmpty(tagElement.ElemName)) return null;
-                    if (this.Evulator.NoParseEnabled && tagElement.ElemName == this.Evulator.NoParseTag)
+                    if (this.Evulator.NoParseEnabled && (tagElement.GetTagFlags() & TextElementFlags.TEF_NoParse) > 0)
                     {
                         this.in_noparse = true;
+                        this.noparse_tag = tagElement.ElemName;
                     }
                     return tagElement;
 
@@ -750,7 +754,7 @@ namespace TextEngine.Text
                         }
                         else if (cur == this.Evulator.RightTag)
                         {
-                            if (nparsetext.ToString() == '/' + this.Evulator.NoParseTag)
+                            if (nparsetext.ToString().ToLowerInvariant() == '/' + this.noparse_tag.ToLowerInvariant())
                             {
                                 parfound = false;
                                 this.pos = i;
@@ -805,20 +809,11 @@ namespace TextEngine.Text
                 }
             }
             this.pos = this.TextLength;
-
             if (this.Evulator.TrimStartEnd)
             {
                 return text.ToString().Trim();
             }
             return text.ToString();
         }
-
-
-
-
-
-
-
-
     }
 }
