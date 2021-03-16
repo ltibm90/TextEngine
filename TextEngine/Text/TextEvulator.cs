@@ -47,6 +47,11 @@ namespace TextEngine.Text
         public Dictionary<char, string> CharMap { get; set; }
         public object CustomDataSingle { get; set; }
         public bool AllowCharMap { get; set; }
+        public Func<EvulatorHandler> EvulatorHandler { get; set; }
+        public EvulatorHandler GetHandler()
+        {
+            return this.EvulatorHandler?.Invoke();
+        }
         private bool isParseMode;
         public bool IsParseMode
         {
@@ -100,18 +105,28 @@ namespace TextEngine.Text
                 this.Text = text;
             }
             this.TagInfos = new TextElementInfos();
+
+            this.InitAll();
+            if (isfile)
+            {
+                this.SetDir(System.IO.Path.GetDirectoryName(text));
+
+            }
+        }
+        public void OnTagClosed(TextElement element)
+        {
+            if (!this.AllowParseCondition || !this.IsParseMode || ((element.GetTagFlags() & TextElementFlags.TEF_ConditionalTag) != 0)) return;
+            element.Parent.EvulateValue(element.Index, element.Index + 1);
+        }
+        public void InitAll()
+        {
+            this.ClearAllInfos();
             this.InitEvulator();
             this.InitAmpMaps();
             this.InitStockTagOptions();
         }
-        public void OnTagClosed(TextElement element)
-        {
 
-
-                if (!this.AllowParseCondition || !this.IsParseMode || ((element.GetTagFlags() & TextElementFlags.TEF_ConditionalTag) != 0)) return;
-            element.Parent.EvulateValue(element.Index, element.Index + 1);
-        }
-        private void InitStockTagOptions()
+        public void InitStockTagOptions()
         {
             //* default flags;
             this.TagInfos["*"].Flags = TextElementFlags.TEF_NONE;
@@ -127,10 +142,11 @@ namespace TextEngine.Text
             this.TagInfos["if"].Flags = TextElementFlags.TEF_NoAttributedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["noparse"].Flags = TextElementFlags.TEF_NoParse;
         }
-        private void InitEvulator()
+        public void InitEvulator()
         {
             this.EvulatorTypes.Param = typeof(ParamEvulator);
             this.EvulatorTypes.GeneralType = typeof(GeneralEvulator);
+            this.EvulatorTypes.Text = typeof(TexttagEvulator);
             this.EvulatorTypes["if"] = typeof(IfEvulator);
             this.EvulatorTypes["for"] = typeof(ForEvulator);
             this.EvulatorTypes["foreach"] = typeof(ForeachEvulator);
@@ -147,7 +163,7 @@ namespace TextEngine.Text
             this.EvulatorTypes["include"] = typeof(IncludeEvulator);
         }
 
-        private void InitAmpMaps()
+        public void InitAmpMaps()
         {
             this.AmpMaps["nbsp"] = " ";
             this.AmpMaps["amp"] = "&";
@@ -165,6 +181,24 @@ namespace TextEngine.Text
             var parser = new TextEvulatorParser(this);
             parser.Parse(baselement, text);
         }
-
+        public void SetDir(string dir)
+        {
+            this.LocalVariables.SetValue("_DIR_", dir);
+        }
+        public void ClearAllInfos()
+        {
+            this.TagInfos.Clear();
+            this.EvulatorTypes.Clear();
+            this.AmpMaps.Clear();
+            this.EvulatorTypes.Param = null;
+            this.EvulatorTypes.Text = null;
+            this.EvulatorTypes.GeneralType = null;
+        }
+        public void ClearElements()
+        {
+            this.Elements.SubElements.Clear();
+            this.Elements.ElemName = "#document";
+            this.Elements.ElementType = TextElementType.Document;
+        }
     }
 }

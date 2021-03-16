@@ -14,19 +14,18 @@ namespace TextEngine.Evulator
             var varname = tag.GetAttribute("var");
             var inlist = this.EvulateAttribute(tag.ElemAttr["in"]);
             if (inlist == null || !(inlist is IEnumerable list)) return null;
-            var svar = new KeyValues<object>();
-            this.Evulator.LocalVariables.Add(svar);
+            this.CreateLocals();
             var result = new TextEvulateResult();
             foreach (var item in list)
             {
-                svar[varname] = item;
+                this.SetLocal(varname, item);
                 var cresult = tag.EvulateValue(0, 0, vars);
                 if (cresult == null) continue;
                 result.TextContent += cresult.TextContent;
                 if (cresult.Result == TextEvulateResultEnum.EVULATE_RETURN)
                 {
                     result.Result = TextEvulateResultEnum.EVULATE_RETURN;
-                    this.Evulator.LocalVariables.Remove(svar);
+                    this.DestroyLocals();
                     return result;
                 }
                 else if (cresult.Result == TextEvulateResultEnum.EVULATE_BREAK)
@@ -34,7 +33,7 @@ namespace TextEngine.Evulator
                     break;
                 }
             }
-            this.Evulator.LocalVariables.Remove(svar);
+            this.DestroyLocals();
             result.Result = TextEvulateResultEnum.EVULATE_TEXT;
             return result;
         }

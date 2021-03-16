@@ -490,6 +490,7 @@ namespace TextEngine.Text
         {
             var result = new TextEvulateResult();
             result.TextContent = senderstr;
+            EvulatorHandler handler = this.BaseEvulator.GetHandler();
             if (this.ElementType == TextElementType.CommentNode)
             {
                 return null;
@@ -498,9 +499,17 @@ namespace TextEngine.Text
             {
                 if(this.BaseEvulator.EvulatorTypes.Text != null)
                 {
+                    if (handler != null && !handler.OnRenderPre(this, vars)) return result;
                     var evulator = Activator.CreateInstance(this.BaseEvulator.EvulatorTypes.Text) as BaseEvulator;
                     evulator.SetEvulator(this.BaseEvulator);
-                    return evulator.Render(this, vars);
+                    var rResult = evulator.Render(this, vars);
+                    if (handler != null && handler.OnRenderFinishPre(this, vars, rResult))
+                    {
+                        evulator.RenderFinish(this, vars, rResult);
+                        handler.OnRenderFinishPost(this, vars, rResult);
+                    }
+                    handler?.OnRenderPost(this, vars, rResult);
+                    return rResult;
                 }
                 result.TextContent = this.value;
                 return result;
@@ -509,10 +518,17 @@ namespace TextEngine.Text
             {
                 if (this.BaseEvulator.EvulatorTypes.Param != null)
                 {
+                    if (handler != null && !handler.OnRenderPre(this, vars)) return result;
                     var evulator = Activator.CreateInstance(this.BaseEvulator.EvulatorTypes.Param) as BaseEvulator;
                     evulator.SetEvulator(this.BaseEvulator);
                     var vresult = evulator.Render(this, vars);
+                    handler?.OnRenderPost(this, vars, vresult);
                     result.Result = vresult.Result;
+                    if (handler != null && handler.OnRenderFinishPre(this, vars, vresult))
+                    {
+                        evulator.RenderFinish(this, vars, vresult);
+                        handler.OnRenderFinishPost(this, vars, vresult);
+                    }
                     if (vresult.Result == TextEvulateResultEnum.EVULATE_TEXT)
                     {
                         result.TextContent += vresult.TextContent;
@@ -539,26 +555,32 @@ namespace TextEngine.Text
                             targetType = this.BaseEvulator.EvulatorTypes.GeneralType;
                         }
                     }
-
                 }
                 TextEvulateResult vresult = null;
+                if (handler != null && !handler.OnRenderPre(subElement, vars)) continue;
                 if (targetType != null)
                 {
                     var evulator = Activator.CreateInstance(targetType) as BaseEvulator;
                     evulator.SetEvulator(this.BaseEvulator);
                     vresult = evulator.Render(subElement, vars);
+                    handler?.OnRenderPost(subElement, vars, vresult);
                     if (vresult == null)
                     {
+                        if (handler != null && !handler.OnRenderFinishPre(subElement, vars, vresult)) continue;
                         evulator.RenderFinish(subElement, vars, vresult);
+                        handler?.OnRenderFinishPost(subElement, vars, vresult);
                         continue;
                     }
                     if (vresult.Result == TextEvulateResultEnum.EVULATE_DEPTHSCAN)
                     {
                         vresult = subElement.EvulateValue(vresult.Start, vresult.End, vars, vresult.TextContent);
                     }
-                    evulator.RenderFinish(subElement, vars, vresult);
+                    if (handler != null && handler.OnRenderFinishPre(subElement, vars, vresult))
+                    {
+                        evulator.RenderFinish(subElement, vars, vresult);
+                        handler.OnRenderFinishPost(subElement, vars, vresult);
+                    }
                     if (vresult == null) continue;
-                    
                 }
                 else
                 {

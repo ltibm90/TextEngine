@@ -73,5 +73,24 @@ namespace TextEngine.Misc
         {
             return "Count: " + this.Count.ToString();
         }
+        public object GetValue(string name)
+        {
+            for (int i = this.Count - 1; i >=  0; i--)
+            {
+                var current = this.inner[i];
+                int id = current.GetIdByName(name);
+                if (id == -1) continue;
+                return current[i];
+            }
+            return null;
+        }
+       public void SetValue(string name, object value)
+        {
+            if(this.Count == 0)
+            {
+                this.Add(new KeyValues<object>());
+            }
+            this.inner[this.Count - 1].Set(name, value);
+        }
     }
 }

@@ -19,18 +19,17 @@ namespace TextEngine.Evulator
             if (tonum < 1) return null;
             var varname = tag.GetAttribute("current_repeat");
             var result = new TextEvulateResult();
-            var svar = new KeyValues<object>();
-            this.Evulator.LocalVariables.Add(svar);
+            this.CreateLocals();
             for (int i = 0; i < tonum; i++)
             {
-                svar[varname] = i;
+                this.SetLocal(varname, i);
                 var cresult = tag.EvulateValue(0, 0, vars);
                 if (cresult == null) continue;
                 result.TextContent += cresult.TextContent;
                 if (cresult.Result == TextEvulateResultEnum.EVULATE_RETURN)
                 {
                     result.Result = TextEvulateResultEnum.EVULATE_RETURN;
-                    this.Evulator.LocalVariables.Remove(svar);
+                    this.DestroyLocals();
                     return result;
                 }
                 else if (cresult.Result == TextEvulateResultEnum.EVULATE_BREAK)
@@ -38,7 +37,7 @@ namespace TextEngine.Evulator
                     break;
                 }
             }
-            this.Evulator.LocalVariables.Remove(svar);
+            this.DestroyLocals();
             result.Result = TextEvulateResultEnum.EVULATE_TEXT;
             return result;
         }

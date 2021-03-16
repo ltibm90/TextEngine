@@ -9,7 +9,8 @@ namespace TextEngine.Evulator
 {
     public abstract class BaseEvulator
     {
-        protected TextEvulator Evulator { get; set; }
+        private KeyValues<object> localVars;
+        protected TextEvulator Evulator { get; set; }   
         public BaseEvulator()
         {
 
@@ -72,7 +73,7 @@ namespace TextEngine.Evulator
             }
             else
             {
-                var cAttr = tag.ElemAttr["c"];
+                var cAttr = tag.ElemAttr[attr];
                 if (cAttr == null || cAttr.Value ==null) return true;
                 pardecoder = cAttr.ParData;
                 if(pardecoder == null)
@@ -90,6 +91,26 @@ namespace TextEngine.Evulator
                 return b;
             }
             return false;
+        }
+        protected void CreateLocals()
+        {
+            if (this.localVars != null) return;
+            this.localVars = new KeyValues<object>();
+            this.Evulator.LocalVariables.Add(this.localVars);
+        }
+        protected void DestroyLocals()
+        {
+            if (this.localVars == null) return;
+            this.Evulator.LocalVariables.Remove(this.localVars);
+            this.localVars = null;
+        }
+        protected void SetLocal(string name, object value)
+        {
+            this.localVars.Set(name, value);
+        }
+        protected object GetLocal(string name)
+        {
+            return this.localVars[name];
         }
     }
 }

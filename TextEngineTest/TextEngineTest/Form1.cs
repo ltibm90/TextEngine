@@ -51,8 +51,12 @@ namespace TextEngineTest
             //Sonuç  Kullanıcı: MacMillan, Grup: AR-GE, Random Sayı: 61
             string res = pf.Apply(kv);
         }
+        private void GeneralTest()
+        {
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
+            GeneralTest();
             NoParseTest();
             ParFormatTest();
             //TextEngineTest6();
