@@ -33,7 +33,7 @@ namespace TextEngineTest
         }
         private void ParFormatTest()
         {
-            //Uzun kullanımı
+            //Long usage
             ParFormat pf = new ParFormat();
             Dictionary<string, object> kv = new Dictionary<string, object>();
             kv["name"] = "MacMillan";
@@ -42,17 +42,18 @@ namespace TextEngineTest
                 return new Random().Next(1, 100);
             };
             pf.SurpressError = true;
-            pf.Text = "Kullanıcı: {%name}, Grup: {%grup}, Random Sayı: {%random()}";
+            pf.Text = "User: {%name}, Group: {%grup}, Random Number: {%random()}";
 
-            //Direkt kullanımı
-            ParFormat.Format("Kullanıcı: {%name}, Grup: {%grup}, Random Sayı: {%random()}", kv);
+            //Short usage
+            ParFormat.Format("User: {%name}, Group: {%grup}, Number Sayı: {%random()}", kv);
 
 
-            //Sonuç  Kullanıcı: MacMillan, Grup: AR-GE, Random Sayı: 61
+            //Output  User: MacMillan, Group: AR-GE, Random Number: 61
             string res = pf.Apply(kv);
         }
         private void GeneralTest()
         {
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {

@@ -50,7 +50,7 @@ namespace TextEngine.Evulator
                     stepAttr.ParData = new ParDecoder.ParDecode(step);
                     stepAttr.ParData.Decode();
                 }
-                startres = this.EvulatePar(stepAttr.ParData);
+                stepres = this.EvulatePar(stepAttr.ParData);
             }
             else
             {
