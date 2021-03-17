@@ -17,12 +17,12 @@ namespace TextEngine.Evulator
             for (int i = 0; i < tag.SubElementsCount; i++)
             {
                 var elem = tag.SubElements[i];
-                if (elem.ElemName == "default")
+                if (elem.ElemName.ToLowerInvariant() == "default")
                 {
                     @default = elem;
                     continue;
                 }
-                else if (elem.ElemName != "case")
+                else if (elem.ElemName.ToLowerInvariant() != "case")
                 {
                     continue;
                 }

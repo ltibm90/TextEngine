@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
-    <id>TextEngine</id>
-    <version>1.2.0</version>
+    <id>TextEngine.x86</id>
+    <version>1.2.0.1</version>
     <authors>macmillan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/ltibm90/TextEngine</projectUrl>
-    <description>Package Description</description>
+    <description>Template/BBCode Engine x86 Version</description>
     <repository url="https://github.com/ltibm90/TextEngine" />
     <dependencies>
       <group targetFramework=".NETFramework4.5.2" />
@@ -17,16 +17,10 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\Release\net452\TextEngine.dll" target="lib\net452\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\Release\net500\TextEngine.dll" target="lib\net5.0\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\Release\netcoreapp2.2\TextEngine.dll" target="lib\netcoreapp2.2\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\Release\netcoreapp3.0\TextEngine.dll" target="lib\netcoreapp3.0\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\Release\netcoreapp3.1\TextEngine.dll" target="lib\netcoreapp3.1\TextEngine.dll" />
-	
-	<file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\net452\TextEngine.dll" target="lib\net452\x86\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\net500\TextEngine.dll" target="lib\net5.0\x86\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\netcoreapp2.2\TextEngine.dll" target="lib\netcoreapp2.2\x86\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\netcoreapp3.0\TextEngine.dll" target="lib\netcoreapp3.0\x86\TextEngine.dll" />
-    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\netcoreapp3.1\TextEngine.dll" target="lib\netcoreapp3.1\x86\TextEngine.dll" />
+    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\net452\TextEngine.dll" target="lib\net452\TextEngine.dll" />
+    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\net500\TextEngine.dll" target="lib\net5.0\TextEngine.dll" />
+    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\netcoreapp2.2\TextEngine.dll" target="lib\netcoreapp2.2\TextEngine.dll" />
+    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\netcoreapp3.0\TextEngine.dll" target="lib\netcoreapp3.0\TextEngine.dll" />
+    <file src="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\bin\x86\Release\netcoreapp3.1\TextEngine.dll" target="lib\netcoreapp3.1\TextEngine.dll" />
   </files>
 </package>

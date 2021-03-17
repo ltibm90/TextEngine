@@ -27,9 +27,19 @@ namespace TextEngine
             }
             return item == null;
         }
-        public static bool in_array(string key, string[] array)
+        public static bool in_array(string key, string[] array, bool ci = true)
         {
-            return array.Any(e => e == key);
+            if (ci) key = key.ToLowerInvariant();
+            return array.Any((e) => { 
+                if(ci)
+                {
+                    return e == key.ToLowerInvariant();
+                }
+                else
+                {
+                    return e == key;
+                }
+            });
         }
 
         public static bool char_equalsany(char key, params char[] chars)

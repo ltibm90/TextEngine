@@ -20,17 +20,18 @@ namespace TextEngine.Text
         {
             get
             {
-                if(lastElement != null && name.ToLower() == lastElement.ElementName)
+                if (name == "#text") return null;
+                if(lastElement != null && name.ToLowerInvariant() == lastElement.ElementName)
                 {
                     return lastElement;
                 }
                 TextElementInfo info = null;
-                info =  inner.Where(e => e.ElementName == name.ToLower()).FirstOrDefault();
+                info =  inner.Where(e => e.ElementName == name.ToLowerInvariant()).FirstOrDefault();
                 if(info == null)
                 {
                     if(this.AutoInitialize)
                     {
-                        info = new TextElementInfo() { ElementName = name.ToLower() };
+                        info = new TextElementInfo() { ElementName = name.ToLowerInvariant() };
                         this.inner.Add(info);
                     }
 
@@ -42,13 +43,13 @@ namespace TextEngine.Text
             {
                 if (value == null) return;
                 TextElementInfo info = null;
-                info = inner.Where(e => e.ElementName == name.ToLower()).FirstOrDefault();
+                info = inner.Where(e => e.ElementName == name.ToLowerInvariant()).FirstOrDefault();
                 if(info != null)
                 {
                     if (info == lastElement) lastElement = null;
                     this.inner.Remove(info);
                 }
-                value.ElementName = name.ToLower();
+                value.ElementName = name.ToLowerInvariant();
                 this.inner.Add(value);
 
             }

@@ -3,16 +3,16 @@
   <PropertyGroup>
 	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net500</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-	<Platforms>AnyCPU;x86</Platforms>
-	<Version>1.2.0.1</Version>
+	<Platforms>AnyCPU;x86;x64</Platforms>
+	<Version>1.2.1</Version>
 	<Authors>macmillan</Authors>
 	<AssemblyVersion>1.2.0.0</AssemblyVersion>
 	<FileVersion>1.2.0.1</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
-	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>Fixed critical error in ForEvulator
-Now support .Net Core 3.0, 3.1 and .Net 5.0</PackageReleaseNotes>
+	<PackageReleaseNotes>Fixed critical bugs.</PackageReleaseNotes>
+	<Description>Template/BBCode Engine</Description>
   </PropertyGroup>
 
 

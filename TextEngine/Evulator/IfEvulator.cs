@@ -27,11 +27,11 @@ namespace TextEngine.Evulator
                 {
                     if(!sil)
                     {
-                        if (sub.ElemName == "else")
+                        if (sub.ElemName.ToLowerInvariant() == "else")
                         {
                             conditionok = true;
                         }
-                        else if (sub.ElemName == "elif")
+                        else if (sub.ElemName.ToLowerInvariant() == "elif")
                         {
                             conditionok = this.ConditionSuccess(sub);
                         }
@@ -43,7 +43,7 @@ namespace TextEngine.Evulator
                 }
                 else
                 {
-                    if(sub.ElemName == "else" || sub.ElemName == "elif")
+                    if(sub.ElemName.ToLowerInvariant() == "else" || sub.ElemName.ToLowerInvariant() == "elif")
                     {
                         sil = true;
                         i--;
@@ -77,7 +77,7 @@ namespace TextEngine.Evulator
                 var elseitem = tag.GetSubElement("elif", "else");
                 while (elseitem != null)
                 {
-                    if (elseitem.ElemName == "else")
+                    if (elseitem.ElemName.ToLowerInvariant() == "else")
                     {
                         result.Start = elseitem.Index + 1;
                         result.Result = TextEvulateResultEnum.EVULATE_DEPTHSCAN;
