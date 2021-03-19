@@ -505,9 +505,9 @@ namespace TextEngine.Text
                     var rResult = evulator.Render(this, vars);
                     if (handler == null || handler.OnRenderFinishPre(this, vars, rResult))
                     {
-                        evulator.RenderFinish(this, vars, rResult);    
+                        evulator.RenderFinish(this, vars, rResult);
+                        if (handler != null) handler.OnRenderFinishPost(this, vars, rResult);
                     }
-                    if(handler != null) handler.OnRenderFinishPost(this, vars, rResult);
                     handler?.OnRenderPost(this, vars, rResult);
                     return rResult;
                 }
@@ -527,8 +527,9 @@ namespace TextEngine.Text
                     if (handler == null || handler.OnRenderFinishPre(this, vars, vresult))
                     {
                         evulator.RenderFinish(this, vars, vresult);
+                        if (handler != null) handler.OnRenderFinishPost(this, vars, vresult);
                     }
-                    if(handler != null) handler.OnRenderFinishPost(this, vars, vresult);
+
                     if (vresult.Result == TextEvulateResultEnum.EVULATE_TEXT)
                     {
                         result.TextContent += vresult.TextContent;
@@ -578,8 +579,9 @@ namespace TextEngine.Text
                     if (handler == null || handler.OnRenderFinishPre(subElement, vars, vresult))
                     {
                         evulator.RenderFinish(subElement, vars, vresult);
+                        if (handler != null) handler.OnRenderFinishPost(subElement, vars, vresult);
                     }
-                    if (handler != null) handler.OnRenderFinishPost(subElement, vars, vresult);
+
                     if (vresult == null) continue;
                 }
                 else
