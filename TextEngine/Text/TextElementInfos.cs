@@ -56,7 +56,11 @@ namespace TextEngine.Text
         }
         public bool HasTagInfo(string tagName)
         {
-            return this[tagName] != null;
+            bool oldinfo = this.AutoInitialize;
+            this.AutoInitialize = false;
+            bool result = this[tagName] != null;
+            this.AutoInitialize = oldinfo;
+            return result;
         }
         public TextElementFlags GetElementFlags(string tagName)
         {

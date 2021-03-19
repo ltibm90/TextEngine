@@ -77,7 +77,8 @@ namespace TextEngine.ParDecoder
             }
             if ((item1 is string && item2 == null) || item2 is string && item1 == null)
             {
-                return false;
+                if (item1 == null) return item2;
+                return item1;
             }
 
             if (@operator == "==" || @operator == "=" || @operator == "!=" && (item1 == null || item2 == null))
@@ -255,6 +256,7 @@ namespace TextEngine.ParDecoder
                     }
                 }
             }
+            if (item1 == null) return item2;
             return item1;
         }
 

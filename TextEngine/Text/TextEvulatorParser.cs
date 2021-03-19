@@ -558,6 +558,10 @@ namespace TextEngine.Text
                         {
                             firstslashused = true;
                         }
+                        if((curFlags & TextElementFlags.TEF_DisableLastSlash) != 0)
+                        {
+                            current.Append(cur);
+                        }
                         continue;
                     }
                     if (cur == '=')
