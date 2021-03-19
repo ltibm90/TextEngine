@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net500</TargetFrameworks>
+	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-	<Platforms>AnyCPU;x86;x64</Platforms>
-	<Version>1.2.1</Version>
+	<Platforms>AnyCPU;x64;x86</Platforms>
+	<Version>1.2.1.1</Version>
 	<Authors>macmillan</Authors>
-	<AssemblyVersion>1.2.0.0</AssemblyVersion>
-	<FileVersion>1.2.0.1</FileVersion>
+	<AssemblyVersion>1.2.1.1</AssemblyVersion>
+	<FileVersion>1.2.1.1</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>Fixed critical bugs.</PackageReleaseNotes>
+	<PackageReleaseNotes>Fixed  RenderFinish not triggered if handler is null problem.
+Fixed net50 name.</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
   </PropertyGroup>
 
