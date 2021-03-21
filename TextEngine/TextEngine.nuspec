@@ -2,12 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>TextEngine.x86</id>
-    <version>1.2.1.2</version>
+    <version>1.2.2.1</version>
     <authors>macmillan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/ltibm90/TextEngine</projectUrl>
     <description>Template/BBCode Engine x86 Version</description>
-    <releaseNotes>Fixed</releaseNotes>
+    <releaseNotes>On MethodCall; changed Dictionary&lt;string, object&gt; to IDictionary&lt;string, object&gt; for ExpandoObject.</releaseNotes>
     <repository url="https://github.com/ltibm90/TextEngine" />
     <dependencies>
       <group targetFramework=".NETFramework4.5.2" />

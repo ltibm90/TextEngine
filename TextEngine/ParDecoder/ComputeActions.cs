@@ -264,7 +264,7 @@ namespace TextEngine.ParDecoder
         {
             if (@object == null) return null;
             MethodInfo method = null;
-            if(@object is  Dictionary<string, object> dict)
+            if(@object is  IDictionary<string, object> dict)
             {
                 if (!dict.TryGetValue(name, out object obj)) return null;
                 if(obj is Delegate d)

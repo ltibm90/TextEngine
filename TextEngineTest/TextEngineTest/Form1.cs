@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,10 +54,18 @@ namespace TextEngineTest
         }
         private void GeneralTest()
         {
-
+            /* dynamic obj = new ExpandoObject();
+             obj.Func = (Func<string>)delegate () {
+                 string sf = "mac";
+                 return sf;
+             };
+             Dictionary<string, object> objd = new Dictionary<string, object>();
+             objd["Func"] = obj.Func;
+             var s =ParFormat.Format("mac {%Func()}", obj);*/
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+
             GeneralTest();
             NoParseTest();
             ParFormatTest();
