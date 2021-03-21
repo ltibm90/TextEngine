@@ -1,3 +1,16 @@
+## Nuget 
+
+**Installation**
+
+Install-Package TextEngine
+
+Install-Package TextEngine.x86
+
+[Text Engine](https://www.nuget.org/packages/TextEngine)
+
+[Text Engine x86](https://www.nuget.org/packages/TextEngine.x86)
+
+
 ## Template Engine Usage
 
 ```csharp
@@ -20,7 +33,7 @@
 ```
 
 
-##ParFormat Usage
+## ParFormat Usage
 ```csharp
             //Long usage
             ParFormat pf = new ParFormat();
