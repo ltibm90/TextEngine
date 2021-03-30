@@ -11,10 +11,12 @@
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>.Net fixed GlobalParamaters name from TextEvulator
+	<PackageReleaseNotes>.Net changed GloblaParameters name to GlobalParamaters name from TextEvulator
 .Net fixed NameEquals on TextElement.
 .Net fixed ForEvulator
-Fixed &amp; and | operator only returned true and false</PackageReleaseNotes>
+Fixed &amp; and | operator only returned true and false
+Added EvulateValue function to TextEvulator class
+Added NeedParse property to TextEvulator</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
   </PropertyGroup>
 
