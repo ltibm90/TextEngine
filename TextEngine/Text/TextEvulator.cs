@@ -9,7 +9,19 @@ namespace TextEngine.Text
 {
     public class TextEvulator
     {
-        public string Text { get; set; }
+        private string text;
+        public string Text
+        {
+            get
+            {
+                return this.text;
+            }
+            set
+            {
+                this.text = value;
+                this.NeedParse = true;
+            }
+        }
         private TextElement elements;
 
         public TextElement Elements
@@ -17,6 +29,7 @@ namespace TextEngine.Text
             get { return elements; }
             set { elements = value; }
         }
+        private bool NeedParse { get; set; }
         public bool SurpressError { get; set; }
         public bool ThrowExceptionIFPrevIsNull { get; set; }
         private int Depth { get; set; } = 0;
@@ -27,7 +40,7 @@ namespace TextEngine.Text
         public bool NoParseEnabled { get; set; } = true;
         public char ParamChar { get; set; } = '%';
         public Dictionary<string, object> Aliasses { get; private set; }
-        public object GloblaParameters { get; set; }
+        public object GlobalParameters { get; set; }
         public KeyValues<object> DefineParameters { get; set; }
 
         public KeyValueGroup LocalVariables { get; private set; }
@@ -110,8 +123,8 @@ namespace TextEngine.Text
             if (isfile)
             {
                 this.SetDir(System.IO.Path.GetDirectoryName(text));
-
             }
+            this.NeedParse = true;
         }
         public void OnTagClosed(TextElement element)
         {
@@ -175,6 +188,7 @@ namespace TextEngine.Text
         {
             var parser = new TextEvulatorParser(this);
             parser.Parse(this.Elements, this.Text);
+            this.NeedParse = false;
         }
         public void Parse(TextElement baselement, string text)
         {
@@ -199,6 +213,11 @@ namespace TextEngine.Text
             this.Elements.SubElements.Clear();
             this.Elements.ElemName = "#document";
             this.Elements.ElementType = TextElementType.Document;
+        }
+        public TextEvulateResult EvulateValue(object vars = null, bool autoparse = true)
+        {
+            if (autoparse && this.NeedParse) this.Parse();
+            return this.Elements.EvulateValue(0, 0, vars);
         }
     }
 }

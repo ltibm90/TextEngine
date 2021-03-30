@@ -19,7 +19,6 @@ namespace TextEngine.ParDecoder
             "and",
             "&&",
             "||",
-            "|",
             "==",
             "=",
             ">",
@@ -54,7 +53,7 @@ namespace TextEngine.ParDecoder
                     return leftitem - rightitem;
                 }
             }
-            if (@operator == "||" || @operator == "|" || @operator == "or" || @operator == "&&" || @operator == "&" || @operator == "and")
+            if ((@operator == "||" || @operator == "or" || @operator == "&&"|| @operator == "and") | ((!TypeUtil.IsNumericType(item1) || !TypeUtil.IsNumericType(item2)) && (@operator == "|" || @operator == "&")))
             {
                 bool lefstate = PhpFuctions.not_empty(item1);
                 bool rightstate = PhpFuctions.not_empty(item2);

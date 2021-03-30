@@ -279,7 +279,7 @@ namespace TextEngine.ParDecoder
                         continue;
                     }
                     string opstr = current.Value.ToString();
-                    if (opstr == "||" || opstr == "|" || opstr == "or" || opstr == "&&" || opstr == "&" || opstr == "and" || opstr == "?")
+                    if (opstr == "||" || /*opstr == "|" ||*/ opstr == "or" || opstr == "&&" || /*opstr == "&" ||*/ opstr == "and" || opstr == "?")
                     {
                         if (waitop2 != "")
                         {
@@ -323,13 +323,13 @@ namespace TextEngine.ParDecoder
 
 
 
-                        if (opstr == "||" || opstr == "|" || opstr == "or")
+                        if (opstr == "||" || /*opstr == "|" ||*/ opstr == "or")
                         {
                             if (state)
                             {
                                 lastvalue = true;
-                                if (opstr != "|")
-                                {
+                                /*if (opstr != "|")
+                                {*/
                                     if (this.IsObject())
                                     {
                                         var exp = cr.Result.First<IDictionary<string, object>>();
@@ -340,7 +340,7 @@ namespace TextEngine.ParDecoder
                                         cr.Result.AddObject(waitkey, true);
                                     }
                                     return cr;
-                                }
+                                //}
                             }
                             else
                             {
@@ -352,8 +352,8 @@ namespace TextEngine.ParDecoder
                             if (!state)
                             {
                                 lastvalue = false;
-                                if (opstr != "&")
-                                {
+                                /*if (opstr != "&")
+                                {*/
                                     if (this.IsObject())
                                     {
                                         var exp = cr.Result.First<IDictionary<string, object>>();
@@ -364,7 +364,7 @@ namespace TextEngine.ParDecoder
                                         cr.Result.AddObject(waitkey, false);
                                     }
                                     return cr;
-                                }
+                                //}
                             }
                             else
                             {

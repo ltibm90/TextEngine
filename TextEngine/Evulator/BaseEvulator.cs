@@ -29,7 +29,7 @@ namespace TextEngine.Evulator
             {
                 this.Evulator.LocalVariables.Add(addpar);
             }
-            var er = pardecoder.Items.Compute(this.Evulator.GloblaParameters, null, this.Evulator.LocalVariables);
+            var er = pardecoder.Items.Compute(this.Evulator.GlobalParameters, null, this.Evulator.LocalVariables);
             if (addpar != null)
             {
                 this.Evulator.LocalVariables.Remove(addpar);

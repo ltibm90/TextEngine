@@ -59,7 +59,7 @@ namespace TextEngine.Evulator
             int startnum = 0;
             int stepnum = 0;
             int tonum = 0;
-            if (!TypeUtil.IsNumericType(startres))
+            if (!TypeUtil.IsNumericType(stepres))
             {
                 stepnum = 1;
             }

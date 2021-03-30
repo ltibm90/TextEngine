@@ -65,7 +65,7 @@ namespace TextEngineTest
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            var item = ParFormat.Format("{%1 + 1 | 2 | 4 | 8 + 4}");
             GeneralTest();
             NoParseTest();
             ParFormatTest();
@@ -80,7 +80,7 @@ namespace TextEngineTest
             evulator.Elements.EvulateValue();
             evulator.Text = "<cw><uyeler><uye name='macmillan'>Üye</uye><uye name='xuye'>XÜye</uye><uye attr='kestane'>YÜye</uye></uyeler></cw>";
             //Parametrelerin attirbute alamayacağınıbelirttik aksi halde yukarı kod syntax hatası verecektir.
-            evulator.GloblaParameters = new CustomClass();
+            evulator.GlobalParameters = new CustomClass();
             evulator.ParamNoAttrib = true;
             evulator.LeftTag = '<';
             evulator.RightTag = '>';
@@ -121,19 +121,19 @@ namespace TextEngineTest
             evulator.ParamNoAttrib = true; //Parametlerin attribute kullanıp kullanamayacağını belirler.
             //Örneğin false ayarlanırsa {%i+5} şeklinde kullanamazsınız fakat true olarak ayarlandığında {%i + 5 *2} gibi
             //kullanabilirsiniz.
-            evulator.GloblaParameters = new object(); //Evulate işlemi sırasındaki değişkenler bu değişken aracılığı il
+            evulator.GlobalParameters = new object(); //Evulate işlemi sırasındaki değişkenler bu değişken aracılığı il
             //Aşağıdaki şekillerdek ullanabilirsiniz
             var test = new
             {
                 name = "Deneme",
                 value = 1000
             };
-            evulator.GloblaParameters = test;
+            evulator.GlobalParameters = test;
             IDictionary<string, object> dict = new Dictionary<string, object>();
-            evulator.GloblaParameters = dict;
+            evulator.GlobalParameters = dict;
             KeyValues<object> kv = new KeyValues<object>();
-            evulator.GloblaParameters = kv;
-            evulator.GloblaParameters = new CustomClass();
+            evulator.GlobalParameters = kv;
+            evulator.GlobalParameters = new CustomClass();
             evulator.TagInfos["test"].Flags =  TextElementFlags.TEF_AutoClosedTag; //ismi yazılan taglar otomatik kapatılır
             evulator.Aliasses.Add("bb", "strong"); //bb kodu aynı zamanda strong olarakta kullanılabilir.
             evulator.Parse(); //Ayrıştırma işlemi yapılır
@@ -151,7 +151,7 @@ namespace TextEngineTest
             dict["isim"] = 5;
             //Desteklenen sınıflar
             //IDictionary<string, object>, KeyValueGrup veye KeyValues<object> veya Doğrudan sınıflar belirtilebilir.
-            evulator.GloblaParameters = dict;
+            evulator.GlobalParameters = dict;
             var result =  evulator.Elements.EvulateValue();
         }
         private void TextEngineTest2()
@@ -163,7 +163,7 @@ namespace TextEngineTest
             //Desteklenen sınıflar
             //IDictionary<string, object>, KeyValueGrup veye KeyValues<object> veya Doğrudan sınıflar belirtilebilir.
 
-            evulator.GloblaParameters = dict;
+            evulator.GlobalParameters = dict;
             var result = evulator.Elements.EvulateValue();
         }
         private void TextEngineTest3()

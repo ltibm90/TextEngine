@@ -186,13 +186,13 @@ namespace TextEngine.Text
                 {
                     var alias = this.BaseEvulator.Aliasses[name];
                     if (alias?.ToString().ToUpperInvariant() == this.ElemName.ToUpperInvariant()) return true;
-                    return true;
+                    return false;
                 }
                 else if(this.BaseEvulator.Aliasses.ContainsKey(this.ElemName))
                 {
                     var alias = this.BaseEvulator.Aliasses[this.ElemName];
                     if (alias?.ToString().ToUpperInvariant() == name.ToUpperInvariant()) return true;
-                    return true;
+                    return false;
                 }
             }
             return false;
