@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50</TargetFrameworks>
+	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+	<Platforms>AnyCPU;x64;x86</Platforms>
+	<Version>1.3.0</Version>
+	<Authors>macmillan</Authors>
+	<AssemblyVersion>1.2.3.0</AssemblyVersion>
+	<FileVersion>1.2.3.0</FileVersion>
+	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
+	<PackageReleaseNotes>.Net changed GloblaParameters name to GlobalParamaters name from TextEvulator
+.Net fixed NameEquals on TextElement.
+.Net fixed ForEvulator
+Fixed &amp; and | operator only returned true and false
+Added EvulateValue function to TextEvulator class
+Added NeedParse property to TextEvulator</PackageReleaseNotes>
+	<Description>Template/BBCode Engine</Description>
+  </PropertyGroup>
+
+
+</Project>

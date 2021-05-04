@@ -6,9 +6,18 @@ namespace TextEngine.ParDecoder
 {
     public class ParFormat
     {
+        private PardecodeFlags flags;
+        public PardecodeFlags Flags
+        {
+            get { return this.flags; }
+            set
+            {
+                this.flags = value;
+            }
+        }
         public ParFormat()
         {
-
+            this.Flags = PardecodeFlags.PDF_AllowArrayAccess | PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess;
         }
         public ParFormat(string text)
         {
@@ -49,6 +58,7 @@ namespace TextEngine.ParDecoder
                     if(item.ParData == null)
                     {
                         item.ParData = new ParDecode(item.ItemText);
+                        item.ParData.OnGetFlags = () => this.Flags;
                         item.ParData.Decode();
                         item.ParData.SurpressError = this.SurpressError;
                     }

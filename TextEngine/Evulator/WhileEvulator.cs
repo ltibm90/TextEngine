@@ -1,25 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using TextEngine.Misc;
 using TextEngine.Text;
 
 namespace TextEngine.Evulator
 {
-    public class ForeachEvulator : BaseEvulator
+    class WhileEvulator : BaseEvulator
     {
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
-            var varname = tag.GetAttribute("var");
-            var inlist = this.EvulateAttribute(tag.ElemAttr["in"]);
-            if (inlist == null || !(inlist is IEnumerable list)) return null;
+            if ((tag.NoAttrib && string.IsNullOrEmpty(tag.Value)) || (!tag.NoAttrib && string.IsNullOrEmpty(tag.GetAttribute("c")))) return null;
             this.CreateLocals();
+            int loop_count = 0;
             var result = new TextEvulateResult();
-            uint loop_count = 0;
-            foreach (var item in list)
+            result.Result = TextEvulateResultEnum.EVULATE_TEXT;
+            while (this.ConditionSuccess(tag))
             {
-                this.SetLocal(varname, item);
                 this.SetLocal("loop_count", loop_count++);
                 var cresult = tag.EvulateValue(0, 0, vars);
                 if (cresult == null) continue;
@@ -36,8 +32,8 @@ namespace TextEngine.Evulator
                 }
             }
             this.DestroyLocals();
-            result.Result = TextEvulateResultEnum.EVULATE_TEXT;
             return result;
         }
+
     }
 }

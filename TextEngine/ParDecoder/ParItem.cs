@@ -16,6 +16,7 @@ namespace TextEngine.ParDecoder
         public ParItem()
         {
             this.InnerItems = new InnerItemsList();
+
         }
         public ParDecode BaseDecoder { get; set; }
         public static EvulatorTypes StaticTypes { get; private set; } = new EvulatorTypes();
@@ -123,50 +124,62 @@ namespace TextEngine.ParDecoder
 
                         if (paritem.ParName == "(")
                         {
-                            if(paritem.BaseDecoder != null && paritem.BaseDecoder.SurpressError)
+                            if(this.BaseDecoder.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
                             {
-                                try
+                                if (paritem.BaseDecoder != null && paritem.BaseDecoder.SurpressError)
+                                {
+                                    try
+                                    {
+                                        currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars);
+                                    }
+                                    catch
+                                    {
+
+                                        currentitemvalue = null;
+                                    }
+                                }
+                                else
                                 {
                                     currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars);
                                 }
-                                catch
+                            }
+                            else
+                            {
+                                //currentitemvalue = null;
+                            }
+                        }
+                        else if(paritem.ParName == "[")
+                        {
+                            if(this.BaseDecoder.Flags.HasFlag(PardecodeFlags.PDF_AllowArrayAccess))
+                            {
+                                var prop = ComputeActions.GetProp(prevvalue, varnew);
+                                if (prop != null)
                                 {
+                                    if (PhpFuctions.is_array(prop))
+                                    {
+                                        int indis = (int)Convert.ChangeType(subresult.Result[0], TypeCode.Int32);
+                                        var aritem = prop as IList;
 
-                                    currentitemvalue = null;
+                                        currentitemvalue = aritem[indis];
+                                    }
+                                    else if (PhpFuctions.is_indis(prop))
+                                    {
+                                        var indisProp = prop.GetType().GetProperty("Item");
+                                        var newParams = ParamUtil.MatchParams(subresult.Result.GetObjects(), indisProp.GetIndexParameters());
+                                        currentitemvalue = indisProp.GetValue(prop, newParams);
+                                    }
+                                    else
+                                    {
+                                        int indis = (int)Convert.ChangeType(subresult.Result[0], TypeCode.Int32);
+                                        currentitemvalue = ((string)prop)[indis];
+                                    }
                                 }
                             }
                             else
                             {
-                                currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars);
+                               
+                                //currentitemvalue = null;
                             }
-
-
-                        }
-                        else if(paritem.ParName == "[")
-                        {
-                            var prop = ComputeActions.GetProp(prevvalue, varnew);
-                            if(prop != null)
-                            {
-                                                            if (PhpFuctions.is_array(prop))
-                            {
-                                int indis = (int)Convert.ChangeType(subresult.Result[0], TypeCode.Int32);
-                                var aritem = prop as IList;
-
-                                currentitemvalue = aritem[indis];
-                            }
-                            else if (PhpFuctions.is_indis(prop))
-                            {
-                                var indisProp = prop.GetType().GetProperty("Item");
-                                var newParams = ParamUtil.MatchParams(subresult.Result.GetObjects(), indisProp.GetIndexParameters());
-                                currentitemvalue = indisProp.GetValue(prop, newParams);
-                            }
-                            else
-                            {
-                                int indis = (int)Convert.ChangeType(subresult.Result[0], TypeCode.Int32);
-                                currentitemvalue = ((string)prop)[indis];
-                            }
-                            }
-
 
                         }
                     }
@@ -433,7 +446,14 @@ namespace TextEngine.ParDecoder
                         }
                         if (xoperator.Value.ToString() == ".")
                         {
-                            lastvalue = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
+                            if(this.BaseDecoder.Flags.HasFlag( PardecodeFlags.PDF_AllowSubMemberAccess))
+                            {
+                                lastvalue = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
+                            }
+                            else
+                            {
+                                //lastvalue = null;
+                            }
                         }
                         else if (nextop != "." && ((xoperator.Value.ToString() != "+" && xoperator.Value.ToString() != "-") || nextop == "" || (ComputeActions.PriotiryStop.Contains(nextop))))
                         {

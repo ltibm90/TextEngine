@@ -61,6 +61,8 @@ namespace TextEngine.Text
         public object CustomDataSingle { get; set; }
         public bool AllowCharMap { get; set; }
         public Func<EvulatorHandler> EvulatorHandler { get; set; }
+        public SpecialCharType SpecialCharOption { get; set; }
+        
         public EvulatorHandler GetHandler()
         {
             return this.EvulatorHandler?.Invoke();
@@ -125,6 +127,7 @@ namespace TextEngine.Text
                 this.SetDir(System.IO.Path.GetDirectoryName(text));
             }
             this.NeedParse = true;
+            this.SpecialCharOption = SpecialCharType.SCT_AllowedAll;
         }
         public void OnTagClosed(TextElement element)
         {
@@ -154,6 +157,8 @@ namespace TextEngine.Text
             this.TagInfos["unset"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["if"].Flags = TextElementFlags.TEF_NoAttributedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["noparse"].Flags = TextElementFlags.TEF_NoParse;
+            this.TagInfos["while"].Flags = TextElementFlags.TEF_NoAttributedTag;
+            this.TagInfos["do"].Flags = TextElementFlags.TEF_NoAttributedTag;
         }
         public void InitEvulator()
         {
@@ -174,6 +179,8 @@ namespace TextEngine.Text
             this.EvulatorTypes["set"] = typeof(SetEvulator);
             this.EvulatorTypes["unset"] = typeof(UnsetEvulator);
             this.EvulatorTypes["include"] = typeof(IncludeEvulator);
+            this.EvulatorTypes["while"] = typeof(WhileEvulator);
+            this.EvulatorTypes["do"] = typeof(DoEvulator);
         }
 
         public void InitAmpMaps()

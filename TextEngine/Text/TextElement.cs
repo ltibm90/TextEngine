@@ -47,6 +47,7 @@ namespace TextEngine.Text
                     }
                     
                 }
+                this._tagInfo = null;
             }
         }
         private TextElementAttributes elemAttr;
@@ -57,7 +58,19 @@ namespace TextEngine.Text
         }
         public TextElementType ElementType { get; set; }
 
-        public TextEvulator BaseEvulator { get; set; }
+        private TextEvulator baseEvulator;
+        public TextEvulator BaseEvulator
+        {
+            get
+            {
+                return this.baseEvulator;
+            }
+            set
+            {
+                this.baseEvulator = value;
+                this._tagInfo = null;
+            }
+        }
         private bool closed;
         public bool Closed
         {
@@ -163,6 +176,28 @@ namespace TextEngine.Text
         {
             get { return tag_attrib; }
             set { this.tag_attrib = value; }
+        }
+        private TextElementInfo _tagInfo;
+        public TextElementInfo TagInfo
+        {
+            get
+            {
+                if (this.BaseEvulator == null) return null;
+                if (this._tagInfo == null && this.ElementType != TextElementType.Parameter)
+                {
+                    if (this.BaseEvulator.TagInfos.HasTagInfo(this.ElemName)) this._tagInfo = this.BaseEvulator.TagInfos[this.ElemName];
+                    else if (this.BaseEvulator.TagInfos.HasTagInfo("*")) this._tagInfo = this.BaseEvulator.TagInfos["*"];
+                }
+                return this._tagInfo;
+            }
+        }
+        public TextElementFlags TagFlags
+        {
+            get
+            {
+                if (this.TagInfo == null) return TextElementFlags.TEF_NONE;
+                return this.TagInfo.Flags;
+            }
         }
         public void AddElement(TextElement element)
         {
@@ -894,18 +929,18 @@ namespace TextEngine.Text
 
             return null;
         }
+
         public TextElementInfo GetTagInfo()
         {
-            if (this.BaseEvulator == null) return null;
-            if (this.BaseEvulator.TagInfos.HasTagInfo(this.ElemName)) return this.BaseEvulator.TagInfos[this.ElemName];
-            if (this.BaseEvulator.TagInfos.HasTagInfo("*")) return this.BaseEvulator.TagInfos["*"];
-            return null;
+            return this.TagInfo;
         }
         public TextElementFlags GetTagFlags()
         {
-            var info = this.GetTagInfo();
-            if (info == null) return TextElementFlags.TEF_NONE;
-            return info.Flags;
+            return this.TagFlags;
+        }
+        public bool HasFlag(TextElementFlags flag)
+        {
+            return (this.TagFlags & flag) != 0;
         }
         public void SetTextTag(bool closetag = false)
         {

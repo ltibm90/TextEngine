@@ -7,10 +7,27 @@ namespace TextEngine.ParDecoder
 {
     public class ParDecode
     {
+        public Func<PardecodeFlags> OnGetFlags { get; set; }
+        public Predicate<PardecodeFlags> OnSetFlags { get; set; }
+
         public string Text { get; set; }
         private int TextLength { get { return this.Text.Length; } }
         private int pos;
         public ParItem items;
+        private PardecodeFlags flags;
+        public PardecodeFlags Flags
+        {
+            get
+            {
+                if (this.OnGetFlags != null) return this.OnGetFlags();
+                return this.flags;
+            }
+            set
+            {
+                if (this.OnSetFlags != null && this.OnSetFlags(value)) return;
+                this.flags = value;
+            }
+        }
         public bool SurpressError { get; set; }
         public ParItem Items
         {
@@ -29,6 +46,8 @@ namespace TextEngine.ParDecoder
             this.Text = text;
             this.Items = new ParItem();
             this.Items.ParName = "(";
+            this.Items.BaseDecoder = this;
+            this.Flags = PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess | PardecodeFlags.PDF_AllowArrayAccess;
         }
 
         public void Decode()

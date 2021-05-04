@@ -63,9 +63,55 @@ namespace TextEngineTest
              objd["Func"] = obj.Func;
              var s =ParFormat.Format("mac {%Func()}", obj);*/
         }
+        class WhileTestClass
+        {
+            public WhileTestClass()
+            {
+                this.Items = new List<string>();
+                this.Position = -1;
+            }
+            public int Position { get; set; }
+            public List<string> Items { get; private set; }
+            public bool Next()
+            {
+                return ++this.Position < this.Items.Count;
+            }
+            public string Get()
+            {
+                return this.Items[this.Position];
+            }
+        }
+        private void WhileTest()
+        {
+            var wtc = new WhileTestClass();
+            wtc.Items.Add("Item1");
+            wtc.Items.Add("Item2");
+            wtc.Items.Add("Item3");
+            wtc.Items.Add("Item4");
+            wtc.Items.Add("Item5");
+            wtc.Items.Add("Item6");
+            var evulator = new TextEvulator();
+            evulator.LeftTag = '[';
+            evulator.RightTag = ']';
+            evulator.ParamNoAttrib = true;
+            evulator.Text = "[while Next()][%loop_count + 1]: [%Get()]\r\n[/while]";
+            evulator.GlobalParameters = wtc;
+            var result = evulator.EvulateValue();
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
-            var item = ParFormat.Format("{%1 + 1 | 2 | 4 | 8 + 4}");
+            var vitetm = new
+            {
+                item = new
+                {
+                    item1 = "deneme"
+                }
+            };
+            ParDecode p = new ParDecode("item.item1");
+          
+            p.Decode();
+           var res=  p.items.Compute(vitetm);
+            WhileTest();
             GeneralTest();
             NoParseTest();
             ParFormatTest();
@@ -295,6 +341,11 @@ namespace TextEngineTest
             evulator.Parse();
             var result = evulator.Elements.EvulateValue();
             MessageBox.Show(result.TextContent);
+        }
+
+        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
         }
     }
 }

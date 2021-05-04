@@ -20,7 +20,7 @@ namespace TextEngine.Text
         {
             get
             {
-                if (name == "#text") return null;
+                if (string.IsNullOrEmpty(name) || name == "#text") return null;
                 if(lastElement != null && name.ToLowerInvariant() == lastElement.ElementName)
                 {
                     return lastElement;

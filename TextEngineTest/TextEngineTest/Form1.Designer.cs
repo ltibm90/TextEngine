@@ -28,7 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
             // Form1
             // 
@@ -43,6 +48,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 
