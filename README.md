@@ -174,3 +174,51 @@ Install-Package TextEngine.x86
             //Output: Value 2
             string result = evulator.Elements.EvulateValue()?.TextContent;
 ```
+
+
+## WhileEvulator Usage
+```csharp
+        class WhileTestClass
+        {
+            public WhileTestClass()
+            {
+                this.Items = new List<string>();
+                this.Position = -1;
+            }
+            public int Position { get; set; }
+            public List<string> Items { get; private set; }
+            public bool Next()
+            {
+                return ++this.Position < this.Items.Count;
+            }
+            public string Get()
+            {
+                return this.Items[this.Position];
+            }
+        }
+	    var wtc = new WhileTestClass();
+            wtc.Items.Add("Item1");
+            wtc.Items.Add("Item2");
+            wtc.Items.Add("Item3");
+            wtc.Items.Add("Item4");
+            wtc.Items.Add("Item5");
+            wtc.Items.Add("Item6");
+            var evulator = new TextEvulator();
+            evulator.LeftTag = '[';
+            evulator.RightTag = ']';
+            evulator.ParamNoAttrib = true;
+            evulator.Text = "[while Next()][%loop_count + 1]: -[%Get()][/while]";
+            evulator.GlobalParameters = wtc;
+	    //Output: 1: -Item12: -Item23: -Item34: -Item45: -Item56: -Item6
+            var result = evulator.EvulateValue().TextContent;
+```
+## DoEvulator Usage
+```csharp
+            var evulator = new TextEvulator();
+            evulator.LeftTag = '[';
+            evulator.RightTag = ']';
+            evulator.ParamNoAttrib = true;
+            evulator.Text = "[do loop_count == 0 || loop_count < 5]Do: [%loop_count][/do]";
+	    //Output: Do: 0Do: 1Do: 2Do: 3Do: 4Do: 5
+            var result = evulator.EvulateValue().TextContent;
+```
