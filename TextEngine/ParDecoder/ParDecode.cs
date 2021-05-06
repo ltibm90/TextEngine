@@ -62,7 +62,7 @@ namespace TextEngine.ParDecoder
                 {
                     prev = this.Text[i - 1];
                 }
-                if ((prev != ')' && prev != ']' && prev != '}' ) && (cur == '=' || cur == '>' || cur == '<' || cur == '?' || cur == ':'))
+                if ((prev != ')' && prev != ']' && prev != '}' ) && (cur == '=' || cur == '>' || cur == '<' || cur == '?' || cur == ':') && false)
                 {
                     if(isopened)
                     {
@@ -185,7 +185,6 @@ namespace TextEngine.ParDecoder
                         }
                         if (cur == '[' || cur == '(' || cur == '{')
                         {
-                           
                             this.pos = i - 1;
                             return innerItems;
                         }
@@ -198,7 +197,8 @@ namespace TextEngine.ParDecoder
                             }
                             else
                             {
-                                this.pos = i - 1;
+                                //this.pos = i - 1;
+                                this.pos = i;
                             }
                             return innerItems;
                         }
@@ -228,7 +228,8 @@ namespace TextEngine.ParDecoder
                             qutochar = '\0';
                             if (valuestr == "=" ||valuestr == "<=" || valuestr == ">=" || valuestr == "<" || valuestr == ">" || valuestr == "!=" || valuestr == "==")
                             {
-                                this.pos = i - 1;
+                                //this.pos = i - 1;
+                                this.pos = i;
                                 return innerItems;
                             }
 

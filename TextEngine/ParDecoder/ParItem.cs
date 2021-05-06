@@ -57,6 +57,7 @@ namespace TextEngine.ParDecoder
             }
             return parent;
         }
+
         public ComputeResult Compute(object vars = null, InnerItem sender = null, object localvars = null)
         {
             var cr = new ComputeResult();
@@ -72,6 +73,7 @@ namespace TextEngine.ParDecoder
             string waitkey = "";
             bool unlemused = false;
             bool stopdoubledot = false;
+            int minuscount = 0;
             if(this.IsObject())
             {
                 cr.Result.AddObject(new ExpandoObject());
@@ -216,6 +218,20 @@ namespace TextEngine.ParDecoder
                     }
                     else
                     {
+                        if(previtem != null && previtem.IsOperator)
+                        {
+                            if(current.Value.ToString() == "+")
+                            {
+                                continue;
+                            }
+                            else if (current.Value.ToString() == "-")
+                            {
+                                minuscount++;
+                                continue;
+                            }
+                         
+                        
+                        }
                         currentitemvalue = current.Value;
                     }
          
@@ -254,17 +270,22 @@ namespace TextEngine.ParDecoder
                     }
                     if ((this.IsParItem() && current.Value.ToString() == ",") || (this.IsArray() && current.Value.ToString() == "=>" && (waitvalue == null || waitvalue.ToString() == "")) || (this.IsObject() && current.Value.ToString() == ":" && (waitvalue == null || waitvalue.ToString() == "") ))
                     {
+                       
                         if (waitop2 != "")
                         {
+                            if(minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                             lastvalue = ComputeActions.OperatorResult(waitvalue2, lastvalue, waitop2);
                             waitvalue2 = null;
                             waitop2 = "";
+                            minuscount = 0;
                         }
                         if (waitop != "")
                         {
+                            if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                             lastvalue = ComputeActions.OperatorResult(waitvalue, lastvalue, waitop);
                             waitvalue = null;
                             waitop = "";
+                            minuscount = 0;
                         }
                         if (current.Value.ToString() == ",")
                         {
@@ -296,15 +317,20 @@ namespace TextEngine.ParDecoder
                     {
                         if (waitop2 != "")
                         {
+                            if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                             lastvalue = ComputeActions.OperatorResult(waitvalue2, lastvalue, waitop2);
                             waitvalue2 = null;
                             waitop2 = "";
+                            minuscount = 0;
+
                         }
                         if (waitop != "")
                         {
+                            if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                             lastvalue = ComputeActions.OperatorResult(waitvalue, lastvalue, waitop);
                             waitvalue = null;
                             waitop = "";
+                            minuscount = 0;
                         }
 
                         bool state = PhpFuctions.not_empty(lastvalue);
@@ -384,7 +410,7 @@ namespace TextEngine.ParDecoder
                                 lastvalue = true;
                             }
                         }
-                        xoperator = current;
+                        xoperator = null;
                     }
                     else
                     {
@@ -403,15 +429,19 @@ namespace TextEngine.ParDecoder
                         {
                             if(waitop2 != "")
                             {
+                                if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                                 lastvalue = ComputeActions.OperatorResult(waitvalue2, lastvalue, waitop2);
                                 waitvalue2 = null;
                                 waitop2 = "";
+                                minuscount = 0;
                             }
                             if(waitop != "")
                             {
+                                if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                                 lastvalue = ComputeActions.OperatorResult(waitvalue, lastvalue, waitop);
                                 waitvalue = null;
                                 waitop = "";
+                                minuscount = 0;
                             }
                         }
 
@@ -457,8 +487,10 @@ namespace TextEngine.ParDecoder
                         }
                         else if (nextop != "." && ((xoperator.Value.ToString() != "+" && xoperator.Value.ToString() != "-") || nextop == "" || (ComputeActions.PriotiryStop.Contains(nextop))))
                         {
+                            if (minuscount % 2 == 1) currentitemvalue = ComputeActions.OperatorResult(currentitemvalue, -1, "*");
                             var opresult = ComputeActions.OperatorResult(lastvalue, currentitemvalue, xoperator.Value.ToString());
                             lastvalue = opresult;
+                            minuscount = 0;
                         }
                         else
                         {
@@ -492,15 +524,19 @@ namespace TextEngine.ParDecoder
             }
             if (waitop2 != "")
             {
+                if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                 lastvalue = ComputeActions.OperatorResult(waitvalue2, lastvalue, waitop2);
                 waitvalue2 = null;
                 waitop2 = "";
+                minuscount = 0;
             }
             if (waitop != "")
             {
+                if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                 lastvalue = ComputeActions.OperatorResult(waitvalue, lastvalue, waitop);
                 waitvalue = null;
                 waitop = "";
+                minuscount = 0;
             }
             if (this.IsObject())
             {

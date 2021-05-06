@@ -81,6 +81,15 @@ namespace TextEngineTest
                 return this.Items[this.Position];
             }
         }
+        private void DoTest()
+        {
+            var evulator = new TextEvulator();
+            evulator.LeftTag = '[';
+            evulator.RightTag = ']';
+            evulator.ParamNoAttrib = true;
+            evulator.Text = "[do loop_count == 0 || loop_count < 5]Do: [%loop_count][/do]";
+            var result = evulator.EvulateValue();
+        }
         private void WhileTest()
         {
             var wtc = new WhileTestClass();
@@ -94,23 +103,13 @@ namespace TextEngineTest
             evulator.LeftTag = '[';
             evulator.RightTag = ']';
             evulator.ParamNoAttrib = true;
-            evulator.Text = "[while Next()][%loop_count + 1]: [%Get()]\r\n[/while]";
+            evulator.Text = "[do loop_count == 0 || loop_count < 5]Do: [%loop_count][/do]";
             evulator.GlobalParameters = wtc;
             var result = evulator.EvulateValue();
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            var vitetm = new
-            {
-                item = new
-                {
-                    item1 = "deneme"
-                }
-            };
-            ParDecode p = new ParDecode("item.item1");
-          
-            p.Decode();
-           var res=  p.items.Compute(vitetm);
+            DoTest();
             WhileTest();
             GeneralTest();
             NoParseTest();
