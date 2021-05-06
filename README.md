@@ -196,6 +196,13 @@ Install-Package TextEngine.x86
                 return this.Items[this.Position];
             }
         }
+	    var wtc = new WhileTestClass();
+            wtc.Items.Add("Item1");
+            wtc.Items.Add("Item2");
+            wtc.Items.Add("Item3");
+            wtc.Items.Add("Item4");
+            wtc.Items.Add("Item5");
+            wtc.Items.Add("Item6");
             var evulator = new TextEvulator();
             evulator.LeftTag = '[';
             evulator.RightTag = ']';
