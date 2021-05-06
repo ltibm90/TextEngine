@@ -200,9 +200,9 @@ Install-Package TextEngine.x86
             evulator.LeftTag = '[';
             evulator.RightTag = ']';
             evulator.ParamNoAttrib = true;
-            evulator.Text = "[while whileItems.Next()][%loop_count + 1]: -[%whileItems.Get()]";
+            evulator.Text = "[while Next()][%loop_count + 1]: -[%Get()][/while]";
             evulator.GlobalParameters = wtc;
-	    //Output: {1: -Item12: -Item23: -Item34: -Item45: -Item56: -Item6}
+	    //Output: 1: -Item12: -Item23: -Item34: -Item45: -Item56: -Item6
             var result = evulator.EvulateValue().TextContent;
 ```
 ## DoEvulator Usage
@@ -212,6 +212,6 @@ Install-Package TextEngine.x86
             evulator.RightTag = ']';
             evulator.ParamNoAttrib = true;
             evulator.Text = "[do loop_count == 0 || loop_count < 5]Do: [%loop_count][/do]";
-	    //Output: {Do: 0Do: 1Do: 2Do: 3Do: 4Do: 5}
+	    //Output: Do: 0Do: 1Do: 2Do: 3Do: 4Do: 5
             var result = evulator.EvulateValue().TextContent;
 ```
