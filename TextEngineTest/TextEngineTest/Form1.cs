@@ -103,7 +103,7 @@ namespace TextEngineTest
             evulator.LeftTag = '[';
             evulator.RightTag = ']';
             evulator.ParamNoAttrib = true;
-            evulator.Text = "[do loop_count == 0 || loop_count < 5]Do: [%loop_count][/do]";
+            evulator.Text = "[while Next()][%loop_count + 1]: -[%Get()][/while]";
             evulator.GlobalParameters = wtc;
             var result = evulator.EvulateValue();
         }
