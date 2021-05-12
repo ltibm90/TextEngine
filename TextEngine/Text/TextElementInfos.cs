@@ -8,12 +8,14 @@ namespace TextEngine.Text
 {
     public class TextElementInfos : IEnumerable<TextElementInfo>, ICloneable
     {
+        public TextElementInfo Default { get; set; }
         private TextElementInfo lastElement;
         private List<TextElementInfo> inner;
         public bool AutoInitialize { get; set; }
         public TextElementInfos()
         {
             this.AutoInitialize = true;
+            this.Default = new TextElementInfo();
             inner = new List<TextElementInfo>();
         }
         public TextElementInfo this[string name]

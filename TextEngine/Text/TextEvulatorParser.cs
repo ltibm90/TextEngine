@@ -35,6 +35,10 @@ namespace TextEngine.Text
         {
             this.evulator = baseevulator;
         }
+        private void OnTagOpened(TextElement element)
+        {
+            element.TagInfo?.OnTagOpened?.Invoke(element);
+        }
 
         public void Parse(TextElement baseitem, string text)
         {
@@ -61,10 +65,31 @@ namespace TextEngine.Text
 
                 if (!tag.SlashUsed)
                 {
+                    OnTagOpened(tag);
+                    if (tag.HasFlag(TextElementFlags.TEF_AutoCloseIfSameTagFound))
+                    {
+                        var prev = this.GetNotClosedPrevTag(tag, tag.ElemName);
+                        if (prev != null && !prev.Closed)
+                        {
+                            prev.CloseState = TextElementClosedType.TECT_AUTOCLOSED;
 
+                            currenttag = this.GetNotClosedPrevTag(prev);
+                            tag.Parent = currenttag;
+                            if (currenttag == null && this.Evulator.ThrowExceptionIFPrevIsNull && !this.Evulator.SurpressError)
+                            {
+                                this.Evulator.IsParseMode = false;
+                                throw new Exception("Syntax Error");
+                            }
+                            else if(currenttag == null)
+                            {
+                                continue;
+                            }
+                        }
+                    }
                     currenttag.AddElement(tag);
                     if (tag.DirectClosed)
                     {
+                        tag.TagInfo?.OnTagClosed?.Invoke(tag);
                         this.Evulator.OnTagClosed(tag);
                     }
                 }
@@ -87,19 +112,24 @@ namespace TextEngine.Text
                                 AutoAdded = true,
                                 BaseEvulator = this.Evulator
                             };
-                            prevtag.Closed = true;
-
-                            if (previtem != null)
+                            prevtag.CloseState = TextElementClosedType.TECT_CLOSED;
+                            prevtag.TagInfo?.OnTagClosed?.Invoke(prevtag);
+                            bool  allowautocreation = !elem.HasFlag(TextElementFlags.TEF_PreventAutoCreation) && (elem.TagInfo.OnAutoCreating == null || elem.TagInfo.OnAutoCreating(elem));
+                            if(allowautocreation)
                             {
-                                previtem.Parent = elem;
-                                elem.AddElement(previtem);
+                                this.OnTagOpened(elem);
+                                if (previtem != null)
+                                {
+                                    previtem.Parent = elem;
+                                    elem.AddElement(previtem);
 
+                                }
+                                else
+                                {
+                                    currenttag = elem;
+                                }
+                                previtem = elem;
                             }
-                            else
-                            {
-                                currenttag = elem;
-                            }
-                            previtem = elem;
 
                         }
                         else
@@ -118,7 +148,8 @@ namespace TextEngine.Text
                             {
                                 currenttag = prevtag.Parent;
                             }
-                            prevtag.Closed = true;
+                            prevtag.CloseState = TextElementClosedType.TECT_CLOSED;
+                            prevtag.TagInfo?.OnTagClosed?.Invoke(prevtag);
                             break;
                         }
                         prevtag = this.GetNotClosedPrevTag(prevtag);
@@ -144,7 +175,17 @@ namespace TextEngine.Text
             this.noparse_tag = "";
             this.Evulator.IsParseMode = false;
         }
-        private TextElements GetNotClosedPrevTagUntil(TextElement tag, string name)
+        private TextElement GetNotClosedPrevTag(TextElement tag, string name)
+        {
+            var stag = this.GetNotClosedPrevTag(tag);
+            while (stag != null)
+            {
+                if (stag.ElemName == name) return stag;
+                stag = this.GetNotClosedPrevTag(stag);
+            }
+            return null;
+        }
+        private TextElements GetNotClosedPrevTagsUntil(TextElement tag, string name)
         {
             var array = new TextElements();
             var stag = this.GetNotClosedPrevTag(tag);
@@ -283,7 +324,7 @@ namespace TextEngine.Text
                                     throw new Exception("Syntax Error");
                                 }
                             }
-                            tagElement.AutoClosed = true;
+                            tagElement.CloseState = TextElementClosedType.TECT_AUTOCLOSED;
                             tagElement.Value = ampcode;
                             return tagElement;
                         }
@@ -404,16 +445,14 @@ namespace TextEngine.Text
                 }
                 if (this.Evulator.AllowXMLTag && cur == '?' && !namefound && current.Length == 0)
                 {
-                    tagElement.Closed = true;
-                    tagElement.AutoClosed = true;
+                    tagElement.CloseState = TextElementClosedType.TECT_AUTOCLOSED;
                     tagElement.ElementType = TextElementType.XMLTag;
                     continue;
 
                 }
                 if (this.Evulator.SupportExclamationTag && cur == '!' && !namefound && current.Length == 0)
                 {
-                    tagElement.Closed = true;
-                    tagElement.AutoClosed = true;
+                    tagElement.CloseState = TextElementClosedType.TECT_AUTOCLOSED;
                     if (i + 8 < this.TextLength)
                     {
                         var mtn = this.Text.Substring(i, 8);
@@ -443,7 +482,7 @@ namespace TextEngine.Text
                 {
                     tagElement.ElementType = TextElementType.CommentNode;
                     tagElement.ElemName = "#summary";
-                    tagElement.Closed = true;
+                    tagElement.CloseState = TextElementClosedType.TECT_CLOSED;
                     i += 2;
                     continue;
                 }
@@ -531,7 +570,7 @@ namespace TextEngine.Text
                     if (cur == this.Evulator.ParamChar && !namefound && !firstslashused)
                     {
                         tagElement.ElementType = TextElementType.Parameter;
-                        tagElement.Closed = true;
+                        tagElement.CloseState = TextElementClosedType.TECT_CLOSED;
                         continue;
                     }
                     if (cur == '/')
@@ -637,15 +676,13 @@ namespace TextEngine.Text
                         tagElement.SlashUsed = firstslashused;
                         if (lastslashused)
                         {
-                            tagElement.DirectClosed = true;
-                            tagElement.Closed = true;
+                            tagElement.CloseState = TextElementClosedType.TECT_DIRECTCLOSED;
                         }
                         string elname = tagElement.ElemName.ToLowerInvariant();
                         if((this.Evulator.TagInfos.GetElementFlags(elname) & TextElementFlags.TEF_AutoClosedTag) != 0)
                         {
                         
-                            tagElement.Closed = true;
-                            tagElement.AutoClosed = true;
+                            tagElement.CloseState = TextElementClosedType.TECT_AUTOCLOSED;
                         }
                         this.pos = i;
                         return;

@@ -22,6 +22,7 @@ namespace TextEngine.ParDecoder
         public ParFormat(string text)
         {
             this.Text = text;
+            this.Flags = PardecodeFlags.PDF_AllowArrayAccess | PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess;
         }
         private string text;
         public string Text {

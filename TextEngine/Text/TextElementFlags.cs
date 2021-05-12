@@ -22,7 +22,9 @@ namespace TextEngine.Text
         /// <summary>
         /// İşaretlenen tagın içeriğini ayrıştırmaz.
         /// </summary>
-        TEF_NoParse = 1 << 5
+        TEF_NoParse = 1 << 5,
+        TEF_AutoCloseIfSameTagFound = 1 << 6,
+        TEF_PreventAutoCreation = 1 << 7,
 
     }
 }

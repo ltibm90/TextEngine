@@ -53,56 +53,11 @@ namespace TextEngine.ParDecoder
         public void Decode()
         {
             InnerItem parentItem = this.Items;
-            bool isopened = false;
             for (int i = 0; i < this.TextLength; i++)
             {
                 var cur = this.Text[i];
-                var prev = '\0';
-                if (i - 1 >= 0)
-                {
-                    prev = this.Text[i - 1];
-                }
-                if ((prev != ')' && prev != ']' && prev != '}' ) && (cur == '=' || cur == '>' || cur == '<' || cur == '?' || cur == ':') && false)
-                {
-                    if(isopened)
-                    {
-                        InnerItem item = new InnerItem();
-                        item.IsOperator = true;
-                        if((prev == '>' && cur == '=') || (prev == '<' && cur == '=') || (prev == '!' && cur == '=') || (prev == '=' && cur == '>'))
-                        {
-                            item.Value = prev.ToString() + cur.ToString();
-                        }
-                        else
-
-                        {
-                            item.Value = cur;
-                        }
-                        parentItem = parentItem.Parent;
-                        isopened = false;
-                        parentItem.InnerItems.Add(item);
-                        i--;
-   
-                    }
-                    else
-                    {
-                        var item = new ParItem
-                        {
-                            Parent = parentItem,
-                            ParName = "(",
-                            BaseDecoder = this
-                        };
-                        parentItem.InnerItems.Add(item);
-                        parentItem = item;
-                        isopened = true;
-                    }
-                    continue;
-                }
                 if (cur == '(' || cur == '[' || cur == '{')
                 {
-                    if(isopened)
-                    {
-                        //isopened = false;   
-                    }
                     var item = new ParItem
                     {
                         Parent = parentItem,
@@ -127,7 +82,7 @@ namespace TextEngine.ParDecoder
                     }
                     continue;
                 }
-                var result = this.DecodeText(i, isopened);
+                var result = this.DecodeText(i);
                 parentItem.InnerItems.AddRange(result);
                 i = this.pos;
             }

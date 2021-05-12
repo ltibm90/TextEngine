@@ -71,20 +71,24 @@ namespace TextEngine.Text
                 this._tagInfo = null;
             }
         }
-        private bool closed;
         public bool Closed
         {
-            get { return closed; }
+            get { return this.CloseState > TextElementClosedType.TECT_OPEN; }
+        }
+        private TextElementClosedType closeState;
+        public TextElementClosedType CloseState
+        {
+            get { return this.closeState; }
             set
             {
-                closed = value;
-                if (this.BaseEvulator != null)
+                this.closeState = value;
+                if (this.BaseEvulator != null && value > TextElementClosedType.TECT_OPEN)
                 {
                     this.BaseEvulator.OnTagClosed(this);
                 }
             }
-        }
 
+        }
         private string value;
 
         public string Value
@@ -132,11 +136,9 @@ namespace TextEngine.Text
             get { return parent; }
             set { this.parent = value; }
         }
-        private bool directclosed;
         public bool DirectClosed
         {
-            get { return directclosed; }
-            set { this.directclosed = value; }
+            get { return this.CloseState == TextElementClosedType.TECT_DIRECTCLOSED; }
         }
 
         private bool autoadded;
@@ -151,11 +153,9 @@ namespace TextEngine.Text
             get { return aliasName; }
             set { this.aliasName = value; }
         }
-        private bool autoclosed;
         public bool AutoClosed
         {
-            get { return autoclosed; }
-            set { this.autoclosed = value; }
+            get { return this.CloseState == TextElementClosedType.TECT_AUTOCLOSED; }
         }
         public bool NoAttrib { get; set; }
         //private int index;
@@ -186,7 +186,7 @@ namespace TextEngine.Text
                 if (this._tagInfo == null && this.ElementType != TextElementType.Parameter)
                 {
                     if (this.BaseEvulator.TagInfos.HasTagInfo(this.ElemName)) this._tagInfo = this.BaseEvulator.TagInfos[this.ElemName];
-                    else if (this.BaseEvulator.TagInfos.HasTagInfo("*")) this._tagInfo = this.BaseEvulator.TagInfos["*"];
+                    else if (this.BaseEvulator.TagInfos.Default != null) this._tagInfo = this.BaseEvulator.TagInfos.Default;
                 }
                 return this._tagInfo;
             }
@@ -946,7 +946,7 @@ namespace TextEngine.Text
         {
             this.ElemName = "#text";
             this.ElementType = TextElementType.TextNode;
-            if(closetag) this.Closed = true;
+            if(closetag) this.CloseState =  TextElementClosedType.TECT_CLOSED;
 
         }
     }

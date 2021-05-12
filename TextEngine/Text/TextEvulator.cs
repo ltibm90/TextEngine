@@ -145,7 +145,7 @@ namespace TextEngine.Text
         public void InitStockTagOptions()
         {
             //* default flags;
-            this.TagInfos["*"].Flags = TextElementFlags.TEF_NONE;
+            this.TagInfos.Default.Flags = TextElementFlags.TEF_NONE;
             this.TagInfos["elif"].Flags =  TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_NoAttributedTag;
             this.TagInfos["else"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["return"].Flags = TextElementFlags.TEF_AutoClosedTag;
