@@ -109,12 +109,13 @@ namespace TextEngineTest
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            /*TextEvulator te = new TextEvulator("[list=1][*]Test[*]Test2[/list][b]i[/b]");
+            TextEvulator te = new TextEvulator("[LI][*]item1[*]item2[*]item3[/LI]");
             te.LeftTag = '[';
             te.RightTag = ']';
             te.TagInfos["*"].Flags |= TextElementFlags.TEF_AutoCloseIfSameTagFound | TextElementFlags.TEF_PreventAutoCreation;
             te.ThrowExceptionIFPrevIsNull = false;
-            te.Parse();*/
+            te.Parse();
+           var ve = te.EvulateValue();
             DoTest();
             WhileTest();
             GeneralTest();
