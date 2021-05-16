@@ -4,6 +4,7 @@ using System.Text;
 using TextEngine.Evulator;
 using TextEngine.Macros;
 using TextEngine.Misc;
+using TextEngine.ParDecoder;
 
 namespace TextEngine.Text
 {
@@ -62,7 +63,9 @@ namespace TextEngine.Text
         public bool AllowCharMap { get; set; }
         public Func<EvulatorHandler> EvulatorHandler { get; set; }
         public SpecialCharType SpecialCharOption { get; set; }
-        
+        public IntertwinedBracketsStateType IntertwinedBracketsState { get; set; }
+        public PardecodeFlags  ParFlags { get; set; }
+
         public EvulatorHandler GetHandler()
         {
             return this.EvulatorHandler?.Invoke();
@@ -92,8 +95,16 @@ namespace TextEngine.Text
             this.TrimMultipleSpaces = true;
 
         }
+        public void ApplyCommandLineByLine()
+        {
+            this.EvulatorTypes.Text = typeof(TextTagCommandEvulator);
+            this.EvulatorTypes.Param = null;
+            this.ParFlags |= PardecodeFlags.PDF_AllowAssigment;
+        }
         public TextEvulator(string text = null, bool isfile = false)
         {
+            this.ParFlags = PardecodeFlags.PDF_AllowArrayAccess | PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess;
+            this.IntertwinedBracketsState = IntertwinedBracketsStateType.IBST_ALLOW_NOATTRIBUTED_AND_PARAM;
             this.CharMap = new Dictionary<char, string>();
             this.CustomDataDictionary = new Dictionary<string, object>();
             this.DefineParameters = new KeyValues<object>();

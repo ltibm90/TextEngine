@@ -11,7 +11,7 @@ namespace TextEngine.Evulator
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
             var result = new TextEvulateResult();
-            var value = this.EvulateAttribute(tag.ElemAttr["c"]);
+            var value = this.EvulateAttribute(tag.ElemAttr["c"], vars);
             TextElement @default = null;
             TextElement active = null;
             for (int i = 0; i < tag.SubElementsCount; i++)

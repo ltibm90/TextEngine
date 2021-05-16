@@ -1,14 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TextEngine.Evulator;
 using TextEngine.Extensions;
 
 namespace TextEngine.ParDecoder
 {
     public class ParDecode
     {
+
+        public EvulatorTypes StaticTypes { get; private set; } = new EvulatorTypes();
+        public List<string> GlobalFunctions { get; set; } = new List<string>();
+
         public Func<PardecodeFlags> OnGetFlags { get; set; }
         public Predicate<PardecodeFlags> OnSetFlags { get; set; }
+       
 
         public string Text { get; set; }
         private int TextLength { get { return this.Text.Length; } }
@@ -28,6 +34,9 @@ namespace TextEngine.ParDecoder
                 this.flags = value;
             }
         }
+        public ParItemAssignReturnType AssignReturnType { get; set; }
+
+
         public bool SurpressError { get; set; }
         public ParItem Items
         {
@@ -43,6 +52,7 @@ namespace TextEngine.ParDecoder
 
         public ParDecode(string text)
         {
+            this.AssignReturnType = ParItemAssignReturnType.PIART_RETRUN_BOOL;
             this.Text = text;
             this.Items = new ParItem();
             this.Items.ParName = "(";
@@ -164,7 +174,8 @@ namespace TextEngine.ParDecoder
                             {
                                 IsOperator = true
                             };
-                            if ((cur == '=' && next == '>') || (cur == '!' && next == '=') || (cur == '>' && next == '=') || (cur == '<' && next == '='))
+                            if ((cur == '=' && next == '>') || (cur == '!' && next == '=') || (cur == '>' && next == '=') || (cur == '<' && next == '=')
+                                 || (cur == '+' && next == '=') || (cur == '-' && next == '=') || (cur == '*' && next == '=') || (cur == '/' && next == '=') || (cur == '^' && next == '='))
                             {
                                 inner2.Value = cur.ToString() + next.ToString();
                                 i++;
@@ -256,6 +267,12 @@ namespace TextEngine.ParDecoder
                 }
             }
             return inner;
+        }
+
+        public ComputeResult Compute(object vars = null, object localvars = null, bool autodecode = true)
+        {
+            if (autodecode && !string.IsNullOrEmpty(this.Text) && this.Items.InnerItems.Count == 0) this.Decode();
+            return this.Items.Compute(vars, null, localvars);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace TextEngine.Evulator
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
             var varname = tag.GetAttribute("var");
-            var inlist = this.EvulateAttribute(tag.ElemAttr["in"]);
+            var inlist = this.EvulateAttribute(tag.ElemAttr["in"], vars);
             if (inlist == null || !(inlist is IEnumerable list)) return null;
             this.CreateLocals();
             var result = new TextEvulateResult();

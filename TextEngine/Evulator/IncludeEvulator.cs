@@ -60,9 +60,9 @@ namespace TextEngine.Evulator
         }
         private TextEvulateResult Render_Default(TextElement tag, object vars)
         {
-            var loc = this.GetLastDir() + this.EvulateAttribute(tag.ElemAttr["name"])?.ToString();
+            var loc = this.GetLastDir() + this.EvulateAttribute(tag.ElemAttr["name"], vars)?.ToString();
             var parse = tag.GetAttribute("parse", "true");
-            if (!File.Exists(loc) || !this.ConditionSuccess(tag, "if")) return null;
+            if (!File.Exists(loc) || !this.ConditionSuccess(tag, "if", vars)) return null;
             this.SetLocal("_DIR_", Path.GetDirectoryName(loc));
             var content = File.ReadAllText(loc);
             var result = new TextEvulateResult();

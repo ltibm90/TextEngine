@@ -9,7 +9,7 @@ namespace TextEngine.Evulator
     {
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
- 		    var cr = this.ConditionSuccess(tag, "if");
+ 		    var cr = this.ConditionSuccess(tag, "if", vars);
             if (!cr) return null;
             var result = new TextEvulateResult
             {

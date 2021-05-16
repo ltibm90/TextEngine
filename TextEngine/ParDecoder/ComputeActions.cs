@@ -276,6 +276,18 @@ namespace TextEngine.ParDecoder
             {
                 Type obj_type = @object.GetType();
                 method = obj_type.GetMethodByNameWithParams(name, @params);
+                if(method == null)
+                {
+                    var prop = obj_type.GetProperty(name);
+                    if(prop.CanRead)
+                    {
+                        var value = prop.GetValue(@object, null);
+                        if(value is Delegate d)
+                        {
+                            return CallMethodDirect(d.Target, d.Method, @params, true);
+                        }
+                    }
+                }
             }
 
             //var method = obj_type.GetMethod(name);
@@ -297,16 +309,16 @@ namespace TextEngine.ParDecoder
             return null;
         }
         /**  @param $item InnerItem */
-        public static object CallMethod(string name, object[] @params, object vars, object localvars = null)
+        public static object CallMethod(string name, object[] @params, object vars, object localvars = null, ParDecode sender = null)
         {
             int dpos = name.IndexOf("::");
-            if (dpos >= 0)
+            if (vars == null && sender != null && dpos >= 0)
             {
                 var clsname = name.Substring(0, dpos);
                 var method = name.Substring(dpos + 2);
-                if (ParItem.GlobalFunctions.Contains(clsname + "::") || ParItem.GlobalFunctions.Contains(name))
+                if (sender.GlobalFunctions.Contains(clsname + "::") || sender.GlobalFunctions.Contains(name))
                 {
-                    var clsttype = ParItem.StaticTypes[clsname];
+                    var clsttype = sender.StaticTypes[clsname];
                     if (clsttype != null)
                     {
                         var cm = clsttype.GetType().GetMethod(method);
@@ -320,23 +332,40 @@ namespace TextEngine.ParDecoder
             return CallMethodSingle(vars, name, @params);
         }
 
-        public static object GetPropValue(InnerItem item, object vars, object localvars = null)
+        public static PropObject GetPropValue(InnerItem item, object vars, object localvars = null)
         {
-            object res = null;
+            PropObject res = null;
             var name = item.Value.ToString();
             if (localvars != null)
             {
                 res = GetProp(name, localvars);
             }
-            if (res == null)
+            if (res == null || res.PropType == PropType.Empty)
             {
                 res = GetProp(name, vars);
             }
             return res;
         }
-        public static object GetProp(string item, object vars)
+        public static PropObject GetPropInArray(string item, IList varsList)
         {
-            if (vars == null) return null;
+            for (int i = 0; i < varsList.Count; i++)
+            {
+                if (varsList[i] == null) continue;
+                var res = GetProp(item, varsList[i]);
+                if (res != null && res.PropType != PropType.Empty) return res;
+            }
+            return null;
+        }
+        public static PropObject GetProp(string item, object vars)
+        {
+            var propObj = new PropObject();
+            if (vars is IList varsList)
+            {
+                return GetPropInArray(item, (IList) vars);
+            }
+
+            if (vars == null) return propObj;
+            Type varsType = vars.GetType();
             if (vars is KeyValueGroup il)
             {
                 for (int i = il.Count - 1; i >= 0; i--)
@@ -344,22 +373,52 @@ namespace TextEngine.ParDecoder
                     if (il[i] is KeyValues<object> kv)
                     {
                         var m = GetProp(item, kv);
-                        if (m != null) return m;
+                        if (m.PropType != PropType.Empty) return m;
                     }
                 }
-                return null;
             }
-            if (vars is IDictionary<string, object> dict)
+            else if(TypeUtil.IsIDictionary(varsType))
             {
-                if (dict.TryGetValue(item, out object nobj))
+                var intfaceType = varsType.GetInterfaces().Where(m => m.IsGenericType && m.GetGenericTypeDefinition() == typeof(IDictionary<,>)).FirstOrDefault();
+                if ((!intfaceType.GenericTypeArguments[0].IsValueType && intfaceType.GenericTypeArguments[0] != typeof(string))) return propObj;
+                object matchedParam = ParamUtil.MatchParam(item, intfaceType.GenericTypeArguments[0], out bool result);
+                if (!result) return propObj;
+                if ((bool) intfaceType.GetMethod("ContainsKey").Invoke(vars, new object[] { matchedParam }))
                 {
-                    return nobj;
+                    var value = intfaceType.GetProperty("Item").GetValue(vars, new object[] { matchedParam });
+                    propObj.Value = value;
+                    propObj.PropType = PropType.Dictionary;
+                    propObj.Indis = matchedParam;
+                    propObj.PropertyInfo = vars;
                 }
-                return null;
+   
+               
+
             }
-            if (vars is KeyValues<object> obj)
+
+            //else if (vars is IDictionary<string, object> dict)
+            //{
+            //    TypeUtil.IsIDictionary
+            //    if (dict.TryGetValue(item, out object nobj))
+            //    {
+            //        propObj.Value = nobj;
+            //        propObj.PropType = PropType.Dictionary;
+            //        propObj.Indis = item;
+            //        propObj.PropertyInfo = dict;
+            //    }
+            //}
+            else if (vars is KeyValues<object> obj)
             {
-                return obj[item];
+                int id = obj.GetIdByName(item);
+                if(id >= 0)
+                {
+                    propObj.Value = obj[id];
+                    propObj.PropType = PropType.KeyValues;
+                    propObj.Indis = item;
+                    propObj.PropertyInfo = obj;
+                }
+            
+
             }
             else
             {
@@ -367,16 +426,73 @@ namespace TextEngine.ParDecoder
                 var prop = vtype.GetProperty(item);
                 if (prop != null)
                 {
-                    var v = prop.GetValue(vars);
-                    return prop.GetValue(vars);
+                    propObj.PropertyInfo = prop;
+                    propObj.Value = prop.GetValue(vars);
+                    propObj.PropType = PropType.Property;
+                    propObj.Indis = vars;
+                    return propObj;
                 }
             }
 
-            return null;
+            return propObj;
         }
         public static bool IsObjectOrArray(object item)
         {
             return item != null && item is ExpandoObject || item is Dictionary<string, object>;
+        }
+        public static AssignResult AssignObjectValue(PropObject probObj, string op, object value)
+        {
+            var ar = new AssignResult();
+            if (probObj == null || probObj.Indis == null) return ar;
+            if(op.Length == 2)
+            {
+               value = ComputeActions.OperatorResult(probObj.Value, value ,op[0].ToString());
+            }
+            bool matchResult = false;
+            if (probObj.PropType == PropType.Property)
+            {
+                PropertyInfo pi = (PropertyInfo)probObj.PropertyInfo;
+                if (pi.CanWrite)
+                {
+                    var targObj = ParamUtil.MatchParam(value, pi.PropertyType, out matchResult);
+                    if (!matchResult) return ar;
+                    if(probObj.IndisParams != null) pi.SetValue(probObj.Indis, targObj, probObj.IndisParams);
+                   else pi.SetValue(probObj.Indis, targObj);
+                    ar.AssignedValue = targObj;
+                    ar.Success = true;
+                    return ar;
+                }
+            }
+            else if(probObj.PropType == PropType.Indis)
+            {
+                if (probObj.IndisParams == null || probObj.IndisParams.Length == 0) return ar;
+                var item = probObj.Indis as IList;
+                if (item == null) return ar;
+                Type listtype = item.GetType();
+                if(listtype.GenericTypeArguments.Length > 0)
+                {
+                    int indis = Convert.ToInt32(probObj.IndisParams[0]);
+                    var targObj = ParamUtil.MatchParam(value, listtype.GenericTypeArguments[0], out matchResult);
+                    if (!matchResult) return ar;
+                    item[indis] = targObj;
+                    ar.AssignedValue = targObj;
+                    ar.Success = true;
+                    return ar;
+                }
+            }
+            else if(probObj.PropType == PropType.Dictionary)
+            {
+                if (probObj.Indis == null) return ar;
+                var intfaceType = probObj.PropertyInfo.GetType().GetInterfaces().Where(m => m.IsGenericType && m.GetGenericTypeDefinition() == typeof(IDictionary<,>)).FirstOrDefault();
+                var targObj = ParamUtil.MatchParam(value, intfaceType.GenericTypeArguments[1], out matchResult);
+                if (!matchResult) return ar;
+                intfaceType.GetProperty("Item").SetValue(probObj.PropertyInfo, targObj , new object[] {probObj.Indis});
+                ar.AssignedValue = targObj;
+                ar.Success = true;
+                return ar;
+            }
+
+            return ar;
         }
 
     }

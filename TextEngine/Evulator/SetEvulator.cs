@@ -10,7 +10,7 @@ namespace TextEngine.Evulator
     {
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
-            bool conditionok = this.ConditionSuccess(tag, "if");
+            bool conditionok = this.ConditionSuccess(tag, "if", vars);
             var result = new TextEvulateResult
             {
                 Result = TextEvulateResultEnum.EVULATE_NOACTION
@@ -20,7 +20,7 @@ namespace TextEngine.Evulator
             {
                 string defname = tag.GetAttribute("name");
                 if (string.IsNullOrEmpty(defname) || !defname.All((c) => char.IsLetterOrDigit(c))) return result;
-                this.Evulator.DefineParameters.Set(defname, this.EvulateAttribute(tag.ElemAttr["value"]));
+                this.Evulator.DefineParameters.Set(defname, this.EvulateAttribute(tag.ElemAttr["value"], vars));
             }
             return result;
         }

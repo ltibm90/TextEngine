@@ -199,6 +199,17 @@ namespace TextEngine.Text
                 return this.TagInfo.Flags;
             }
         }
+        public bool AllowIntertwinedPar
+        {
+            get
+            {
+                var state = this.BaseEvulator.IntertwinedBracketsState;
+                bool allowed = state == IntertwinedBracketsStateType.IBST_ALLOW_ALWAYS;
+                allowed = allowed || (this.NoAttrib && (state == IntertwinedBracketsStateType.IBST_ALLOW_NOATTRIBUTED_AND_PARAM || state == IntertwinedBracketsStateType.IBST_ALLOW_NOATTRIBUTED_ONLY));
+                allowed = allowed || (this.ElementType == TextElementType.Parameter && (state == IntertwinedBracketsStateType.IBST_ALLOW_PARAM_ONLY || state == IntertwinedBracketsStateType.IBST_ALLOW_NOATTRIBUTED_AND_PARAM));
+                return allowed;
+            }
+        }
         public void AddElement(TextElement element)
         {
             element.Index = this.SubElements.Count;
@@ -948,6 +959,17 @@ namespace TextEngine.Text
             this.ElementType = TextElementType.TextNode;
             if(closetag) this.CloseState =  TextElementClosedType.TECT_CLOSED;
 
+        }
+        public TextElement GetParentByName(string name)
+        {
+            var parent = this.Parent;
+            while (parent != null)
+            {
+                if (parent.NameEquals(name)) return parent;
+                parent = parent.Parent;
+            }
+            return null;
+            
         }
     }
 }

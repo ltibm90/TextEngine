@@ -15,6 +15,13 @@ namespace TextEngine.Evulator
         {
 
         }
+        protected ParDecode CreatePardecode(string text, bool decode = true)
+        {
+            var pd = new ParDecode(text);
+            pd.OnGetFlags = () => this.Evulator.ParFlags;
+            if (decode) pd.Decode();
+            return pd;
+        }
         public abstract TextEvulateResult Render(TextElement tag, object vars);
         public virtual void RenderFinish(TextElement tag, object vars, TextEvulateResult latestResult) { }
 
@@ -24,22 +31,21 @@ namespace TextEngine.Evulator
             {
                 pardecoder.SurpressError = this.Evulator.SurpressError;
             }
-            var addpar = additionalparams as KeyValues<object>;
-            if (addpar != null)
+            ComputeResult er = null;
+            if(additionalparams == null)
             {
-                this.Evulator.LocalVariables.Add(addpar);
+                er = pardecoder.Items.Compute(this.Evulator.GlobalParameters, null, this.Evulator.LocalVariables);
             }
-            var er = pardecoder.Items.Compute(this.Evulator.GlobalParameters, null, this.Evulator.LocalVariables);
-            if (addpar != null)
+            else
             {
-                this.Evulator.LocalVariables.Remove(addpar);
+                er = pardecoder.Items.Compute(new object[] {additionalparams, this.Evulator.GlobalParameters}, null, this.Evulator.LocalVariables);
             }
+
             return er.Result.First();
         }
         protected object EvulateText(string text, object additionalparams = null)
         {
-		    var pardecoder = new ParDecode(text);
-		    pardecoder.Decode();
+		    var pardecoder = this.CreatePardecode(text);
             return this.EvulatePar(pardecoder, additionalparams);
         }
         public void SetEvulator(TextEvulator evulator)
@@ -51,41 +57,39 @@ namespace TextEngine.Evulator
             if (attribute == null || string.IsNullOrEmpty(attribute.Value)) return null;
             if(attribute.ParData == null)
             {
-                attribute.ParData = new ParDecode(attribute.Value);
-                attribute.ParData.Decode();
+                attribute.ParData = this.CreatePardecode(attribute.Value);
             }
             return this.EvulatePar(attribute.ParData, additionalparams);
             
         }
-        protected bool ConditionSuccess(TextElement tag, string attr = "c")
+        protected bool ConditionSuccess(TextElement tag, string attr = "*", object vars = null)
         {
             ParDecode pardecoder = null;
-            if(tag.NoAttrib)
+            if((attr == null || attr == "" || attr == "*") && tag.NoAttrib)
             {
                 if (tag.Value == null) return true;
                 pardecoder = tag.ParData;
                 if(pardecoder == null)
                 {
-                    pardecoder = new ParDecode(tag.Value);
-                    pardecoder.Decode();
+
+                    pardecoder = this.CreatePardecode(tag.Value);
                     tag.ParData = pardecoder;
                 }
             }
             else
             {
+                if (attr == "*") attr = "c";
                 var cAttr = tag.ElemAttr[attr];
                 if (cAttr == null || cAttr.Value ==null) return true;
                 pardecoder = cAttr.ParData;
                 if(pardecoder == null)
                 {
-                    pardecoder = new ParDecode(tag.Value);
-                    pardecoder.Text = cAttr.Value;
-                    pardecoder.Decode();
+                    pardecoder  = this.CreatePardecode(cAttr.Value);
                     cAttr.ParData = pardecoder;
                 }
  
             }
-		    var res = this.EvulatePar(pardecoder);
+		    var res = this.EvulatePar(pardecoder, vars);
             if(res is bool b)
             {
                 return b;

@@ -18,7 +18,7 @@ namespace TextEngine.Evulator
         public  TextEvulateResult Render_ParseMode(TextElement tag, object vars)
         {
             var result = new TextEvulateResult();
-            bool conditionok = this.ConditionSuccess(tag);
+            bool conditionok = this.ConditionSuccess(tag, "*", vars);
             bool sil = false;
             for (int i = 0; i < tag.SubElementsCount; i++)
             {
@@ -33,7 +33,7 @@ namespace TextEngine.Evulator
                         }
                         else if (sub.ElemName.ToLowerInvariant() == "elif")
                         {
-                            conditionok = this.ConditionSuccess(sub);
+                            conditionok = this.ConditionSuccess(sub, "*", vars);
                         }
                     }
 
@@ -62,7 +62,7 @@ namespace TextEngine.Evulator
         public  TextEvulateResult RenderDefault(TextElement tag, object vars)
         {
             var result = new TextEvulateResult();
-            if (this.ConditionSuccess(tag))
+            if (this.ConditionSuccess(tag, "*", vars))
             {
           
                 var elseitem = tag.GetSubElement("elif", "else");
@@ -86,7 +86,7 @@ namespace TextEngine.Evulator
                     else
                     {
 
-                        if (this.ConditionSuccess(elseitem))
+                        if (this.ConditionSuccess(elseitem, "*", vars))
                         {
                             result.Start = elseitem.Index + 1;
                             var nextelse = elseitem.NextElementWN("elif", "else");

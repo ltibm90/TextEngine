@@ -2,19 +2,42 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>TextEngine.x86</id>
-    <version>1.3.2.1</version>
+    <version>1.4.0.0</version>
     <authors>macmillan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/ltibm90/TextEngine</projectUrl>
     <description>Template/BBCode Engine x86 Version</description>
     <releaseNotes>
-      Added OnTagOpened, OnTagClosed, OnAutoCreating property to TextElementInfo class.
-      Added TEF_AutoCloseIfSameTagFound to TextElementFlags enum.
-      Removed unused code to Decode function of ParDecode class.
-      Added Default property to TextElementInfos class.
-      Removed * tag info from TagInfos property from TextEvulator class.
-      Added TextElementClosedType enum.
-      Set Closed, AutoClosed and  DirectClosed  propery  as readonly from TextElement class.
+      .ParDecode now support assigment operators(=, +=, -=, *=, /=)
+      .Net now allow to call dymamic property method of Class.
+      .Net Moved  StaticTypes, GlobalFunctions property from ParItem to ParDecode class, and removed static keyword.
+      .Net php Moved globalFunctions property from ParItem to ParDecode class, and removed static var and renamed to GlobalFunctions.
+      .Net Added MatchParam function to ParamUtil class.
+      .Net Added IsDictionary and IsIDictionary functions to TypeUtil
+      .Net ParDecode now support Dictionary&lt;, &gt; and other(older version supports only Dictionary&lt;string, object&gt;, first generic type must be valuetype
+      Added sender parameters to CallMethod function from ComputeActions class.
+      .Node added GlobalFunctions property to ParDecode class.
+      Fixed PardecodeFlags enum.
+      Added PDF_AllowAssigment flag to PardecodeFlags enum
+      Added AssignObjectValue function to ComputeActions class.
+      Added ParItemAssignReturnType enum.
+      Added AssignReturnType property to ParDecode class
+      ParFormat now support Intertwined curly brackets
+      Added IntertwinedBracketsStateType enum.
+      Added IntertwinedBracketsState property to TextEvulator class.
+      Added AllowIntertwinedPar property to TextElement class.
+      Added GetParentByName function to TextElement class.
+      Fixed ConditionSuccess function to BaseEvulator class.
+      Added StringUtils class.
+      Added TextTagCommandEvulator class.
+      Added ApplyCommandLineByLine to TextEvulator class.
+      Fixed evulators.
+      Added GetPropInArray function to ComputeActions class.
+      Added Compute function to ParDecode class.
+      ParDecode now supports multi object(array or list)
+      Added ParFlags property to TextEvulator class.
+      Added AssignResult class.
+      Some improvements.
     </releaseNotes>
     <repository url="https://github.com/ltibm90/TextEngine" />
     <dependencies>

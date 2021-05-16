@@ -107,15 +107,57 @@ namespace TextEngineTest
             evulator.GlobalParameters = wtc;
             var result = evulator.EvulateValue();
         }
+        public class TestAssignClass
+        {
+            public int IntProp { get; set; }
+            public string StringProp { get; set; }
+            public List<string> Items { get; set; }
+            public int[] ItemArrays { get; set; }
+            public Dictionary<string ,object> DictItems { get; set; }
+            public TestAssignClass()
+            {
+                this.DictItems = new Dictionary<string, object>();
+                this.DictItems["str1"] = "string var";
+               
+            }
+        }
+        public class TestClass
+        { 
+            public void TestFunction(TestAssignClass tac)
+            {
+
+            }
+        }
+        private void AssignTest()
+        {
+            var p = new TestAssignClass();
+            p.Items = new List<string>();
+            p.Items.Add("item1");
+            p.Items.Add("item2");
+            var pf = new ParFormat();
+            pf.Text = "{%Items[0] = 'item1 changed'} {%ItemArrays = [1, 2, 3]} {%DictItems = {'a': 1, 'b': 2, 'c': 3}} {%DictItems.a += 5} {%StringProp = 'string'} {%IntProp = 1903}";
+            pf.Flags |= PardecodeFlags.PDF_AllowAssigment;
+            var res = pf.Apply(p);
+        }
+        private void CommandLineByLineText()
+        {
+            dynamic obj = new ExpandoObject();
+            obj.Item1 = 1;
+            obj.Item2 = 2;
+            obj.Item3 = 3;
+            TextEvulator te = new TextEvulator("Item1 = Item2 + 1\r\nItem2 = Item3 + 1\r\nItem3 = Item1 + Item2");
+            te.GlobalParameters = obj;
+            te.ApplyCommandLineByLine();
+            te.Parse();
+            var res = te.EvulateValue();
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
-            TextEvulator te = new TextEvulator("[LI][*]item1[*]item2[*]item3[/LI]");
-            te.LeftTag = '[';
-            te.RightTag = ']';
-            te.TagInfos["*"].Flags |= TextElementFlags.TEF_AutoCloseIfSameTagFound | TextElementFlags.TEF_PreventAutoCreation;
-            te.ThrowExceptionIFPrevIsNull = false;
-            te.Parse();
-           var ve = te.EvulateValue();
+
+
+
+            AssignTest();
+            CommandLineByLineText();
             DoTest();
             WhileTest();
             GeneralTest();

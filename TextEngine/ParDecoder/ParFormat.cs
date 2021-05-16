@@ -60,6 +60,7 @@ namespace TextEngine.ParDecoder
                     {
                         item.ParData = new ParDecode(item.ItemText);
                         item.ParData.OnGetFlags = () => this.Flags;
+                        item.ParData.AssignReturnType = ParItemAssignReturnType.PIART_RETURN_ASSIGNVALUE_OR_NULL;
                         item.ParData.Decode();
                         item.ParData.SurpressError = this.SurpressError;
                     }
@@ -77,10 +78,11 @@ namespace TextEngine.ParDecoder
 
         private void ParseFromString(string s)
         {
+            int openedPar = 0;
             this.FormatItems = new List<ParFormatItem>();
             StringBuilder text = new StringBuilder();
             bool inpar = false;
-    
+            char quotchar = '0';
             for (int i = 0; i < s.Length; i++)
             {
                 char cur = s[i];
@@ -112,16 +114,28 @@ namespace TextEngine.ParDecoder
                 }
                 else
                 {
-                    if(cur == '{')
+                    if(quotchar == '0' && (cur == '\'' || cur == '"'))
                     {
-                        if (this.SurpressError)
-                        {
-                            continue;
-                        }
-                        throw new Exception("Syntax Error: Unexpected {");
+                        quotchar = cur;
+                    }
+                    else if (quotchar != '0' && cur == quotchar) quotchar = '0';
+                    if(cur == '{' && quotchar == '0')
+                    {
+                        openedPar++;
+                        //if (this.SurpressError)
+                        //{
+                        //    continue;
+                        //}
+                        //throw new Exception("Syntax Error: Unexpected {");
                     }
                     if(cur == '}')
                     {
+                        if(openedPar > 0)
+                        {
+                            openedPar--;
+                            text.Append(cur);
+                            continue;
+                        }
                         if (text.Length > 0)
                         {
                             this.FormatItems.Add(new ParFormatItem()

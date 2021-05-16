@@ -30,7 +30,7 @@ namespace TextEngine.Evulator
                 {
                     break;
                 }
-            } while (this.ConditionSuccess(tag));
+            } while (this.ConditionSuccess(tag, "*", vars));
             this.DestroyLocals();
             return result;
         }

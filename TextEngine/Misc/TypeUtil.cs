@@ -1,11 +1,26 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace TextEngine.Misc
 {
     public static class TypeUtil
     {
+        public static bool IsDictionary(Type t)
+        { 
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Dictionary<,>);
+        }
+        public static bool IsIDictionary(Type t)
+        {
+            if (t is IDictionary) return true;
+            return t.GetInterfaces().Any(m => m.IsGenericType && m.GetGenericTypeDefinition() == typeof(IDictionary<,>));
+        }
+        public static bool IsList(Type t)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>);
+        }
         public static bool IsNumericType(object item)
         {
             if (item == null) return false;

@@ -36,7 +36,7 @@ namespace TextEngine.Evulator
                     startAttr.ParData = new ParDecoder.ParDecode(start);
                     startAttr.ParData.Decode();
                 }
-                startres = this.EvulatePar(startAttr.ParData);
+                startres = this.EvulatePar(startAttr.ParData, vars);
             }
             else
             {
@@ -50,7 +50,7 @@ namespace TextEngine.Evulator
                     stepAttr.ParData = new ParDecoder.ParDecode(step);
                     stepAttr.ParData.Decode();
                 }
-                stepres = this.EvulatePar(stepAttr.ParData);
+                stepres = this.EvulatePar(stepAttr.ParData, vars);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace TextEngine.Evulator
             {
                 startnum = (int)Convert.ChangeType(startres, TypeCode.Int32); ;
             }
-            var tores = this.EvulateAttribute(toAttr);
+            var tores = this.EvulateAttribute(toAttr, vars);
             if (!TypeUtil.IsNumericType(tores))
 		    {
                 return null;
