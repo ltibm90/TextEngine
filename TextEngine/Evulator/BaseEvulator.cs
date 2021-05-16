@@ -38,7 +38,10 @@ namespace TextEngine.Evulator
             }
             else
             {
-                er = pardecoder.Items.Compute(new object[] {additionalparams, this.Evulator.GlobalParameters}, null, this.Evulator.LocalVariables);
+                var multi = new MultiObject();
+                multi.Add(additionalparams);
+                multi.Add(this.Evulator.GlobalParameters);
+                er = pardecoder.Items.Compute(multi, null, this.Evulator.LocalVariables);
             }
 
             return er.Result.First();

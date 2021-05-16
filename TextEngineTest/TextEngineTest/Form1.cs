@@ -105,7 +105,7 @@ namespace TextEngineTest
             evulator.ParamNoAttrib = true;
             evulator.Text = "[while Next()][%loop_count + 1]: -[%Get()][/while]";
             evulator.GlobalParameters = wtc;
-            var result = evulator.EvulateValue();
+            var result = evulator.EvulateValue(new object());
         }
         public class TestAssignClass
         {
@@ -119,13 +119,6 @@ namespace TextEngineTest
                 this.DictItems = new Dictionary<string, object>();
                 this.DictItems["str1"] = "string var";
                
-            }
-        }
-        public class TestClass
-        { 
-            public void TestFunction(TestAssignClass tac)
-            {
-
             }
         }
         private void AssignTest()

@@ -176,7 +176,8 @@ namespace TextEngine.XPathClasses
                                     var method = XPathFunctions.GetMetohdByName(prevexp.Value.ToString());
                                     if (method != null)
                                     {
-                                        expvalue = ComputeActions.CallMethodDirect(XPathFunctions, method, (object[])expvalue);
+                                        bool iscalled = false;
+                                        expvalue = ComputeActions.CallMethodDirect(XPathFunctions, method, (object[])expvalue, out iscalled);
                                         if (curvalue == null)
                                         {
                                             curvalue = expvalue;

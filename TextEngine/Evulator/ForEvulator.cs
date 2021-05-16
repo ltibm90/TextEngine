@@ -33,8 +33,7 @@ namespace TextEngine.Evulator
             {
                 if (startAttr.ParData == null)
                 {
-                    startAttr.ParData = new ParDecoder.ParDecode(start);
-                    startAttr.ParData.Decode();
+                    startAttr.ParData =  this.CreatePardecode(start);
                 }
                 startres = this.EvulatePar(startAttr.ParData, vars);
             }
@@ -47,8 +46,7 @@ namespace TextEngine.Evulator
             {
                 if (stepAttr.ParData == null)
                 {
-                    stepAttr.ParData = new ParDecoder.ParDecode(step);
-                    stepAttr.ParData.Decode();
+                    stepAttr.ParData = this.CreatePardecode(step);
                 }
                 stepres = this.EvulatePar(stepAttr.ParData, vars);
             }

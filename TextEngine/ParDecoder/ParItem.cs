@@ -131,11 +131,12 @@ namespace TextEngine.ParDecoder
                         {
                             if(this.BaseDecoder.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
                             {
+                                bool iscalled = false;
                                 if (paritem.BaseDecoder != null && paritem.BaseDecoder.SurpressError)
                                 {
                                     try
                                     {
-                                        currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars, this.BaseDecoder);
+                                        currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, out iscalled, localvars, this.BaseDecoder);
                                     }
                                     catch
                                     {
@@ -145,7 +146,7 @@ namespace TextEngine.ParDecoder
                                 }
                                 else
                                 {
-                                    currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, localvars, this.BaseDecoder);
+                                    currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, out iscalled, localvars, this.BaseDecoder);
                                 }
                             }
                             else

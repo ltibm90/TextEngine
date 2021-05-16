@@ -259,16 +259,27 @@ namespace TextEngine.ParDecoder
             return item1;
         }
 
-        public static object CallMethodSingle(object @object, string name, object[] @params)
+        public static object CallMethodSingle(object @object, string name, object[] @params, out bool iscalled)
         {
-            if (@object == null) return null;
+            iscalled = false;
+            if (@object is MultiObject varsList)
+            {
+                for (int i = 0; i < varsList.Count; i++)
+                {
+                    if (varsList.Get(i) == null) continue;
+                    var res = CallMethodSingle(varsList.Get(i), name, @params, out iscalled);
+                    if (iscalled) return res;
+                }
+                return null;
+            }
+
             MethodInfo method = null;
             if(@object is  IDictionary<string, object> dict)
             {
                 if (!dict.TryGetValue(name, out object obj)) return null;
                 if(obj is Delegate d)
                 {
-                    return CallMethodDirect(d.Target, d.Method, @params, true);
+                    return CallMethodDirect(d.Target, d.Method, @params, out iscalled, true);
                 }
                 return null;
             }
@@ -279,12 +290,13 @@ namespace TextEngine.ParDecoder
                 if(method == null)
                 {
                     var prop = obj_type.GetProperty(name);
-                    if(prop.CanRead)
+                    if(prop != null && prop.CanRead)
                     {
                         var value = prop.GetValue(@object, null);
                         if(value is Delegate d)
                         {
-                            return CallMethodDirect(d.Target, d.Method, @params, true);
+
+                            return CallMethodDirect(d.Target, d.Method, @params, out iscalled, true);
                         }
                     }
                 }
@@ -292,26 +304,29 @@ namespace TextEngine.ParDecoder
 
             //var method = obj_type.GetMethod(name);
 
-            return CallMethodDirect(@object, method, @params);
+            return CallMethodDirect(@object, method, @params, out iscalled);
 
         }
-        public static object CallMethodDirect(object @object, MethodInfo method, object[] @params, bool isdelegate = false)
+        public static object CallMethodDirect(object @object, MethodInfo method, object[] @params, out bool iscalled, bool isdelegate = false)
         {
+            iscalled = false;
             if (method == null) return null;
             var convertedParams = ParamUtil.MatchParams(@params, method.GetParameters());
             if (method != null)
             {
                 if (method.IsPublic || isdelegate)
                 {
+                    iscalled = true;
                     return method.Invoke(@object, convertedParams.ToArray());
                 }
             }
             return null;
         }
         /**  @param $item InnerItem */
-        public static object CallMethod(string name, object[] @params, object vars, object localvars = null, ParDecode sender = null)
+        public static object CallMethod(string name, object[] @params, object vars, out bool iscalled, object localvars = null, ParDecode sender = null)
         {
             int dpos = name.IndexOf("::");
+            iscalled = false;
             if (vars == null && sender != null && dpos >= 0)
             {
                 var clsname = name.Substring(0, dpos);
@@ -324,12 +339,14 @@ namespace TextEngine.ParDecoder
                         var cm = clsttype.GetType().GetMethod(method);
                         if (cm != null)
                         {
+                            iscalled = true;
                             return cm.Invoke(null, @params);
                         }
                     }
                 }
             }
-            return CallMethodSingle(vars, name, @params);
+
+            return CallMethodSingle(vars, name, @params, out iscalled);
         }
 
         public static PropObject GetPropValue(InnerItem item, object vars, object localvars = null)
@@ -346,12 +363,12 @@ namespace TextEngine.ParDecoder
             }
             return res;
         }
-        public static PropObject GetPropInArray(string item, IList varsList)
+        public static PropObject GetPropInArray(string item, MultiObject varsList)
         {
             for (int i = 0; i < varsList.Count; i++)
             {
-                if (varsList[i] == null) continue;
-                var res = GetProp(item, varsList[i]);
+                if (varsList.Get(i) == null) continue;
+                var res = GetProp(item, varsList.Get(i));
                 if (res != null && res.PropType != PropType.Empty) return res;
             }
             return null;
@@ -359,9 +376,9 @@ namespace TextEngine.ParDecoder
         public static PropObject GetProp(string item, object vars)
         {
             var propObj = new PropObject();
-            if (vars is IList varsList)
+            if (vars is MultiObject varsList)
             {
-                return GetPropInArray(item, (IList) vars);
+                return GetPropInArray(item, varsList);
             }
 
             if (vars == null) return propObj;
