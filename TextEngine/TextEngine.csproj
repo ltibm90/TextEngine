@@ -4,7 +4,7 @@
 	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<Platforms>AnyCPU;x64;x86</Platforms>
-	<Version>1.4.0</Version>
+	<Version>1.4.1</Version>
 	<Authors>macmillan</Authors>
 	<AssemblyVersion>1.4.1.0</AssemblyVersion>
 	<FileVersion>1.4.1.0</FileVersion>
