@@ -9,32 +9,24 @@ namespace TextEngine.ParDecoder
     public class ParDecode
     {
 
-        public EvulatorTypes StaticTypes { get; private set; } = new EvulatorTypes();
-        public List<string> GlobalFunctions { get; set; } = new List<string>();
-
-        public Func<PardecodeFlags> OnGetFlags { get; set; }
-        public Predicate<PardecodeFlags> OnSetFlags { get; set; }
+        private ParDecodeAttributes _attributes;
+        public Func<ParDecodeAttributes> OnGetAttributes { get; set; }
        
-
+        public ParDecodeAttributes Attributes
+        {
+            get
+            {
+                ParDecodeAttributes attribs = null;
+                if (this.OnGetAttributes != null) attribs = this.OnGetAttributes();
+                if (attribs != null) return attribs;
+                if (this._attributes == null) this._attributes = new ParDecodeAttributes();
+                return this._attributes;
+            }
+        }
         public string Text { get; set; }
         private int TextLength { get { return this.Text.Length; } }
         private int pos;
         public ParItem items;
-        private PardecodeFlags flags;
-        public PardecodeFlags Flags
-        {
-            get
-            {
-                if (this.OnGetFlags != null) return this.OnGetFlags();
-                return this.flags;
-            }
-            set
-            {
-                if (this.OnSetFlags != null && this.OnSetFlags(value)) return;
-                this.flags = value;
-            }
-        }
-        public ParItemAssignReturnType AssignReturnType { get; set; }
 
 
         public bool SurpressError { get; set; }
@@ -52,12 +44,12 @@ namespace TextEngine.ParDecoder
 
         public ParDecode(string text)
         {
-            this.AssignReturnType = ParItemAssignReturnType.PIART_RETRUN_BOOL;
+
             this.Text = text;
             this.Items = new ParItem();
             this.Items.ParName = "(";
             this.Items.BaseDecoder = this;
-            this.Flags = PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess | PardecodeFlags.PDF_AllowArrayAccess;
+
         }
 
         public void Decode()

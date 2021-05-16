@@ -4,18 +4,22 @@
 	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<Platforms>AnyCPU;x64;x86</Platforms>
-	<Version>1.4.1</Version>
+	<Version>1.4.2</Version>
 	<Authors>macmillan</Authors>
-	<AssemblyVersion>1.4.1.0</AssemblyVersion>
-	<FileVersion>1.4.1.0</FileVersion>
+	<AssemblyVersion>1.4.2.0</AssemblyVersion>
+	<FileVersion>1.4.2.0</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>.Net fixed ForEvulator
-Fixed CallMethods for multiobject vars.
-Added iscalled parameters to CallMethodSingle and CallMethodDirect functions from ComputeActions
-Added MultiObject class
-Updated BaseEvulator class</PackageReleaseNotes>
+	<PackageReleaseNotes>Added ParDecodeAttributes class.
+Removed StaticTypes, GlobalFunctions, OnGetFlags, OnSetFlags, Flags, AssignReturnType and SurpressError properties from ParDecode class.
+Added OnGetAttributes and Attributes property to ParDecode flags.
+Removed ParFlags property from TextEvulator class.
+Added ParAttributes property to TextEvulator class.
+Added ParAttributes property to ParFormat class.
+Removed SurpressError and Flags property from ParFormat class.
+Added static FormatEx function to ParFormat class.
+Fixed global functions is not called.</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
   </PropertyGroup>
 

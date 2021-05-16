@@ -31,7 +31,19 @@ namespace TextEngine.Text
             set { elements = value; }
         }
         private bool NeedParse { get; set; }
-        public bool SurpressError { get; set; }
+        private bool m_surpressError;
+        public bool SurpressError
+        {
+            get
+            {
+                return this.m_surpressError;
+            }
+            set
+            {
+                this.m_surpressError = value;
+                this.ParAttributes.SurpressError = value;
+            }
+        }
         public bool ThrowExceptionIFPrevIsNull { get; set; }
         private int Depth { get; set; } = 0;
         public char LeftTag { get; set; } = '{';
@@ -64,8 +76,8 @@ namespace TextEngine.Text
         public Func<EvulatorHandler> EvulatorHandler { get; set; }
         public SpecialCharType SpecialCharOption { get; set; }
         public IntertwinedBracketsStateType IntertwinedBracketsState { get; set; }
-        public PardecodeFlags  ParFlags { get; set; }
 
+        public ParDecodeAttributes ParAttributes { get; private set; }
         public EvulatorHandler GetHandler()
         {
             return this.EvulatorHandler?.Invoke();
@@ -99,11 +111,11 @@ namespace TextEngine.Text
         {
             this.EvulatorTypes.Text = typeof(TextTagCommandEvulator);
             this.EvulatorTypes.Param = null;
-            this.ParFlags |= PardecodeFlags.PDF_AllowAssigment;
+            this.ParAttributes.Flags |= PardecodeFlags.PDF_AllowAssigment;
         }
         public TextEvulator(string text = null, bool isfile = false)
         {
-            this.ParFlags = PardecodeFlags.PDF_AllowArrayAccess | PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess;
+            this.ParAttributes = new ParDecodeAttributes();
             this.IntertwinedBracketsState = IntertwinedBracketsStateType.IBST_ALLOW_NOATTRIBUTED_AND_PARAM;
             this.CharMap = new Dictionary<char, string>();
             this.CustomDataDictionary = new Dictionary<string, object>();

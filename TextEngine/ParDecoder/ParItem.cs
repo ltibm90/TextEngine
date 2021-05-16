@@ -116,8 +116,10 @@ namespace TextEngine.ParDecoder
                         
                     }
                     object varnew = null;
+                    bool checkglobal = true;
                     if (lastvalue != null)
                     {
+                        checkglobal = false;
                         varnew = lastvalue;
                     }
                     else
@@ -129,14 +131,14 @@ namespace TextEngine.ParDecoder
 
                         if (paritem.ParName == "(")
                         {
-                            if(this.BaseDecoder.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
+                            if(this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
                             {
                                 bool iscalled = false;
                                 if (paritem.BaseDecoder != null && paritem.BaseDecoder.SurpressError)
                                 {
                                     try
                                     {
-                                        currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, out iscalled, localvars, this.BaseDecoder);
+                                        currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, out iscalled, localvars, this.BaseDecoder, checkglobal);
                                     }
                                     catch
                                     {
@@ -146,7 +148,7 @@ namespace TextEngine.ParDecoder
                                 }
                                 else
                                 {
-                                    currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, out iscalled, localvars, this.BaseDecoder);
+                                    currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, out iscalled, localvars, this.BaseDecoder, checkglobal);
                                 }
                             }
                             else
@@ -156,7 +158,7 @@ namespace TextEngine.ParDecoder
                         }
                         else if(paritem.ParName == "[")
                         {
-                            if(this.BaseDecoder.Flags.HasFlag(PardecodeFlags.PDF_AllowArrayAccess))
+                            if(this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowArrayAccess))
                             {
                                 lastPropObject = ComputeActions.GetProp(prevvalue, varnew); ;
                                 var prop = lastPropObject.Value;
@@ -330,7 +332,7 @@ namespace TextEngine.ParDecoder
                     string opstr = current.Value.ToString();
                     if(waitAssigmentObject == null && (opstr == "=" || opstr == "+=" || opstr == "-=" || opstr == "*=" || opstr == "/=" || opstr == "^="))
                     {
-                        if (totalOp <= 1 && (this.BaseDecoder.Flags & PardecodeFlags.PDF_AllowAssigment) != 0)
+                        if (totalOp <= 1 && (this.BaseDecoder.Attributes.Flags & PardecodeFlags.PDF_AllowAssigment) != 0)
                         {
                             waitAssigmentObject = lastPropObject;
                             assigment = opstr;
@@ -513,7 +515,7 @@ namespace TextEngine.ParDecoder
                         if (xoperator.Value.ToString() == ".")
                         {
                             totalOp--;
-                            if(this.BaseDecoder.Flags.HasFlag( PardecodeFlags.PDF_AllowSubMemberAccess))
+                            if(this.BaseDecoder.Attributes.Flags.HasFlag( PardecodeFlags.PDF_AllowSubMemberAccess))
                             {
                                 lastPropObject = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
                                 lastvalue = lastPropObject.Value;
@@ -591,7 +593,7 @@ namespace TextEngine.ParDecoder
 
                     }
                 }
-                switch (this.BaseDecoder.AssignReturnType)
+                switch (this.BaseDecoder.Attributes.AssignReturnType)
                 {
                     case ParItemAssignReturnType.PIART_RETURN_NULL:
                         lastvalue = null;

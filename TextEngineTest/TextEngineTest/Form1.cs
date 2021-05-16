@@ -42,7 +42,7 @@ namespace TextEngineTest
             kv["random"] = (Func<int>)delegate () {
                 return new Random().Next(1, 100);
             };
-            pf.SurpressError = true;
+            pf.ParAttributes.SurpressError = true;
             pf.Text = "User: {%name}, Group: {%grup}, Random Number: {%random()}";
 
             //Short usage
@@ -129,7 +129,7 @@ namespace TextEngineTest
             p.Items.Add("item2");
             var pf = new ParFormat();
             pf.Text = "{%Items[0] = 'item1 changed'} {%ItemArrays = [1, 2, 3]} {%DictItems = {'a': 1, 'b': 2, 'c': 3}} {%DictItems.a += 5} {%StringProp = 'string'} {%IntProp = 1903}";
-            pf.Flags |= PardecodeFlags.PDF_AllowAssigment;
+            pf.ParAttributes.Flags |= PardecodeFlags.PDF_AllowAssigment;
             var res = pf.Apply(p);
         }
         private void CommandLineByLineText()
@@ -144,8 +144,41 @@ namespace TextEngineTest
             te.Parse();
             var res = te.EvulateValue();
         }
+        public class DenemeClass
+        {
+            public DenemeClass(bool isalt = false)
+            {
+                if (isalt) return;
+                this.AltClass = new DenemeClass(true);
+            }
+            public int Test()
+            {
+                return 1;
+            }
+            public DenemeClass AltClass { get; set; }
+        }
+        public class MyGlobalFunctions
+        {
+            public static int Clamp(int value, int min, int max)
+            {
+                if (value > max) value = max;
+                else if (value < min) value = min;
+                return value;
+            }
+        }
+        public void GlobalFunctionsTest()
+        {
+           var r = ParFormat.FormatEx("Value: {%Clamp(IntVal, 5, 15)}, IsNullOrEmpty test prop: {%String::IsNullOrEmpty(Test)}", new { Test= "a", IntVal = 25}, (m) => {
+                m.StaticTypes.GeneralType = typeof(MyGlobalFunctions);
+                m.StaticTypes["String"] = typeof(String);
+                m.GlobalFunctions.Add("String::");
+                m.GlobalFunctions.Add("::");
+            });
+            //Overloaded functions currently not supported.
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
+            GlobalFunctionsTest();
             AssignTest();
             CommandLineByLineText();
             DoTest();

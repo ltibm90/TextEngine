@@ -6,23 +6,20 @@ namespace TextEngine.ParDecoder
 {
     public class ParFormat
     {
-        private PardecodeFlags flags;
-        public PardecodeFlags Flags
-        {
-            get { return this.flags; }
-            set
-            {
-                this.flags = value;
-            }
-        }
         public ParFormat()
         {
-            this.Flags = PardecodeFlags.PDF_AllowArrayAccess | PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess;
+            this.Initialise();
         }
         public ParFormat(string text)
         {
             this.Text = text;
-            this.Flags = PardecodeFlags.PDF_AllowArrayAccess | PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess;
+            this.Initialise();
+        }
+        private void Initialise()
+        {
+
+            this.ParAttributes = new ParDecodeAttributes();
+            this.ParAttributes.AssignReturnType = ParItemAssignReturnType.PIART_RETURN_ASSIGNVALUE_OR_NULL;
         }
         private string text;
         public string Text {
@@ -37,7 +34,7 @@ namespace TextEngine.ParDecoder
             }
         }
         private List<ParFormatItem> FormatItems { get; set; }
-        public bool SurpressError { get; set; }
+        public ParDecodeAttributes ParAttributes { get; private set; }
         public string Apply(object data = null)
         {
             if (string.IsNullOrEmpty(this.Text)) return this.Text;
@@ -59,10 +56,8 @@ namespace TextEngine.ParDecoder
                     if(item.ParData == null)
                     {
                         item.ParData = new ParDecode(item.ItemText);
-                        item.ParData.OnGetFlags = () => this.Flags;
-                        item.ParData.AssignReturnType = ParItemAssignReturnType.PIART_RETURN_ASSIGNVALUE_OR_NULL;
+                        item.ParData.OnGetAttributes = () => this.ParAttributes;
                         item.ParData.Decode();
-                        item.ParData.SurpressError = this.SurpressError;
                     }
                     var cr = item.ParData.Items.Compute(data);
                     text.Append(cr.Result?.First()?.ToString());
@@ -70,12 +65,17 @@ namespace TextEngine.ParDecoder
             }
             return text.ToString();
         }
-       public static string Format(string s, object data = null)
+        public static string Format(string s, object data = null)
         {
             var pf = new ParFormat(s);
             return pf.Apply(data);
         }
-
+        public static string FormatEx(string s, object data = null, Action<ParDecodeAttributes> onInitialise = null)
+        {
+            var pf = new ParFormat(s);
+            if (onInitialise != null) onInitialise(pf.ParAttributes);
+            return pf.Apply(data);
+        }
         private void ParseFromString(string s)
         {
             int openedPar = 0;

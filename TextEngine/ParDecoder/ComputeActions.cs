@@ -211,8 +211,8 @@ namespace TextEngine.ParDecoder
 
             else
             {
-                if (item2 == null) item2 = "";
-                if (item1 == null) item1 = "";
+                //if (item2 == null) item2 = "";
+                //if (item1 == null) item1 = "";
                 if (TypeUtil.IsNumericType(item1) && TypeUtil.IsNumericType(item2) || TypeUtil.IsNumericType(item1) && item2.ToString().IsNumeric() || TypeUtil.IsNumericType(item2) && item1.ToString().IsNumeric())
                 {
                     var leftitem = (double)Convert.ChangeType(item1, typeof(double));
@@ -262,6 +262,7 @@ namespace TextEngine.ParDecoder
         public static object CallMethodSingle(object @object, string name, object[] @params, out bool iscalled)
         {
             iscalled = false;
+            if (@object == null) return null;
             if (@object is MultiObject varsList)
             {
                 for (int i = 0; i < varsList.Count; i++)
@@ -323,26 +324,35 @@ namespace TextEngine.ParDecoder
             return null;
         }
         /**  @param $item InnerItem */
-        public static object CallMethod(string name, object[] @params, object vars, out bool iscalled, object localvars = null, ParDecode sender = null)
+        public static object CallMethod(string name, object[] @params, object vars, out bool iscalled, object localvars = null, ParDecode sender = null, bool checkglobal = false)
         {
-            int dpos = name.IndexOf("::");
+           
             iscalled = false;
-            if (sender != null && dpos >= 0)
+            if (sender != null && checkglobal && sender.Attributes != null && sender.Attributes.StaticTypes != null && sender.Attributes.GlobalFunctions != null)
             {
-                var clsname = name.Substring(0, dpos);
-                var method = name.Substring(dpos + 2);
-                if (sender.GlobalFunctions.Contains(clsname + "::") || sender.GlobalFunctions.Contains(name))
+                int dpos = name.IndexOf("::");
+                Type clstype = null;
+                string methodName = name;
+                string clsname = "";
+                if(dpos >= 0)
                 {
-                    var clsttype = sender.StaticTypes[clsname];
-                    if (clsttype != null)
+                    clsname = name.Substring(0, dpos);
+                    methodName= name.Substring(dpos + 2);
+
+                }
+                if (sender.Attributes.GlobalFunctions.Contains(clsname + "::") || sender.Attributes.GlobalFunctions.Contains(methodName))
+                {
+                    if (dpos == -1) clstype = sender.Attributes.StaticTypes.GeneralType;
+                    else clstype = sender.Attributes.StaticTypes[clsname];
+                }
+                if (clstype != null)
+                {
+                    var cm = clstype.GetMethod(methodName);
+                    if (cm != null && cm.IsStatic)
                     {
-                        var cm = clsttype.GetType().GetMethod(method);
-                        if (cm != null)
-                        {
-                            iscalled = true;
-                            return cm.Invoke(null, @params);
-                        }
+                        return CallMethodDirect(null, cm, @params, out iscalled);
                     }
+                    if (dpos >= 0) return null;
                 }
             }
 

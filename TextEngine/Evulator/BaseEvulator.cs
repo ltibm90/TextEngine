@@ -18,7 +18,7 @@ namespace TextEngine.Evulator
         protected ParDecode CreatePardecode(string text, bool decode = true)
         {
             var pd = new ParDecode(text);
-            pd.OnGetFlags = () => this.Evulator.ParFlags;
+            pd.OnGetAttributes = () => this.Evulator.ParAttributes;
             if (decode) pd.Decode();
             return pd;
         }
@@ -27,10 +27,6 @@ namespace TextEngine.Evulator
 
         protected object EvulatePar(ParDecode pardecoder, object additionalparams = null)
         {
-            if(pardecoder.SurpressError != this.Evulator.SurpressError)
-            {
-                pardecoder.SurpressError = this.Evulator.SurpressError;
-            }
             ComputeResult er = null;
             if(additionalparams == null)
             {

@@ -2,17 +2,21 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>TextEngine.x86</id>
-    <version>1.4.1.0</version>
+    <version>1.4.2.0</version>
     <authors>macmillan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/ltibm90/TextEngine</projectUrl>
     <description>Template/BBCode Engine x86 Version</description>
     <releaseNotes>
-      .Net fixed ForEvulator
-      Fixed CallMethods for multiobject vars.
-      Added iscalled parameters to CallMethodSingle and CallMethodDirect functions from ComputeActions
-      Added MultiObject class
-      Updated BaseEvulator class
+      Added ParDecodeAttributes class.
+      Removed StaticTypes, GlobalFunctions, OnGetFlags, OnSetFlags, Flags, AssignReturnType and SurpressError properties from ParDecode class.
+      Added OnGetAttributes and Attributes property to ParDecode flags.
+      Removed ParFlags property from TextEvulator class.
+      Added ParAttributes property to TextEvulator class.
+      Added ParAttributes property to ParFormat class.
+      Removed SurpressError and Flags property from ParFormat class.
+      Added static FormatEx function to ParFormat class.
+      Fixed global functions is not called.
     </releaseNotes>
     <repository url="https://github.com/ltibm90/TextEngine" />
     <dependencies>

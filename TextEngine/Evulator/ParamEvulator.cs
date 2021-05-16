@@ -17,8 +17,7 @@ namespace TextEngine.Evulator
             }
             if(tag.ParData == null)
             {
-                tag.ParData = new ParDecoder.ParDecode(tag.ElemName);
-                tag.ParData.Decode();
+                tag.ParData = this.CreatePardecode(tag.ElemName);
             }
             result.TextContent += this.EvulatePar(tag.ParData, vars);
             return result;
