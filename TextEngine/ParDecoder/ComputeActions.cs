@@ -327,7 +327,7 @@ namespace TextEngine.ParDecoder
         {
             int dpos = name.IndexOf("::");
             iscalled = false;
-            if (vars == null && sender != null && dpos >= 0)
+            if (sender != null && dpos >= 0)
             {
                 var clsname = name.Substring(0, dpos);
                 var method = name.Substring(dpos + 2);
