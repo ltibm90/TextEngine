@@ -28,8 +28,6 @@ namespace TextEngine.ParDecoder
         private int pos;
         public ParItem items;
 
-
-        public bool SurpressError { get; set; }
         public ParItem Items
         {
             get
@@ -75,7 +73,7 @@ namespace TextEngine.ParDecoder
                     parentItem = parentItem.Parent;
                     if (parentItem == null)
                     {
-                        if (this.SurpressError)
+                        if (this.Attributes.SurpressError)
                         {
                             parentItem = this.Items;
                             continue;

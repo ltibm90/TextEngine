@@ -134,7 +134,7 @@ namespace TextEngine.ParDecoder
                             if(this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
                             {
                                 bool iscalled = false;
-                                if (paritem.BaseDecoder != null && paritem.BaseDecoder.SurpressError)
+                                if (paritem.BaseDecoder != null && paritem.BaseDecoder.Attributes.SurpressError)
                                 {
                                     try
                                     {

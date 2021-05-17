@@ -2,14 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>TextEngine.x86</id>
-    <version>1.4.2.1</version>
+    <version>1.4.2.2</version>
     <authors>macmillan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/ltibm90/TextEngine</projectUrl>
     <description>Template/BBCode Engine x86 Version</description>
     <releaseNotes>
-        Added supports &lt;&lt; and &gt;&gt; operator.
-        Added |=, &amp;=, &lt;&lt;= and &gt;&gt;= for assigment operator.
+      Removed SurpressError property from ParDecoder
     </releaseNotes>
     <repository url="https://github.com/ltibm90/TextEngine" />
     <dependencies>
