@@ -110,6 +110,9 @@ namespace TextEngineTest
         public class TestAssignClass
         {
             public int IntProp { get; set; }
+            public int IntProp2 { get; set; }
+            public int IntProp3 { get; set; }
+            public int IntProp4 { get; set; }
             public string StringProp { get; set; }
             public List<string> Items { get; set; }
             public int[] ItemArrays { get; set; }
@@ -176,8 +179,22 @@ namespace TextEngineTest
             });
             //Overloaded functions currently not supported.
         }
+        private void OperatorsTest()
+        {
+            TestAssignClass test = new TestAssignClass();
+            test.IntProp = 3; //Assigmenting... first: 7, last: 4
+            test.IntProp2 = 0; //Assigmenting... first: 16, last: 0
+            test.IntProp3 = 1; //After assigment 16
+            test.IntProp4 = 4; //After assigment 2
+            //Returned 71640162
+            var r = ParFormat.FormatEx("{%IntProp |= 4}{%IntProp2 = 1 << 4}{%IntProp &= 4}{%IntProp2 = 1 >> 4}{%IntProp3 <<= 4}{%IntProp4 >>= 1}", test, (m) => {
+                m.Flags |= PardecodeFlags.PDF_AllowAssigment;
+            });
+           
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
+            OperatorsTest();
             GlobalFunctionsTest();
             AssignTest();
             CommandLineByLineText();

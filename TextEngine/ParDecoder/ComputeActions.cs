@@ -250,6 +250,10 @@ namespace TextEngine.ParDecoder
                             return (long)leftitem & (long)rightitem;
                         case "|":
                             return (long)leftitem | (long)rightitem;
+                        case "<<":
+                            return (int)leftitem << (int)rightitem;
+                        case ">>":
+                            return (int)leftitem >> (int)rightitem;
                         default:
                             break;
                     }
@@ -471,9 +475,9 @@ namespace TextEngine.ParDecoder
         {
             var ar = new AssignResult();
             if (probObj == null || probObj.Indis == null) return ar;
-            if(op.Length == 2)
+            if(op.Length > 1)
             {
-               value = ComputeActions.OperatorResult(probObj.Value, value ,op[0].ToString());
+               value = ComputeActions.OperatorResult(probObj.Value, value , op.Substring(0, op.Length - 1));
             }
             bool matchResult = false;
             if (probObj.PropType == PropType.Property)

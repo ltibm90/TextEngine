@@ -11,7 +11,7 @@ namespace TextEngine.ParDecoder
 
         private ParDecodeAttributes _attributes;
         public Func<ParDecodeAttributes> OnGetAttributes { get; set; }
-       
+
         public ParDecodeAttributes Attributes
         {
             get
@@ -75,7 +75,7 @@ namespace TextEngine.ParDecoder
                     parentItem = parentItem.Parent;
                     if (parentItem == null)
                     {
-                        if(this.SurpressError)
+                        if (this.SurpressError)
                         {
                             parentItem = this.Items;
                             continue;
@@ -100,9 +100,14 @@ namespace TextEngine.ParDecoder
             {
                 var cur = this.Text[i];
                 char next = '\0';
+                char next2 = '\0';
                 if (i + 1 < this.TextLength)
                 {
                     next = this.Text[i + 1];
+                }
+                if (i + 2 < this.TextLength)
+                {
+                    next2 = this.Text[i + 2];
                 }
                 if (inspec)
                 {
@@ -145,9 +150,9 @@ namespace TextEngine.ParDecoder
                             this.pos = i - 1;
                             return innerItems;
                         }
-                        if(autopar && (cur == '?' || cur == ':' || cur == '=' || cur == '<' || cur == '>' || (cur == '!' && next == '=')))
+                        if (autopar && (cur == '?' || cur == ':' || cur == '=' || cur == '<' || cur == '>' || (cur == '!' && next == '=')))
                         {
-                           
+
                             if ((cur == '=' && next == '>') || (cur == '!' && next == '=') || (cur == '>' && next == '=') || (cur == '<' && next == '='))
                             {
                                 this.pos = i;
@@ -166,11 +171,21 @@ namespace TextEngine.ParDecoder
                             {
                                 IsOperator = true
                             };
-                            if ((cur == '=' && next == '>') || (cur == '!' && next == '=') || (cur == '>' && next == '=') || (cur == '<' && next == '=')
-                                 || (cur == '+' && next == '=') || (cur == '-' && next == '=') || (cur == '*' && next == '=') || (cur == '/' && next == '=') || (cur == '^' && next == '='))
+                            if ((cur == '<' && next == '<') || (cur == '>' && next == '>') || (cur == '=' && next == '>') || (cur == '!' && next == '=') || (cur == '>' && next == '=') || (cur == '<' && next == '=')
+                                 || (cur == '+' && next == '=') || (cur == '-' && next == '=') || (cur == '*' && next == '=') || (cur == '/' && next == '=') || (cur == '^' && next == '=')
+                                 || (cur == '&' && next == '=') || (cur == '|' && next == '='))
                             {
-                                inner2.Value = cur.ToString() + next.ToString();
-                                i++;
+                                if (next2 == '=' && ((cur == '<' && next == '<') || (cur == '>' && next == '>')))
+                                {
+                                    inner2.Value = cur.ToString() + next.ToString() + next2.ToString();
+                                    i+=2;
+                                }
+                                else
+                                {
+                                    inner2.Value = cur.ToString() + next.ToString();
+                                    i++;
+                                }
+
                             }
                             else if ((cur == '=' || cur == '&' || cur == '|') && cur == next)
                             {
@@ -181,10 +196,10 @@ namespace TextEngine.ParDecoder
                             {
                                 inner2.Value = cur.ToString();
                             }
-                            string valuestr =(string) inner2.Value;
+                            string valuestr = (string)inner2.Value;
                             innerItems.Add(inner2);
                             qutochar = '\0';
-                            if (valuestr == "=" ||valuestr == "<=" || valuestr == ">=" || valuestr == "<" || valuestr == ">" || valuestr == "!=" || valuestr == "==")
+                            if (valuestr == "=" || valuestr == "<=" || valuestr == ">=" || valuestr == "<" || valuestr == ">" || valuestr == "!=" || valuestr == "==")
                             {
                                 //this.pos = i - 1;
                                 this.pos = i;
@@ -239,7 +254,7 @@ namespace TextEngine.ParDecoder
                 if (current == "true" || current == "false")
                 {
                     inner.InnerType = InnerType.TYPE_BOOLEAN;
-                    if(current == "true")
+                    if (current == "true")
                     {
                         inner.Value = true;
                     }
