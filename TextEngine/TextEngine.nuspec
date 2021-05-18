@@ -2,15 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>TextEngine.x86</id>
-    <version>1.4.3</version>
+    <version>1.4.3.1</version>
     <authors>macmillan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/ltibm90/TextEngine</projectUrl>
     <description>Template/BBCode Engine x86 Version</description>
     <releaseNotes>
-      Fixed dot character for numeric entry.
-      Added supportd %= operator.
-      Fixed someting.
+      Fixed TextTagCommandEvulator
     </releaseNotes>
     <repository url="https://github.com/ltibm90/TextEngine" />
     <dependencies>

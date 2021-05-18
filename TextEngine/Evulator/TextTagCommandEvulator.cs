@@ -18,7 +18,7 @@ namespace TextEngine.Evulator
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
-                line.Trim();
+                line = line.Trim();
                 if (string.IsNullOrEmpty(line)) continue;
                 this.EvulateText(line, vars);
             }
