@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using TextEngine.Evulator;
 using TextEngine.Extensions;
@@ -94,6 +96,7 @@ namespace TextEngine.ParDecoder
             char qutochar = '\0';
             var innerItems = new InnerItemsList();
             StringBuilder value = new StringBuilder();
+            bool valDotEntered = false;
             for (int i = start; i < this.TextLength; i++)
             {
                 var cur = this.Text[i];
@@ -138,9 +141,17 @@ namespace TextEngine.ParDecoder
                     cur == '<' || cur == '>' || cur == '{' ||
                     cur == '}' || (cur == ':' && next != ':') || cur == '?' || cur == '.')
                     {
+                            
                         if (value.Length > 0)
                         {
+                            if(cur == '.' && !valDotEntered && value.ToString().IsNumeric())
+                            {
+                                valDotEntered = true;
+                                value.Append(cur);
+                                continue;
+                            }
                             innerItems.Add(this.Inner(value.ToString(), qutochar));
+                            valDotEntered = false;
                             value.Clear();
                         }
                         if (cur == '[' || cur == '(' || cur == '{')
@@ -171,7 +182,7 @@ namespace TextEngine.ParDecoder
                             };
                             if ((cur == '<' && next == '<') || (cur == '>' && next == '>') || (cur == '=' && next == '>') || (cur == '!' && next == '=') || (cur == '>' && next == '=') || (cur == '<' && next == '=')
                                  || (cur == '+' && next == '=') || (cur == '-' && next == '=') || (cur == '*' && next == '=') || (cur == '/' && next == '=') || (cur == '^' && next == '=')
-                                 || (cur == '&' && next == '=') || (cur == '|' && next == '='))
+                                 || (cur == '&' && next == '=') || (cur == '|' && next == '=') || (cur == '%' && next == '='))
                             {
                                 if (next2 == '=' && ((cur == '<' && next == '<') || (cur == '>' && next == '>')))
                                 {
@@ -264,7 +275,7 @@ namespace TextEngine.ParDecoder
                 else if (inner.Quote == '\0' && current.IsNumeric())
                 {
                     inner.InnerType = InnerType.TYPE_NUMERIC;
-                    inner.Value = double.Parse(current.ToString());
+                    inner.Value = double.Parse(current.ToString(), System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture);
                 }
                 else
                 {

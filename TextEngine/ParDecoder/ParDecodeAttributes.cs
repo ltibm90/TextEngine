@@ -14,9 +14,9 @@ namespace TextEngine.ParDecoder
         public virtual bool SurpressError { get; set; }
         public ParDecodeAttributes()
         {
-            this.Iinitialise();
+            this.Initialise();
         }
-        protected virtual void Iinitialise()
+        protected virtual void Initialise()
         {
             this.GlobalFunctions = new List<string>();
             this.StaticTypes = new EvulatorTypes();

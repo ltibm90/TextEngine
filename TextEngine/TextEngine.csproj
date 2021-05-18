@@ -4,14 +4,16 @@
 	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<Platforms>AnyCPU;x64;x86</Platforms>
-	<Version>1.4.2.3</Version>
+	<Version>1.4.3</Version>
 	<Authors>macmillan</Authors>
-	<AssemblyVersion>1.4.2.3</AssemblyVersion>
-	<FileVersion>1.4.2.3</FileVersion>
+	<AssemblyVersion>1.4.3.0</AssemblyVersion>
+	<FileVersion>1.4.3.0</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>Fixed bugs</PackageReleaseNotes>
+	<PackageReleaseNotes>Fixed dot character for numeric entry.
+Added supportd %= operator.
+Fixed someting.</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
   </PropertyGroup>
 

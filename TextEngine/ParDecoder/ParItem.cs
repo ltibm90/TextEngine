@@ -331,7 +331,7 @@ namespace TextEngine.ParDecoder
                     }
                     string opstr = current.Value.ToString();
                     if(waitAssigmentObject == null && (opstr == "=" || opstr == "+=" || opstr == "-=" || opstr == "*=" || opstr == "/=" || opstr == "^=" || opstr == "|=" 
-                        || opstr == "&=" || opstr == "<<=" || opstr == ">>="))
+                        || opstr == "&=" || opstr == "<<=" || opstr == ">>=" || opstr == "%="))
                     {
                         if (totalOp <= 1 && (this.BaseDecoder.Attributes.Flags & PardecodeFlags.PDF_AllowAssigment) != 0)
                         {

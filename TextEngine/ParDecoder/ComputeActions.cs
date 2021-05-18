@@ -522,7 +522,16 @@ namespace TextEngine.ParDecoder
                 ar.Success = true;
                 return ar;
             }
+            else if(probObj.PropType == PropType.KeyValues)
+            {
+                if (probObj.Indis == null) return ar;
+                var kv = (KeyValues<object>) probObj.PropertyInfo;
+                if (kv == null) return null;
+                kv.Set(probObj.Indis.ToString(), value);
+                ar.AssignedValue = value;
+                ar.Success = true;
 
+            }
             return ar;
         }
 
