@@ -18,7 +18,6 @@ namespace TextEngine.ParDecoder
         }
         protected virtual void Iinitialise()
         {
-            this.Flags = this.Flags = PardecodeFlags.PDF_AllowMethodCall | PardecodeFlags.PDF_AllowSubMemberAccess | PardecodeFlags.PDF_AllowArrayAccess;
             this.GlobalFunctions = new List<string>();
             this.StaticTypes = new EvulatorTypes();
             this.AssignReturnType = ParItemAssignReturnType.PIART_RETRUN_BOOL;

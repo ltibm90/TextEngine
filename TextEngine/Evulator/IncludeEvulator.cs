@@ -17,7 +17,7 @@ namespace TextEngine.Evulator
         private TextEvulateResult Render_Parse(TextElement tag, object vars)
         {
             var loc = this.GetLastDir() + this.EvulateAttribute(tag.ElemAttr["name"], vars)?.ToString();
-            if (!this.ConditionSuccess(tag, "if") || !File.Exists(loc)) return null;
+            if (!this.ConditionSuccess(tag, "if", vars) || !File.Exists(loc)) return null;
             this.SetLocal("_DIR_", Path.GetDirectoryName(loc));
             string xpath = tag.GetAttribute("xpath");
             bool xpathold = false;

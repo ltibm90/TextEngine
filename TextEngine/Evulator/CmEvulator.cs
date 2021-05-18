@@ -13,7 +13,7 @@ namespace TextEngine.Evulator
         {
             if (string.IsNullOrEmpty(tag.ElemAttr.FirstAttribute?.Name)) return null;
             var name = tag.ElemAttr.FirstAttribute.Name;
-		    var cr = this.ConditionSuccess(tag, "if");
+		    var cr = this.ConditionSuccess(tag, "if", vars);
             if (!cr) return null;
             if (string.IsNullOrEmpty(name)) return null;
 		    var element = this.GetMacroElement(name);

@@ -14,7 +14,7 @@ namespace TextEngine.Evulator
             int loop_count = 0;
             var result = new TextEvulateResult();
             result.Result = TextEvulateResultEnum.EVULATE_TEXT;
-            while (this.ConditionSuccess(tag))
+            while (this.ConditionSuccess(tag, "*", vars))
             {
                 this.SetLocal("loop_count", loop_count++);
                 var cresult = tag.EvulateValue(0, 0, vars);
