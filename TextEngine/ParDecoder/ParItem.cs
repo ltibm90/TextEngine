@@ -131,6 +131,7 @@ namespace TextEngine.ParDecoder
 
                         if (paritem.ParName == "(")
                         {
+                            lastPropObject = null;
                             if(this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
                             {
                                 bool iscalled = false;
@@ -267,7 +268,9 @@ namespace TextEngine.ParDecoder
                         {
 
                             lastPropObject = ComputeActions.GetPropValue(current, vars, localvars);
-                            currentitemvalue = lastPropObject.Value;
+                            if (lastPropObject == null) currentitemvalue = null;
+                            else currentitemvalue = lastPropObject.Value;
+
                         }
                     }
                 }
@@ -487,11 +490,19 @@ namespace TextEngine.ParDecoder
                         {
                             if (xoperator.Value.ToString() == ".")
                             {
-                                if(currentitemvalue != null && !string.IsNullOrEmpty(currentitemvalue.ToString()))
+                                if (this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowSubMemberAccess))
                                 {
-                                    lastPropObject = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
-                                    lastvalue = lastPropObject.Value;
+                                    if (currentitemvalue != null && !string.IsNullOrEmpty(currentitemvalue.ToString()))
+                                    {
+                                        lastPropObject = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
+                                        lastvalue = lastPropObject.Value;
+                                    }
                                 }
+                                else
+                                {
+
+                                }
+  
                             }
                             else
                             {

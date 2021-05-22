@@ -192,6 +192,15 @@ namespace TextEngineTest
             });
            
         }
+        public class Class3
+        {
+            public string Test { get; set; }
+        }
+        public class Class2
+        {
+            public string StartupPosition { get; set; }
+            public bool UseFenFormat { get; set; }
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
             OperatorsTest();
