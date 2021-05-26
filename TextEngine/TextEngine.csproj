@@ -4,16 +4,31 @@
 	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<Platforms>AnyCPU;x64;x86</Platforms>
-	<Version>1.4.3.2</Version>
+	<Version>1.5.0.0</Version>
 	<Authors>macmillan</Authors>
-	<AssemblyVersion>1.4.3.2</AssemblyVersion>
-	<FileVersion>1.4.3.2</FileVersion>
+	<AssemblyVersion>1.5.0.0</AssemblyVersion>
+	<FileVersion>1.5.0.0</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>Fixed TextTagCommandEvulator Split problem.
-Fixed ParItem GetPropValue method.
-Fixed ParDecode bug.</PackageReleaseNotes>
+	<PackageReleaseNotes>User now handle Accessing Property at ParAttributes class.
+NoParse flagged tag now supports parameter tag(optional).
+Added TextParamEvulator class
+TextTagCommandEvulator class now support semicolon.
+Removed in_noparse and noparse_tag properties from TextEvulatorParser.
+Added TEF_NoParse_AllowParam flag to TextElementFlags enums.
+Added ReturnEmptyIfTextEvulatorIsNull property to TextEvulator class.
+Added SCT_AllowedNoParseWithParamTagOnly flag to SpecialCharTpye enum.
+Added OnPropertyAccess property to ParDecodeAttributes class.
+Added ParProperty class
+Added ParTracer, ParTraceItem class
+Added ParTraceFlags enum.
+Added Attributes property to ParItem class
+Added AllowAccessProperty and AddToTrace functions to ParItem class.
+Added RestrictedProperties to ParDecodeAttributes
+Added EvulatorOptions class
+Added Options property to EvulatorTypes class, user can limit Loop action.
+Added Options property to BaseEvulator class.</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
   </PropertyGroup>
 

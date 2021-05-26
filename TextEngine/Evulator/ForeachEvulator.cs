@@ -34,6 +34,7 @@ namespace TextEngine.Evulator
                 {
                     break;
                 }
+                if (this.Options.Max_ForEach_Loop != 0 && loop_count - 1 > this.Options.Max_ForEach_Loop) break;
             }
             this.DestroyLocals();
             result.Result = TextEvulateResultEnum.EVULATE_TEXT;

@@ -6,7 +6,7 @@ namespace TextEngine.Misc
 {
     public class StringUtils
     {
-        public static List<string> SplitLineWithQuote(string text)
+        public static List<string> SplitLineWithQuote(string text, bool splitsemicolon = false)
         {
             List<string> all = new List<string>();
             char quotechar = '0';
@@ -18,10 +18,10 @@ namespace TextEngine.Misc
                 if (quotechar == '0' && (cur == '\'' || cur == '"')) quotechar = cur;
                 else if (quotechar != '0' && cur == quotechar) quotechar = '0';
                 bool nextN = i + 1 < text.Length && text[i + 1] == '\n';
-                if (quotechar == '0' && (cur == '\n' || (cur == '\r')))
+                if (quotechar == '0' && (cur == '\n' || (cur == '\r') || (splitsemicolon && cur == ';')))
                 {
                     all.Add(text.Substring(start, i - start));
-                    if (nextN) i++;
+                    if (nextN && cur != ';') i++;
                     start = i + 1;
                 }
             }

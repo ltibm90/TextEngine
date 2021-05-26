@@ -2,15 +2,30 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>TextEngine.x86</id>
-    <version>1.4.3.2</version>
+    <version>1.5.0.0</version>
     <authors>macmillan</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <projectUrl>https://github.com/ltibm90/TextEngine</projectUrl>
     <description>Template/BBCode Engine x86 Version</description>
     <releaseNotes>
-      Fixed TextTagCommandEvulator Split problem.
-      Fixed ParItem GetPropValue method.
-      Fixed ParDecode bug.
+      User now handle Accessing Property at ParAttributes class.
+      NoParse flagged tag now supports parameter tag(optional).
+      Added TextParamEvulator class
+      TextTagCommandEvulator class now support semicolon.
+      Removed in_noparse and noparse_tag properties from TextEvulatorParser.
+      Added TEF_NoParse_AllowParam flag to TextElementFlags enums.
+      Added ReturnEmptyIfTextEvulatorIsNull property to TextEvulator class.
+      Added SCT_AllowedNoParseWithParamTagOnly flag to SpecialCharTpye enum.
+      Added OnPropertyAccess property to ParDecodeAttributes class.
+      Added ParProperty class
+      Added ParTracer, ParTraceItem class
+      Added ParTraceFlags enum.
+      Added Attributes property to ParItem class
+      Added AllowAccessProperty and AddToTrace functions to ParItem class.
+      Added RestrictedProperties to ParDecodeAttributes
+      Added EvulatorOptions class
+      Added Options property to EvulatorTypes class, user can limit Loop action.
+      Added Options property to BaseEvulator class.
     </releaseNotes>
     <repository url="https://github.com/ltibm90/TextEngine" />
     <dependencies>

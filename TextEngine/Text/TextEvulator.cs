@@ -78,6 +78,7 @@ namespace TextEngine.Text
         public IntertwinedBracketsStateType IntertwinedBracketsState { get; set; }
 
         public ParDecodeAttributes ParAttributes { get; private set; }
+        public bool ReturnEmptyIfTextEvulatorIsNull { get; set; }
         public EvulatorHandler GetHandler()
         {
             return this.EvulatorHandler?.Invoke();
@@ -182,6 +183,7 @@ namespace TextEngine.Text
             this.TagInfos["noparse"].Flags = TextElementFlags.TEF_NoParse;
             this.TagInfos["while"].Flags = TextElementFlags.TEF_NoAttributedTag;
             this.TagInfos["do"].Flags = TextElementFlags.TEF_NoAttributedTag;
+            this.TagInfos["text"].Flags = TextElementFlags.TEF_NoParse_AllowParam;
         }
         public void InitEvulator()
         {
@@ -204,6 +206,7 @@ namespace TextEngine.Text
             this.EvulatorTypes["include"] = typeof(IncludeEvulator);
             this.EvulatorTypes["while"] = typeof(WhileEvulator);
             this.EvulatorTypes["do"] = typeof(DoEvulator);
+            this.EvulatorTypes["text"] = typeof(TextParamEvulator);
         }
 
         public void InitAmpMaps()

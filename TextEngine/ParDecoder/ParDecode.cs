@@ -93,7 +93,7 @@ namespace TextEngine.ParDecoder
         {
             var inspec = false;
             var inquot = false;
-            char qutochar = '\0';
+            char quotechar = '\0';
             var innerItems = new InnerItemsList();
             StringBuilder value = new StringBuilder();
             bool valDotEntered = false;
@@ -130,7 +130,7 @@ namespace TextEngine.ParDecoder
                     if (cur == '\'' || cur == '\"')
                     {
                         inquot = true;
-                        qutochar = cur;
+                        quotechar = cur;
                         continue;
                     }
                     if (cur == '+' || cur == '-' || cur == '*' ||
@@ -150,7 +150,7 @@ namespace TextEngine.ParDecoder
                                 value.Append(cur);
                                 continue;
                             }
-                            innerItems.Add(this.Inner(value.ToString(), qutochar));
+                            innerItems.Add(this.Inner(value.ToString(), quotechar));
                             valDotEntered = false;
                             value.Clear();
                         }
@@ -207,7 +207,7 @@ namespace TextEngine.ParDecoder
                             }
                             string valuestr = (string)inner2.Value;
                             innerItems.Add(inner2);
-                            qutochar = '\0';
+                            quotechar = '\0';
                             if (valuestr == "=" || valuestr == "<=" || valuestr == ">=" || valuestr == "<" || valuestr == ">" || valuestr == "!=" || valuestr == "==")
                             {
                                 //this.pos = i - 1;
@@ -226,7 +226,7 @@ namespace TextEngine.ParDecoder
                 }
                 else
                 {
-                    if (cur == qutochar)
+                    if (cur == quotechar)
                     {
                         inquot = false;
                         continue;
@@ -241,9 +241,9 @@ namespace TextEngine.ParDecoder
                 value.Append(cur);
 
             }
-            if (value.Length > 0 || (qutochar == '\'' ||qutochar == '"'))
+            if (value.Length > 0 || (quotechar == '\'' || quotechar == '"'))
             {
-                innerItems.Add(this.Inner(value.ToString(), qutochar));
+                innerItems.Add(this.Inner(value.ToString(), quotechar));
             }
             this.pos = this.TextLength;
 

@@ -11,6 +11,13 @@ namespace TextEngine.Evulator
     {
         private KeyValues<object> localVars;
         protected TextEvulator Evulator { get; set; }   
+        public EvulatorOptions Options
+        {
+            get
+            {
+                return this.Evulator.EvulatorTypes.Options;
+            }
+        }
         public BaseEvulator()
         {
 

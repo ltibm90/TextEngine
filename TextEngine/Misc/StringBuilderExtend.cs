@@ -11,6 +11,7 @@ namespace TextEngine.Misc
         {
 
         }
+
         public void Append(string s)
         {
             sb.Append(s);
@@ -74,6 +75,10 @@ namespace TextEngine.Misc
                 item1.Append(item2.Text);
             }
             return item1;
+        }
+        public void Clear()
+        {
+            this.sb.Clear();
         }
 
     }

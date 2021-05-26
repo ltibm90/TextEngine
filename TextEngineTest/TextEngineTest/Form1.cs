@@ -176,7 +176,12 @@ namespace TextEngineTest
                 m.StaticTypes["String"] = typeof(String);
                 m.GlobalFunctions.Add("String::");
                 m.GlobalFunctions.Add("::");
-            });
+               m.OnPropertyAccess = (property) =>
+               {
+                   if (property.Name == "Clamp") return false;
+                   return true;
+               };
+           });
             //Overloaded functions currently not supported.
         }
         private void OperatorsTest()
@@ -201,8 +206,71 @@ namespace TextEngineTest
             public string StartupPosition { get; set; }
             public bool UseFenFormat { get; set; }
         }
+        private void TextTest()
+        {
+            TextEvulator te = new TextEvulator("{TEXT}This result is print {%3*4+5}{/TEXT}This is value is not print {TEXT}Result is print{/TEXT}");
+            //For disable parameter tag
+            te.TagInfos["text"].Flags = TextElementFlags.TEF_NoParse;
+
+            //For enable parameter tag
+            te.TagInfos["text"].Flags = TextElementFlags.TEF_NoParse_AllowParam; //Default
+
+            te.ReturnEmptyIfTextEvulatorIsNull = true;
+            te.EvulatorTypes.Text = null;
+            te.ParamNoAttrib = true;
+            te.Parse();
+            var r = te.EvulateValue();
+        }
+        public class SubClass
+        {
+            public string SubMember { get; set; }
+            public int SubMethod()
+            {
+                return 10;
+            }
+        }
+        public class TraceClass
+        {
+            public TraceClass()
+            {
+                this.SubItem = new SubClass();
+            }
+            public int IntProp { get; set; }
+            public bool TestMethod(int num)
+            {
+                return num > 0;
+            }
+            public SubClass SubItem { get; set; }
+        }
+        private void TracenRestrictionAndHandleTest()
+        {
+            TextEvulator te = new TextEvulator("IntProp = 5\r\nTestMethod(5)\r\nSubItem.SubMember = 'testString'\r\nSubItem.SubMethod()");
+            te.ApplyCommandLineByLine();
+            te.ParAttributes.Tracing.Enabled = true;
+            //Initialize first
+            te.ParAttributes.RestrictedProperties = new Dictionary<string, ParPropRestrictedType>();
+            //Restricted IntProp Get and Set
+            te.ParAttributes.RestrictedProperties["IntProp"] = ParPropRestrictedType.PRT_RESTRICT_GET | ParPropRestrictedType.PRT_RESTRICT_SET;
+            //or
+            te.ParAttributes.RestrictedProperties["IntProp"] = ParPropRestrictedType.PRT_RESTRICT_ALL;
+            te.ParAttributes.OnPropertyAccess = (prop) =>
+            {
+                //Prevent to access property if returned false
+                // return false;
+                return true;
+            };
+            te.EvulateValue(new TraceClass());
+            if((bool)te.ParAttributes.Tracing.GetField("TestMethod").Value)
+            {
+                MessageBox.Show("Test Method returned true");
+            }
+            
+
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
+            TracenRestrictionAndHandleTest();
+            TextTest();
             OperatorsTest();
             GlobalFunctionsTest();
             AssignTest();

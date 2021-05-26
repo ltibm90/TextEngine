@@ -77,6 +77,7 @@ namespace TextEngine.Evulator
             tonum = (int)Convert.ChangeType(tores, TypeCode.Int32);
 		    var result = new TextEvulateResult();
             this.CreateLocals();
+            int loop_count = 0;
             for (int i = startnum; i < tonum; i += stepnum)
 		    {
                 this.SetLocal(varname, i);
@@ -93,6 +94,7 @@ namespace TextEngine.Evulator
 			    {
                         break;
                 }
+                if (this.Options.Max_For_Loop != 0 && loop_count++ > this.Options.Max_For_Loop) break;
             }
             this.DestroyLocals();
             result.Result = TextEvulateResultEnum.EVULATE_TEXT;

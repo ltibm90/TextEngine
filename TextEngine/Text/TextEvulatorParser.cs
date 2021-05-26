@@ -10,9 +10,8 @@ namespace TextEngine.Text
     {
         public string Text { get; set; }
         private int pos = 0;
-        private bool in_noparse = false;
-        private string noparse_tag = "";
-       
+        private bool directclose = false;
+
         public int TextLength
         {
             get
@@ -81,7 +80,7 @@ namespace TextEngine.Text
                                 this.Evulator.IsParseMode = false;
                                 throw new Exception("Syntax Error");
                             }
-                            else if(currenttag == null)
+                            else if (currenttag == null)
                             {
                                 continue;
                             }
@@ -115,8 +114,8 @@ namespace TextEngine.Text
                             };
                             prevtag.CloseState = TextElementClosedType.TECT_CLOSED;
                             prevtag.TagInfo?.OnTagClosed?.Invoke(prevtag);
-                            bool  allowautocreation = !elem.HasFlag(TextElementFlags.TEF_PreventAutoCreation) && (elem.TagInfo.OnAutoCreating == null || elem.TagInfo.OnAutoCreating(elem));
-                            if(allowautocreation)
+                            bool allowautocreation = !elem.HasFlag(TextElementFlags.TEF_PreventAutoCreation) && (elem.TagInfo.OnAutoCreating == null || elem.TagInfo.OnAutoCreating(elem));
+                            if (allowautocreation)
                             {
                                 this.OnTagOpened(elem);
                                 if (previtem != null)
@@ -172,8 +171,6 @@ namespace TextEngine.Text
                 i = this.pos;
             }
             this.pos = 0;
-            this.in_noparse = false;
-            this.noparse_tag = "";
             this.Evulator.IsParseMode = false;
         }
         private TextElement GetNotClosedPrevTag(TextElement tag, string name)
@@ -275,23 +272,29 @@ namespace TextEngine.Text
             };
             bool istextnode = false;
             bool intag = false;
+            bool in_noparse = parent != null && (parent.HasFlag(TextElementFlags.TEF_NoParse) || parent.HasFlag(TextElementFlags.TEF_NoParse_AllowParam));
             for (int i = start; i < this.TextLength; i++)
             {
-                if (this.Evulator.NoParseEnabled && this.in_noparse)
+                var cur = this.Text[i];
+                var next = '\0';
+                if (i + 1 < this.TextLength)
+                {
+                    next = this.Text[i + 1];
+                }
+                if (in_noparse && cur == this.Evulator.LeftTag && (next != this.Evulator.ParamChar || !parent.HasFlag(TextElementFlags.TEF_NoParse_AllowParam)))
                 {
                     istextnode = true;
                     tagElement.SetTextTag(true);
                 }
                 else
                 {
-                    var cur = this.Text[i];
                     if (!inspec)
                     {
                         if (cur == this.Evulator.LeftTag)
                         {
                             if (intag)
                             {
-                                if(this.Evulator.SurpressError)
+                                if (this.Evulator.SurpressError)
                                 {
                                     tagElement.SetTextTag(true);
                                     tagElement.Value = this.Text.Substring(start, i - start);
@@ -307,7 +310,7 @@ namespace TextEngine.Text
                             intag = true;
                             continue;
                         }
-                        else if (this.Evulator.DecodeAmpCode && cur == '&')
+                        else if (!in_noparse && this.Evulator.DecodeAmpCode && cur == '&')
                         {
                             string ampcode = this.DecodeAmp(i + 1, false);
                             i = this.pos;
@@ -315,7 +318,7 @@ namespace TextEngine.Text
                             tagElement.ElementType = TextElementType.EntityReferenceNode;
                             if (ampcode.StartsWith("&") && this.Evulator.SurpressError)
                             {
-                                if(this.Evulator.SurpressError)
+                                if (this.Evulator.SurpressError)
                                 {
                                     tagElement.ElementType = TextElementType.TextNode;
                                 }
@@ -342,7 +345,7 @@ namespace TextEngine.Text
                     {
                         if (!intag)
                         {
-                            if(this.Evulator.SurpressError)
+                            if (this.Evulator.SurpressError)
                             {
                                 tagElement.SetTextTag(true);
                                 tagElement.Value = this.Text.Substring(start, i - start);
@@ -359,23 +362,21 @@ namespace TextEngine.Text
                 this.pos = i;
                 if (!intag || istextnode)
                 {
-                    tagElement.Value = this.ParseInner();
-                    if (!this.in_noparse && tagElement.ElementType == TextElementType.TextNode && string.IsNullOrEmpty(tagElement.Value))
+                    tagElement.Value = this.ParseInner(parent);
+                    if (!in_noparse && tagElement.ElementType == TextElementType.TextNode && string.IsNullOrEmpty(tagElement.Value))
                     {
                         return null;
                     }
                     intag = false;
-                    if (this.in_noparse)
+                    if (this.directclose && in_noparse)
                     {
                         parent.AddElement(tagElement);
                         var elem = new TextElement
                         {
                             Parent = parent,
-                            ElemName = this.noparse_tag,
+                            ElemName = parent.ElemName,
                             SlashUsed = true
                         };
-                        this.noparse_tag = "";
-                        this.in_noparse = false;
                         return elem;
                     }
                     return tagElement;
@@ -385,11 +386,7 @@ namespace TextEngine.Text
                     this.ParseTagHeader(ref tagElement);
                     intag = false;
                     if (string.IsNullOrEmpty(tagElement.ElemName)) return null;
-                    if (this.Evulator.NoParseEnabled && (tagElement.GetTagFlags() & TextElementFlags.TEF_NoParse) > 0)
-                    {
-                        this.in_noparse = true;
-                        this.noparse_tag = tagElement.ElemName;
-                    }
+
                     return tagElement;
 
                 }
@@ -522,16 +519,16 @@ namespace TextEngine.Text
                         inquot = true;
                         quotchar = cur;
                     }
-                    if(!inquot && cur == this.Evulator.LeftTag && tagElement.AllowIntertwinedPar)
+                    if (!inquot && cur == this.Evulator.LeftTag && tagElement.AllowIntertwinedPar)
                     {
                         totalPar++;
                     }
                     if (inquot || totalPar > 0 || (cur != this.Evulator.RightTag && tagElement.ElementType == TextElementType.Parameter) ||
-                        cur != this.Evulator.RightTag && (cur != '/' && next != this.Evulator.RightTag || 
+                        cur != this.Evulator.RightTag && (cur != '/' && next != this.Evulator.RightTag ||
                         (tagElement.TagFlags & TextElementFlags.TEF_DisableLastSlash) != 0))
                     {
                         if (!inquot && cur == this.Evulator.RightTag && totalPar > 0) totalPar--;
-                            current.Append(cur);
+                        current.Append(cur);
                         continue;
                     }
                 }
@@ -557,7 +554,7 @@ namespace TextEngine.Text
                     }
                     if (inquot && cur == quotchar)
                     {
-                        if(istagattrib)// if (currentName.ToString() == "##set_TAG_ATTR##")
+                        if (istagattrib)// if (currentName.ToString() == "##set_TAG_ATTR##")
                         {
                             tagElement.TagAttrib = current.ToString();
                             istagattrib = false;
@@ -601,7 +598,7 @@ namespace TextEngine.Text
                         }
                         if (namefound)
                         {
-                            if(next == this.Evulator.RightTag && (tagElement.TagFlags & TextElementFlags.TEF_DisableLastSlash) == 0)
+                            if (next == this.Evulator.RightTag && (tagElement.TagFlags & TextElementFlags.TEF_DisableLastSlash) == 0)
                             {
                                 lastslashused = true;
                             }
@@ -611,7 +608,7 @@ namespace TextEngine.Text
                         {
                             firstslashused = true;
                         }
-                        if((tagElement.TagFlags & TextElementFlags.TEF_DisableLastSlash) != 0)
+                        if ((tagElement.TagFlags & TextElementFlags.TEF_DisableLastSlash) != 0)
                         {
                             current.Append(cur);
                         }
@@ -621,7 +618,7 @@ namespace TextEngine.Text
                     {
                         if (namefound)
                         {
-                            if(istagattrib)
+                            if (istagattrib)
                             {
                                 current.Append(cur);
                             }
@@ -664,7 +661,7 @@ namespace TextEngine.Text
 
                     if (cur == this.Evulator.RightTag)
                     {
-                        if(totalPar > 0)
+                        if (totalPar > 0)
                         {
                             totalPar--;
                             current.Append(cur);
@@ -675,7 +672,7 @@ namespace TextEngine.Text
                             tagElement.ElemName = current.ToString();
                             current.Clear();
                         }
-                        if(tagElement.NoAttrib)
+                        if (tagElement.NoAttrib)
                         {
                             tagElement.Value = current.ToString();
                         }
@@ -684,7 +681,7 @@ namespace TextEngine.Text
                             tagElement.TagAttrib = current.ToString();
                             istagattrib = false;
                         }
-                        else if (currentName.Length > 0  && !tagElement.HasFlag(TextElementFlags.TEF_TagAttribonly))
+                        else if (currentName.Length > 0 && !tagElement.HasFlag(TextElementFlags.TEF_TagAttribonly))
                         {
                             tagElement.SetAttribute(currentName.ToString(), current.ToString());
                         }
@@ -698,9 +695,9 @@ namespace TextEngine.Text
                             tagElement.CloseState = TextElementClosedType.TECT_DIRECTCLOSED;
                         }
                         string elname = tagElement.ElemName.ToLowerInvariant();
-                        if((this.Evulator.TagInfos.GetElementFlags(elname) & TextElementFlags.TEF_AutoClosedTag) != 0)
+                        if ((this.Evulator.TagInfos.GetElementFlags(elname) & TextElementFlags.TEF_AutoClosedTag) != 0)
                         {
-                        
+
                             tagElement.CloseState = TextElementClosedType.TECT_AUTOCLOSED;
                         }
                         this.pos = i;
@@ -760,14 +757,15 @@ namespace TextEngine.Text
             }
             this.pos = this.TextLength;
         }
-        private string ParseInner(bool isat = false)
+        private string ParseInner(TextElement parent, bool isat = false)
         {
             StringBuilder text = new StringBuilder();
             bool inspec = false;
             StringBuilder nparsetext = new StringBuilder();
             bool parfound = false;
             StringBuilder waitspces = new StringBuilder();
-
+            bool in_noparse = parent != null && (parent.HasFlag(TextElementFlags.TEF_NoParse) || parent.HasFlag(TextElementFlags.TEF_NoParse_AllowParam));
+            this.directclose = false;
             for (int i = this.pos; i < this.TextLength; i++)
             {
                 var cur = this.Text[i];
@@ -780,17 +778,18 @@ namespace TextEngine.Text
                 }
                 if (cur == '\\')
                 {
-                    if (this.Evulator.SpecialCharOption == Misc.SpecialCharType.SCT_AllowedAll ||  (this.Evulator.SpecialCharOption == Misc.SpecialCharType.SCT_AllowedClosedTagOnly && next == this.Evulator.RightTag))
+                    if (this.Evulator.SpecialCharOption == SpecialCharType.SCT_AllowedAll || ((this.Evulator.SpecialCharOption & SpecialCharType.SCT_AllowedClosedTagOnly) != 0 && next == this.Evulator.RightTag) 
+                        || ((this.Evulator.SpecialCharOption & SpecialCharType.SCT_AllowedNoParseWithParamTagOnly) != 0 && in_noparse && parent.HasFlag(TextElementFlags.TEF_NoParse_AllowParam)))
                     {
                         inspec = true;
                         continue;
                     }
                 }
-                if(this.Evulator.AllowCharMap && cur != this.Evulator.LeftTag && cur != this.Evulator.RightTag && this.Evulator.CharMap.Keys.Count > 0)
+                if (this.Evulator.AllowCharMap && cur != this.Evulator.LeftTag && cur != this.Evulator.RightTag && this.Evulator.CharMap.Keys.Count > 0)
                 {
-                    if(this.Evulator.CharMap.TryGetValue(cur, out string str))
+                    if (this.Evulator.CharMap.TryGetValue(cur, out string str))
                     {
-                        if(parfound)
+                        if (parfound)
                         {
                             nparsetext.Append(str);
                         }
@@ -808,10 +807,11 @@ namespace TextEngine.Text
                 //    i = this.pos;
                 //    continue;
                 //}
-                if (this.Evulator.NoParseEnabled && this.in_noparse)
+                if (this.Evulator.NoParseEnabled && in_noparse)
                 {
                     if (parfound)
                     {
+
                         if (cur == this.Evulator.LeftTag || cur == '\r' || cur == '\n' || cur == '\t' || cur == ' ')
                         {
                             text.Append(this.Evulator.LeftTag + nparsetext.ToString());
@@ -820,10 +820,11 @@ namespace TextEngine.Text
                         }
                         else if (cur == this.Evulator.RightTag)
                         {
-                            if (nparsetext.ToString().ToLowerInvariant() == '/' + this.noparse_tag.ToLowerInvariant())
+                            if (nparsetext.ToString().ToLowerInvariant() == '/' + parent.ElemName.ToLowerInvariant())
                             {
                                 parfound = false;
                                 this.pos = i;
+                                this.directclose = true;
                                 if (this.Evulator.TrimStartEnd)
                                 {
                                     return text.ToString().Trim();
@@ -844,6 +845,16 @@ namespace TextEngine.Text
                     {
                         if (cur == this.Evulator.LeftTag)
                         {
+                            if (next == this.Evulator.ParamChar && parent.HasFlag(TextElementFlags.TEF_NoParse_AllowParam))
+                            {
+                                this.pos = i - 1;
+                                this.directclose = false;
+                                if (this.Evulator.TrimStartEnd)
+                                {
+                                    return text.ToString().Trim();
+                                }
+                                return text.ToString();
+                            }
                             parfound = true;
                             continue;
                         }

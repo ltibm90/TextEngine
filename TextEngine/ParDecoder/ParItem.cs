@@ -19,6 +19,14 @@ namespace TextEngine.ParDecoder
             this.InnerItems = new InnerItemsList();
 
         }
+        public ParDecodeAttributes Attributes
+        {
+            get
+            {
+                if (this.BaseDecoder == null) return null;
+                return this.BaseDecoder.Attributes;
+            }
+        }
         public ParDecode BaseDecoder { get; set; }
 
 
@@ -77,7 +85,9 @@ namespace TextEngine.ParDecoder
             PropObject lastPropObject = null;
             PropObject waitAssigmentObject = null;
             int totalOp = 0;
-            if(this.IsObject())
+            StringBuilderExtend propertyStr = new StringBuilderExtend();
+
+            if (this.IsObject())
             {
                 cr.Result.AddObject(new ExpandoObject());
             }
@@ -86,13 +96,13 @@ namespace TextEngine.ParDecoder
                 object currentitemvalue = null;
                 InnerItem current = this.InnerItems[i];
                 ParItem paritem = null;
-                if(current.IsParItem())
+                if (current.IsParItem())
                 {
                     paritem = current as ParItem;
                 }
-                if(stopdoubledot)
+                if (stopdoubledot)
                 {
-                    if(current.IsOperator && current.Value.ToString() == ":")
+                    if (current.IsOperator && current.Value.ToString() == ":")
                     {
                         break;
                     }
@@ -109,11 +119,11 @@ namespace TextEngine.ParDecoder
                     var subresult = paritem.Compute(vars, this, localvars);
                     string prevvalue = "";
                     bool previsvar = false;
-                    if(previtem != null && !previtem.IsOperator && previtem.Value != null)
+                    if (previtem != null && !previtem.IsOperator && previtem.Value != null)
                     {
                         previsvar = previtem.InnerType == InnerType.TYPE_VARIABLE;
                         prevvalue = previtem.Value.ToString();
-                        
+
                     }
                     object varnew = null;
                     bool checkglobal = true;
@@ -132,10 +142,13 @@ namespace TextEngine.ParDecoder
                         if (paritem.ParName == "(")
                         {
                             lastPropObject = null;
-                            if(this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
+                            if (this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowMethodCall))
                             {
                                 bool iscalled = false;
-                                if (paritem.BaseDecoder != null && paritem.BaseDecoder.Attributes.SurpressError)
+                                if (propertyStr.Length == 0) propertyStr = prevvalue;
+                                else propertyStr.Append("." + prevvalue);
+                                bool allowget = this.AllowAccessProperty(propertyStr, PropType.Method);
+                                if (allowget && paritem.BaseDecoder != null && paritem.BaseDecoder.Attributes.SurpressError)
                                 {
                                     try
                                     {
@@ -147,22 +160,32 @@ namespace TextEngine.ParDecoder
                                         currentitemvalue = null;
                                     }
                                 }
-                                else
+                                else if(allowget)
                                 {
                                     currentitemvalue = ComputeActions.CallMethod(prevvalue, subresult.Result.GetObjects(), varnew, out iscalled, localvars, this.BaseDecoder, checkglobal);
                                 }
+                                else
+                                {
+                                    currentitemvalue = null;
+                                }
+                                if(allowget) this.AddToTrace(propertyStr, PropType.Method, currentitemvalue, iscalled);
                             }
                             else
                             {
                                 //currentitemvalue = null;
                             }
                         }
-                        else if(paritem.ParName == "[")
+                        else if (paritem.ParName == "[")
                         {
-                            if(this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowArrayAccess))
+                            if (this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowArrayAccess))
                             {
-                                lastPropObject = ComputeActions.GetProp(prevvalue, varnew); ;
-                                var prop = lastPropObject.Value;
+                                if (propertyStr.Length == 0) propertyStr = prevvalue ;
+                                else propertyStr.Append("." + prevvalue);
+                                bool allowget = this.AllowAccessProperty(propertyStr, PropType.Indis);
+                                if (allowget) lastPropObject = ComputeActions.GetProp(prevvalue, varnew);
+                                else lastPropObject = null;
+                                object prop = null;
+                                if (lastPropObject != null) prop = lastPropObject.Value;
                                 if (prop != null)
                                 {
                                     if (PhpFuctions.is_array(prop))
@@ -171,7 +194,7 @@ namespace TextEngine.ParDecoder
                                         var aritem = prop as IList;
 
                                         currentitemvalue = aritem[indis];
-                                        lastPropObject.IndisParams = new object[] { indis};
+                                        lastPropObject.IndisParams = new object[] { indis };
                                         lastPropObject.PropType = PropType.Indis;
                                         lastPropObject.Indis = aritem;
                                     }
@@ -192,10 +215,11 @@ namespace TextEngine.ParDecoder
                                         lastPropObject = null;
                                     }
                                 }
+                                if(allowget) this.AddToTrace(propertyStr, PropType.Indis, currentitemvalue, lastPropObject != null && lastPropObject.PropType != PropType.Empty);
                             }
                             else
                             {
-                               
+
                                 //currentitemvalue = null;
                             }
 
@@ -203,13 +227,13 @@ namespace TextEngine.ParDecoder
                     }
                     else
                     {
-                        if(paritem.ParName == "(")
+                        if (paritem.ParName == "(")
                         {
                             currentitemvalue = subresult.Result[0];
                         }
-                        else if(paritem.ParName == "[")
+                        else if (paritem.ParName == "[")
                         {
-                            if(subresult.Result.KeysIncluded())
+                            if (subresult.Result.KeysIncluded())
                             {
                                 currentitemvalue = subresult.Result.ToDictionary();
                             }
@@ -217,9 +241,9 @@ namespace TextEngine.ParDecoder
                             {
                                 currentitemvalue = subresult.Result.GetObjects();
                             }
-                          
+
                         }
-                        else if(paritem.ParName == "{")
+                        else if (paritem.ParName == "{")
                         {
                             currentitemvalue = subresult.Result.First();
                         }
@@ -228,15 +252,15 @@ namespace TextEngine.ParDecoder
                 }
                 else
                 {
-                    if(!current.IsOperator && current.InnerType == InnerType.TYPE_VARIABLE &&  next != null && next.IsParItem())
+                    if (!current.IsOperator && current.InnerType == InnerType.TYPE_VARIABLE && next != null && next.IsParItem())
                     {
                         currentitemvalue = null;
                     }
                     else
                     {
-                        if(previtem != null && previtem.IsOperator)
+                        if (previtem != null && previtem.IsOperator)
                         {
-                            if(current.Value.ToString() == "+")
+                            if (current.Value.ToString() == "+")
                             {
                                 continue;
                             }
@@ -245,12 +269,12 @@ namespace TextEngine.ParDecoder
                                 minuscount++;
                                 continue;
                             }
-                         
-                        
+
+
                         }
                         currentitemvalue = current.Value;
                     }
-                    if (current.InnerType == InnerType.TYPE_VARIABLE && (next == null || !next.IsParItem()) && (xoperator == null || xoperator.Value.ToString() != ".") )
+                    if (current.InnerType == InnerType.TYPE_VARIABLE && (next == null || !next.IsParItem()) && (xoperator == null || xoperator.Value.ToString() != "."))
                     {
                         if (currentitemvalue == null || currentitemvalue.ToString() == "null")
                         {
@@ -267,14 +291,17 @@ namespace TextEngine.ParDecoder
                         else if (!this.IsObject())
                         {
 
-                            lastPropObject = ComputeActions.GetPropValue(current, vars, localvars);
+                            propertyStr = current.Value.ToString();
+                            bool allowget = this.AllowAccessProperty(propertyStr, PropType.Property);
+                            if (allowget) lastPropObject = ComputeActions.GetPropValue(current, vars, localvars);
+                            else lastPropObject = null;
                             if (lastPropObject == null) currentitemvalue = null;
                             else currentitemvalue = lastPropObject.Value;
-
+                            if(allowget) this.AddToTrace(propertyStr, PropType.Property, currentitemvalue, lastPropObject != null && lastPropObject.PropType != PropType.Empty);
                         }
                     }
                 }
-                if(unlemused)
+                if (unlemused)
                 {
                     currentitemvalue = !PhpFuctions.not_empty(currentitemvalue);
                     unlemused = false;
@@ -288,12 +315,12 @@ namespace TextEngine.ParDecoder
                         previtem = current;
                         continue;
                     }
-                    if ((this.IsParItem() && current.Value.ToString() == ",") || (this.IsArray() && current.Value.ToString() == "=>" && (waitvalue == null || waitvalue.ToString() == "")) || (this.IsObject() && current.Value.ToString() == ":" && (waitvalue == null || waitvalue.ToString() == "") ))
+                    if ((this.IsParItem() && current.Value.ToString() == ",") || (this.IsArray() && current.Value.ToString() == "=>" && (waitvalue == null || waitvalue.ToString() == "")) || (this.IsObject() && current.Value.ToString() == ":" && (waitvalue == null || waitvalue.ToString() == "")))
                     {
-                       
+
                         if (waitop2 != "")
                         {
-                            if(minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
+                            if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                             lastvalue = ComputeActions.OperatorResult(waitvalue2, lastvalue, waitop2);
                             waitvalue2 = null;
                             waitop2 = "";
@@ -309,9 +336,9 @@ namespace TextEngine.ParDecoder
                         }
                         if (current.Value.ToString() == ",")
                         {
-                            if(this.IsObject())
+                            if (this.IsObject())
                             {
-                               var exp = cr.Result.First<IDictionary<string, object>>();
+                                var exp = cr.Result.First<IDictionary<string, object>>();
                                 exp.Add(waitkey, lastvalue);
                             }
                             else
@@ -320,7 +347,7 @@ namespace TextEngine.ParDecoder
                             }
 
                             waitkey = "";
-                           
+
 
                         }
                         else
@@ -333,12 +360,14 @@ namespace TextEngine.ParDecoder
                         continue;
                     }
                     string opstr = current.Value.ToString();
-                    if(waitAssigmentObject == null && (opstr == "=" || opstr == "+=" || opstr == "-=" || opstr == "*=" || opstr == "/=" || opstr == "^=" || opstr == "|=" 
+                    if (waitAssigmentObject == null && (opstr == "=" || opstr == "+=" || opstr == "-=" || opstr == "*=" || opstr == "/=" || opstr == "^=" || opstr == "|="
                         || opstr == "&=" || opstr == "<<=" || opstr == ">>=" || opstr == "%="))
                     {
                         if (totalOp <= 1 && (this.BaseDecoder.Attributes.Flags & PardecodeFlags.PDF_AllowAssigment) != 0)
                         {
                             waitAssigmentObject = lastPropObject;
+                            if(waitAssigmentObject != null) waitAssigmentObject.FullName = propertyStr;
+                            propertyStr.Clear();
                             assigment = opstr;
 
                             xoperator = null;
@@ -410,16 +439,16 @@ namespace TextEngine.ParDecoder
                                 lastvalue = true;
                                 /*if (opstr != "|")
                                 {*/
-                                    if (this.IsObject())
-                                    {
-                                        var exp = cr.Result.First<IDictionary<string, object>>();
-                                        exp.Add(waitkey, true);
-                                    }
-                                    else
-                                    {
-                                        cr.Result.AddObject(waitkey, true);
-                                    }
-                                    return cr;
+                                if (this.IsObject())
+                                {
+                                    var exp = cr.Result.First<IDictionary<string, object>>();
+                                    exp.Add(waitkey, true);
+                                }
+                                else
+                                {
+                                    cr.Result.AddObject(waitkey, true);
+                                }
+                                return cr;
                                 //}
                             }
                             else
@@ -434,16 +463,16 @@ namespace TextEngine.ParDecoder
                                 lastvalue = false;
                                 /*if (opstr != "&")
                                 {*/
-                                    if (this.IsObject())
-                                    {
-                                        var exp = cr.Result.First<IDictionary<string, object>>();
-                                        exp.Add(waitkey, false);
-                                    }
-                                    else
-                                    {
-                                        cr.Result.AddObject(waitkey, false);
-                                    }
-                                    return cr;
+                                if (this.IsObject())
+                                {
+                                    var exp = cr.Result.First<IDictionary<string, object>>();
+                                    exp.Add(waitkey, false);
+                                }
+                                else
+                                {
+                                    cr.Result.AddObject(waitkey, false);
+                                }
+                                return cr;
                                 //}
                             }
                             else
@@ -466,9 +495,9 @@ namespace TextEngine.ParDecoder
 
                     if (xoperator != null)
                     {
-                        if ( ComputeActions.PriotiryStop.Contains(xoperator.Value.ToString()))
+                        if (ComputeActions.PriotiryStop.Contains(xoperator.Value.ToString()))
                         {
-                            if(waitop2 != "")
+                            if (waitop2 != "")
                             {
                                 if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                                 lastvalue = ComputeActions.OperatorResult(waitvalue2, lastvalue, waitop2);
@@ -476,7 +505,7 @@ namespace TextEngine.ParDecoder
                                 waitop2 = "";
                                 minuscount = 0;
                             }
-                            if(waitop != "")
+                            if (waitop != "")
                             {
                                 if (minuscount % 2 == 1) lastvalue = ComputeActions.OperatorResult(lastvalue, -1, "*");
                                 lastvalue = ComputeActions.OperatorResult(waitvalue, lastvalue, waitop);
@@ -494,25 +523,38 @@ namespace TextEngine.ParDecoder
                                 {
                                     if (currentitemvalue != null && !string.IsNullOrEmpty(currentitemvalue.ToString()))
                                     {
-                                        lastPropObject = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
-                                        lastvalue = lastPropObject.Value;
+                                        propertyStr.Append("." + currentitemvalue);
+                                        if(this.AllowAccessProperty(propertyStr, PropType.Property))
+                                        {
+                                            lastPropObject = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
+                                            lastvalue = lastPropObject.Value;
+                                            this.AddToTrace(propertyStr, PropType.Property, lastvalue, lastPropObject != null && lastPropObject.PropType != PropType.Empty);
+                                        }
+                                        else
+                                        {
+                                            lastPropObject = null;
+                                            lastvalue = null;
+                                        }
+
+
+
                                     }
                                 }
                                 else
                                 {
 
                                 }
-  
+
                             }
                             else
                             {
-                                if(waitop == "")
+                                if (waitop == "")
                                 {
                                     waitop = xoperator.Value.ToString();
                                     waititem = current;
                                     waitvalue = lastvalue;
                                 }
-                                else if(waitop2 == "")
+                                else if (waitop2 == "")
                                 {
                                     waitop2 = xoperator.Value.ToString();
                                     waititem2 = current;
@@ -527,10 +569,20 @@ namespace TextEngine.ParDecoder
                         if (xoperator.Value.ToString() == ".")
                         {
                             totalOp--;
-                            if(this.BaseDecoder.Attributes.Flags.HasFlag( PardecodeFlags.PDF_AllowSubMemberAccess))
+                            if (this.BaseDecoder.Attributes.Flags.HasFlag(PardecodeFlags.PDF_AllowSubMemberAccess))
                             {
-                                lastPropObject = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
-                                lastvalue = lastPropObject.Value;
+                                propertyStr.Append("." + currentitemvalue);
+                                if (this.AllowAccessProperty(propertyStr, PropType.Property))
+                                {
+                                    lastPropObject = ComputeActions.GetProp(currentitemvalue.ToString(), lastvalue);
+                                    lastvalue = lastPropObject.Value;
+                                    this.AddToTrace(propertyStr, PropType.Property, lastvalue, lastPropObject != null && lastPropObject.PropType != PropType.Empty);
+                                }
+                                else
+                                {
+                                    lastPropObject = null;
+                                    lastvalue = null;
+                                }
                             }
                             else
                             {
@@ -546,21 +598,21 @@ namespace TextEngine.ParDecoder
                         }
                         else
                         {
-                            if(waitop == "")
+                            if (waitop == "")
                             {
                                 waitop = xoperator.Value.ToString();
                                 waititem = current;
                                 waitvalue = lastvalue;
                                 lastvalue = currentitemvalue;
                             }
-                            else if(waitop2 == "")
+                            else if (waitop2 == "")
                             {
                                 waitop2 = xoperator.Value.ToString();
                                 waititem2 = current;
                                 waitvalue2 = lastvalue;
                                 lastvalue = currentitemvalue;
                             }
-                        
+
                             continue;
                         }
                     }
@@ -591,10 +643,10 @@ namespace TextEngine.ParDecoder
                 waitop = "";
                 minuscount = 0;
             }
-            if (waitAssigmentObject != null )
+            if (waitAssigmentObject != null && this.AllowAccessProperty(waitAssigmentObject.FullName, waitAssigmentObject.PropType, true))
             {
                 AssignResult assignResult = null;
-                if(waitAssigmentObject.PropType != PropType.Empty && waitAssigmentObject.PropertyInfo != null)
+                if (waitAssigmentObject.PropType != PropType.Empty && waitAssigmentObject.PropertyInfo != null)
                 {
                     try
                     {
@@ -621,6 +673,7 @@ namespace TextEngine.ParDecoder
                         if (assignResult) lastvalue = assignResult.AssignedValue;
                         break;
                 }
+                if (assignResult) this.AddToTrace(waitAssigmentObject.FullName, waitAssigmentObject.PropType, assignResult.AssignedValue, true, true);
             }
             if (this.IsObject())
             {
@@ -633,5 +686,32 @@ namespace TextEngine.ParDecoder
             }
             return cr;
         }
+        private bool AllowAccessProperty(string propStr, PropType type, bool isassign = false)
+        {
+            if (this.Attributes.RestrictedProperties != null && this.Attributes.RestrictedProperties.Count > 0)
+            {
+                ParPropRestrictedType prt = ParPropRestrictedType.PRT_RESTRICT_GET;
+                if(this.Attributes.RestrictedProperties.TryGetValue(propStr, out prt))
+                {
+                    if ((isassign && (prt & ParPropRestrictedType.PRT_RESTRICT_SET) != 0) || (!isassign && (prt & ParPropRestrictedType.PRT_RESTRICT_GET) != 0)) return false;
+                }
+            }
+            return this.Attributes.OnPropertyAccess == null || this.Attributes.OnPropertyAccess(new ParProperty(propStr, type, isassign));
+        }
+        private void AddToTrace(string propname, PropType type, object value, bool accessed = false, bool isassign = false)
+        {
+            if(!this.Attributes.Tracing.Enabled)
+            {
+                return;
+            }
+            bool allowtrace = (!isassign && this.Attributes.Tracing.HasTraceThisType(type)) || (isassign && this.Attributes.Tracing.HasFlag(ParTraceFlags.PTF_TRACE_ASSIGN));
+            if (!allowtrace) return;
+            var traceitem = new ParTracerItem(propname, type);
+            traceitem.Accessed = accessed;
+            traceitem.IsAssign = isassign;
+            if(this.Attributes.Tracing.HasFlag(ParTraceFlags.PTF_KEEP_VALUE)) traceitem.Value = value;
+            this.Attributes.Tracing.Add(traceitem);
+        }
     }
+    
 }

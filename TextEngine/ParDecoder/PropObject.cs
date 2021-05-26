@@ -6,6 +6,7 @@ namespace TextEngine.ParDecoder
 {
     public class PropObject
     {
+        public string FullName { get; set; }
         public object Value { get; set; }
         public object PropertyInfo { get; set; }
         public object[] IndisParams { get; set; }
@@ -19,7 +20,8 @@ namespace TextEngine.ParDecoder
         Property,
         Dictionary,
         KeyValues,
-        Indis
+        Indis,
+        Method
     }
 
 }

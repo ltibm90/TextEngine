@@ -25,11 +25,13 @@ namespace TextEngine.Evulator
         {
             var comparer = StringComparer.OrdinalIgnoreCase;
             types = new Dictionary<string, Type>(comparer);
+            this.Options = new EvulatorOptions();
         }
         
         public Type Param { get; set; }
         public Type GeneralType { get; set; }
         public Type Text { get; set; }
+        public EvulatorOptions Options { get; private set; }
         public void SetType(string name, Type type)
         {
             types[name] = type;

@@ -557,7 +557,10 @@ namespace TextEngine.Text
                     handler?.OnRenderPost(this, vars, rResult);
                     return rResult;
                 }
-                result.TextContent = this.value;
+                if(!this.BaseEvulator.ReturnEmptyIfTextEvulatorIsNull)
+                {
+                    result.TextContent = this.Value;
+                }
                 return result;
             }
             if (this.ElementType == TextElementType.Parameter)

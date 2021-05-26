@@ -14,7 +14,7 @@ namespace TextEngine.Evulator
             res.Result = TextEvulateResultEnum.EVULATE_NOACTION;
             var str = tag.Value;
             if (string.IsNullOrEmpty(str)) return res;
-            var lines = StringUtils.SplitLineWithQuote(str);
+            var lines = StringUtils.SplitLineWithQuote(str, true);
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
