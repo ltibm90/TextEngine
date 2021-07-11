@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextEngineTest", "TextEngineTest\TextEngineTest.csproj", "{7EC05CA9-10A4-4419-88D9-1E6D2BCF7106}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextEngine", "..\TextEngine\TextEngine.csproj", "{9461564C-191D-4305-BA3D-1CC4C7B5EB97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextEngine", "D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\TextEngine.csproj", "{9461564C-191D-4305-BA3D-1CC4C7B5EB97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
