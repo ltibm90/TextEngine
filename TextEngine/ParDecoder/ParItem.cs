@@ -100,7 +100,7 @@ namespace TextEngine.ParDecoder
                 {
                     paritem = current as ParItem;
                 }
-                if (stopdoubledot)
+                 if (stopdoubledot)
                 {
                     if (current.IsOperator && current.Value.ToString() == ":")
                     {
@@ -182,7 +182,7 @@ namespace TextEngine.ParDecoder
                                 if (propertyStr.Length == 0) propertyStr = prevvalue ;
                                 else propertyStr.Append("." + prevvalue);
                                 bool allowget = this.AllowAccessProperty(propertyStr, PropType.Indis);
-                                if (allowget) lastPropObject = ComputeActions.GetProp(prevvalue, varnew);
+                                if (allowget) lastPropObject = ComputeActions.GetProp(prevvalue, varnew, localvars);
                                 else lastPropObject = null;
                                 object prop = null;
                                 if (lastPropObject != null) prop = lastPropObject.Value;

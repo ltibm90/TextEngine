@@ -387,6 +387,20 @@ namespace TextEngine.ParDecoder
             }
             return null;
         }
+
+        public static PropObject GetProp(string item, object vars, object localvars)
+        {
+            PropObject res = null;
+            if (localvars != null)
+            {
+                res = GetProp(item, localvars);
+            }
+            if (res == null || res.PropType == PropType.Empty)
+            {
+                res = GetProp(item, vars);
+            }
+            return res;
+        }
         public static PropObject GetProp(string item, object vars)
         {
             var propObj = new PropObject();

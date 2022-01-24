@@ -123,7 +123,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="D:\Flash\ASP_NET\_DynamicLibrary\TextEngine\TextEngine\TextEngine.csproj">
+    <ProjectReference Include="..\..\TextEngine\TextEngine.csproj">
       <Project>{9461564c-191d-4305-ba3d-1cc4c7b5eb97}</Project>
       <Name>TextEngine</Name>
     </ProjectReference>
