@@ -269,6 +269,9 @@ namespace TextEngineTest
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+            TextEvulator te = new TextEvulator();
+            te.Text = "{set name=array value=[1,2,3,4,5,6]}{for var=i to=array.Length}{%array[i]}{/for}";
+           var res = te.EvulateValue();
             TracenRestrictionAndHandleTest();
             TextTest();
             OperatorsTest();

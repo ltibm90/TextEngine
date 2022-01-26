@@ -80,7 +80,7 @@ namespace TextEngine.Misc
                 var current = this.inner[i];
                 int id = current.GetIdByName(name);
                 if (id == -1) continue;
-                return current[i];
+                return current[id];
             }
             return null;
         }
