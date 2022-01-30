@@ -191,8 +191,6 @@ namespace TextEngine.Text
                 var ev = new SectionEvulator();
                 ev.SetEvulator(m.BaseEvulator);
                 if (!ev.ConditionSuccess(m, "if")) return;
-                if (m.Parent != null && m.Parent.ElemName != "#document")
-                    return;
 
                 if (m.ElemAttr.FirstAttribute != null)
                 {

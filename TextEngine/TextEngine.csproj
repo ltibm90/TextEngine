@@ -9,7 +9,7 @@
 	<AssemblyVersion>1.5.2</AssemblyVersion>
 	<FileVersion>1.5.2</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
-	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
 	<PackageReleaseNotes>Added GetElements and GetElementsByName method to TextElements class
 Added TEF_AllowQuoteOnAttributeName flag to TextElementsFlags
@@ -20,7 +20,7 @@ Added preload and noprint attribute support to MacroEvulator
 Added SectionEvulator And RenderSectionEvulator Class supports noprint attribute
 Added AllowMultipleNames to SavedMacros Class</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
-	<PackageId>$(AssemblyName).x86</PackageId>
+	<PackageId>$(AssemblyName)</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net60|AnyCPU'">

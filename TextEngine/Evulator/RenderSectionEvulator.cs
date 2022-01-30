@@ -9,7 +9,7 @@ namespace TextEngine.Evulator
     {
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
-            var cr = this.ConditionSuccess(tag, "if", vars);
+            var crç = this.ConditionSuccess(tag, "if", vars);
             var result = new TextEvulateResult()
             {
                 Result = TextEvulateResultEnum.EVULATE_NOACTION
