@@ -64,6 +64,7 @@ namespace TextEngine.Evulator
             var loc = this.GetLastDir() + this.EvulateAttribute(tag.ElemAttr["name"], vars)?.ToString();
             var parse = tag.GetAttribute("parse", "true");
             if (!File.Exists(loc) || !this.ConditionSuccess(tag, "if", vars)) return null;
+            bool globalnoprint = tag.GetAttribute("noprint", "0") == "1";
             this.SetLocal("_DIR_", Path.GetDirectoryName(loc));
             var content = File.ReadAllText(loc);
             var result = new TextEvulateResult();
@@ -127,7 +128,7 @@ namespace TextEngine.Evulator
                     }
                     
                 }
-                if (parseType == -1)
+                if (parseType <= 0)
                 {
                     tag.TagInfo.SingleData = 1;
                     return null;
@@ -141,6 +142,14 @@ namespace TextEngine.Evulator
                 {
                     result.Result = TextEvulateResultEnum.EVULATE_RETURN;
                     return result;
+                }
+                else
+
+                {
+                    if(globalnoprint)
+                    {
+                        return null;
+                    }
                 }
                 result.Result = TextEvulateResultEnum.EVULATE_TEXT;
             }

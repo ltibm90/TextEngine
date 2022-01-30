@@ -20,7 +20,7 @@ Added preload and noprint attribute support to MacroEvulator and IncludeEvulator
 Added SectionEvulator And RenderSectionEvulator Class supports noprint attribute
 Added AllowMultipleNames to SavedMacros Class</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
-	<PackageId>$(AssemblyName).x86</PackageId>
+	<PackageId>$(AssemblyName)</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net60|AnyCPU'">

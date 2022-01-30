@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Tüm değerleri belirtebilir veya varsayılan Derleme ve Düzeltme Numaralarını kullanmak için
 // '*' kullanarak varsayılana ayarlayabilirsiniz:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.5.2.2")]
-[assembly: AssemblyFileVersion("1.5.2.2")]
+[assembly: AssemblyVersion("1.5.2.3")]
+[assembly: AssemblyFileVersion("1.5.2.3")]
