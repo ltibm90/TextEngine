@@ -4,17 +4,16 @@
 	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50;net60</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<Platforms>AnyCPU;x64;x86</Platforms>
-	<Version>1.5.1.0</Version>
+	<Version>1.5.2</Version>
 	<Authors>macmillan</Authors>
-	<AssemblyVersion>1.5.1.0</AssemblyVersion>
-	<FileVersion>1.5.1.0</FileVersion>
+	<AssemblyVersion>1.5.2</AssemblyVersion>
+	<FileVersion>1.5.2</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>Added .Net 6.0 support,
-Fixed array access problem for local variables.</PackageReleaseNotes>
+	<PackageReleaseNotes>Fixed.</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
-	<PackageId>$(AssemblyName)</PackageId>
+	<PackageId>$(AssemblyName).x86</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net60|AnyCPU'">

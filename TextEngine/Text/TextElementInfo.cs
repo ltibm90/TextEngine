@@ -8,9 +8,10 @@ namespace TextEngine.Text
     {
         public string ElementName { get; set; }
         public TextElementFlags Flags { get; set; }
-        Dictionary<string, object> CustomData { get; set; }
+        public Dictionary<string, object> CustomData { get; set; }
         public Action<TextElement> OnTagOpened { get; set; }
         public Action<TextElement> OnTagClosed { get; set; }
         public Predicate<TextElement> OnAutoCreating { get; set; }
+        public object SingleData { get; set; }
     }
 }

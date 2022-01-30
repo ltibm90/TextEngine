@@ -16,6 +16,7 @@ namespace TextEngine.Text
             set
             {
                 name = value;
+                this.ParDataName = null;
             }
         }
         private string value;
@@ -31,6 +32,15 @@ namespace TextEngine.Text
                 this.ParData = null;
             }
         }
+        public string GetQuotedName()
+        {
+            if(this.Name.Contains(" "))
+            {
+                return "\"" + this.Name.Replace("\"", "\\\"") + "\"";
+            }
+            return this.Name;
+        }
+        public ParDecoder.ParDecode ParDataName { get; set; }
         public ParDecoder.ParDecode ParData { get; set; }
         public override string ToString()
         {

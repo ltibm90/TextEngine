@@ -10,7 +10,9 @@ namespace TextEngine.Evulator
     {
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
+            if (tag.ElemAttr.HasAttribute("preload")) return null;
             var name = tag.GetAttribute("name");
+
             if (!string.IsNullOrEmpty(name))
             {
                 this.Evulator.SavedMacrosList.SetMacro(name, tag);

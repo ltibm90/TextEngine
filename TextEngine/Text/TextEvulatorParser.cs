@@ -546,14 +546,25 @@ namespace TextEngine.Text
                 }
                 if (cur == '"' || cur == '\'')
                 {
-                    if (!namefound || currentName.Length == 0)
+                    if(!namefound)
                     {
                         if (this.Evulator.SurpressError) continue;
                         this.Evulator.IsParseMode = false;
                         throw new Exception("Syntax Error");
                     }
+                    if (currentName.Length == 0)
+                    {
+                        if(!tagElement.TagFlags.HasFlag(TextElementFlags.TEF_AllowQuoteOnAttributeName))
+                        {
+                            if (this.Evulator.SurpressError) continue;
+                            this.Evulator.IsParseMode = false;
+                            throw new Exception("Syntax Error");
+                        }
+
+                    }
                     if (inquot && cur == quotchar)
                     {
+                        bool clearcurrentname = true;
                         if (istagattrib)// if (currentName.ToString() == "##set_TAG_ATTR##")
                         {
                             tagElement.TagAttrib = current.ToString();
@@ -565,7 +576,13 @@ namespace TextEngine.Text
 
                             tagElement.ElemAttr.SetAttribute(currentName.ToString(), current.ToString());
                         }
-                        currentName.Clear();
+                        else if(currentName.Length == 0 && !tagElement.HasFlag(TextElementFlags.TEF_TagAttribonly))
+                        {
+                            clearcurrentname = false;
+                            currentName.Append(current.ToString());
+
+                        }
+                        if(clearcurrentname) currentName.Clear();
                         current.Clear();
                         inquot = false;
                         quoted = true;

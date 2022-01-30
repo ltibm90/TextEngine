@@ -6,8 +6,9 @@ using TextEngine.Text;
 
 namespace TextEngine.Macros
 {
-    public class SavedMacros
+    public class SavedMacros : TextElements
     {
+        public bool AllowMultipleNames { get; set; }
         private List<TextElement> macros = new List<TextElement>();
         private int GetMacroIndex(string name)
         {
@@ -23,17 +24,29 @@ namespace TextEngine.Macros
             if (index == -1) return null;
             return macros[index];
         }
+        public List<TextElement> GetMacros(string name)
+        {
+            return this.GetElements(m => m.GetAttribute("name") == name).ToList();
+        }
         public void SetMacro(string name, TextElement tag)
         {
-            var index = GetMacroIndex(name);
-            if(index == -1)
+            if(!AllowMultipleNames)
             {
-                macros.Add(tag);
+                var index = GetMacroIndex(name);
+                if (index == -1)
+                {
+                    macros.Add(tag);
+                }
+                else
+                {
+                    macros[index] = tag;
+                }
             }
             else
             {
-                macros[index] = tag;
+                macros.Add(tag);
             }
+
         }
 
     }

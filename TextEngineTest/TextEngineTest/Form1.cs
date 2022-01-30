@@ -39,7 +39,8 @@ namespace TextEngineTest
             Dictionary<string, object> kv = new Dictionary<string, object>();
             kv["name"] = "MacMillan";
             kv["grup"] = "AR-GE";
-            kv["random"] = (Func<int>)delegate () {
+            kv["random"] = (Func<int>)delegate ()
+            {
                 return new Random().Next(1, 100);
             };
             pf.ParAttributes.SurpressError = true;
@@ -116,12 +117,12 @@ namespace TextEngineTest
             public string StringProp { get; set; }
             public List<string> Items { get; set; }
             public int[] ItemArrays { get; set; }
-            public Dictionary<string ,object> DictItems { get; set; }
+            public Dictionary<string, object> DictItems { get; set; }
             public TestAssignClass()
             {
                 this.DictItems = new Dictionary<string, object>();
                 this.DictItems["str1"] = "string var";
-               
+
             }
         }
         private void AssignTest()
@@ -171,17 +172,18 @@ namespace TextEngineTest
         }
         public void GlobalFunctionsTest()
         {
-           var r = ParFormat.FormatEx("Value: {%Clamp(IntVal, 5, 15)}, IsNullOrEmpty test prop: {%String::IsNullOrEmpty(Test)}", new { Test= "a", IntVal = 25}, (m) => {
+            var r = ParFormat.FormatEx("Value: {%Clamp(IntVal, 5, 15)}, IsNullOrEmpty test prop: {%String::IsNullOrEmpty(Test)}", new { Test = "a", IntVal = 25 }, (m) =>
+            {
                 m.StaticTypes.GeneralType = typeof(MyGlobalFunctions);
                 m.StaticTypes["String"] = typeof(String);
                 m.GlobalFunctions.Add("String::");
                 m.GlobalFunctions.Add("::");
-               m.OnPropertyAccess = (property) =>
-               {
-                   if (property.Name == "Clamp") return false;
-                   return true;
-               };
-           });
+                m.OnPropertyAccess = (property) =>
+                {
+                    if (property.Name == "Clamp") return false;
+                    return true;
+                };
+            });
             //Overloaded functions currently not supported.
         }
         private void OperatorsTest()
@@ -192,10 +194,11 @@ namespace TextEngineTest
             test.IntProp3 = 1; //After assigment 16
             test.IntProp4 = 4; //After assigment 2
             //Returned 71640162
-            var r = ParFormat.FormatEx("{%IntProp |= 4}{%IntProp2 = 1 << 4}{%IntProp &= 4}{%IntProp2 = 1 >> 4}{%IntProp3 <<= 4}{%IntProp4 >>= 1}", test, (m) => {
+            var r = ParFormat.FormatEx("{%IntProp |= 4}{%IntProp2 = 1 << 4}{%IntProp &= 4}{%IntProp2 = 1 >> 4}{%IntProp3 <<= 4}{%IntProp4 >>= 1}", test, (m) =>
+            {
                 m.Flags |= PardecodeFlags.PDF_AllowAssigment;
             });
-           
+
         }
         public class Class3
         {
@@ -260,18 +263,21 @@ namespace TextEngineTest
                 return true;
             };
             te.EvulateValue(new TraceClass());
-            if((bool)te.ParAttributes.Tracing.GetField("TestMethod").Value)
+            if ((bool)te.ParAttributes.Tracing.GetField("TestMethod").Value)
             {
                 MessageBox.Show("Test Method returned true");
             }
-            
+
 
         }
+
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             TextEvulator te = new TextEvulator();
-            te.Text = "{set name=array value=[1,2,3,4,5,6]}{for var=i to=array.Length}{%array[i]}{/for}";
-           var res = te.EvulateValue();
+            te.Text = "{rendersection '\\'test\\'' /}{%title}{section test}{set name='title' value='\"Test Title\"'}{/section}";
+            var res = te.EvulateValue();
             TracenRestrictionAndHandleTest();
             TextTest();
             OperatorsTest();
@@ -289,7 +295,7 @@ namespace TextEngineTest
             evulator.LeftTag = '[';
             evulator.RightTag = ']';
             evulator.Text = "[";
-          //  evulator.Text = "deneme{tag}içerik: <b>{%'Mesaj: ' + mesaj + ', Uzunluk: ' + strlen_cw(mesaj) + ':'}</b>{/tag}";
+            //  evulator.Text = "deneme{tag}içerik: <b>{%'Mesaj: ' + mesaj + ', Uzunluk: ' + strlen_cw(mesaj) + ':'}</b>{/tag}";
             evulator.Parse();
             evulator.Elements.EvulateValue();
             evulator.Text = "<cw><uyeler><uye name='macmillan'>Üye</uye><uye name='xuye'>XÜye</uye><uye attr='kestane'>YÜye</uye></uyeler></cw>";
@@ -299,9 +305,9 @@ namespace TextEngineTest
             evulator.LeftTag = '<';
             evulator.RightTag = '>';
             evulator.Parse();
-           //var items = evulator.Elements.FindByXPath("(cw/uyeler/uye)[@name]");
+            //var items = evulator.Elements.FindByXPath("(cw/uyeler/uye)[@name]");
             var items = evulator.Elements.FindByXPath("cw/uyeler/uye[@name='xuye' or @name='macmillan'][1]");
-          
+
             var result = evulator.Elements.EvulateValue();
             MessageBox.Show(result.TextContent);
 
@@ -348,12 +354,12 @@ namespace TextEngineTest
             KeyValues<object> kv = new KeyValues<object>();
             evulator.GlobalParameters = kv;
             evulator.GlobalParameters = new CustomClass();
-            evulator.TagInfos["test"].Flags =  TextElementFlags.TEF_AutoClosedTag; //ismi yazılan taglar otomatik kapatılır
+            evulator.TagInfos["test"].Flags = TextElementFlags.TEF_AutoClosedTag; //ismi yazılan taglar otomatik kapatılır
             evulator.Aliasses.Add("bb", "strong"); //bb kodu aynı zamanda strong olarakta kullanılabilir.
             evulator.Parse(); //Ayrıştırma işlemi yapılır
             var elems = evulator.Elements; //Ayrıştırılan elemanlar bu sınıfta tutulur.
             elems.EvulateValue(); //ELeman içeriğini verilen parametrelere göre değerlendirip sonucunu döner.
-            
+
         }
 
         private void TextEngineTest1()
@@ -366,7 +372,7 @@ namespace TextEngineTest
             //Desteklenen sınıflar
             //IDictionary<string, object>, KeyValueGrup veye KeyValues<object> veya Doğrudan sınıflar belirtilebilir.
             evulator.GlobalParameters = dict;
-            var result =  evulator.Elements.EvulateValue();
+            var result = evulator.Elements.EvulateValue();
         }
         private void TextEngineTest2()
         {
@@ -429,7 +435,7 @@ namespace TextEngineTest
             evulator.ThrowExceptionIFPrevIsNull = false;
             string result = evulator.Elements.EvulateValue().TextContent;
             MessageBox.Show(result);
-           
+
         }
         private void TextEngineTest5()
         {
@@ -475,7 +481,7 @@ namespace TextEngineTest
             pd.Decode();
             //Ayrıştırlan itemler hesaplanır.
             var result = pd.Items.Compute();
-            
+
         }
         public class ParDeneme
         {
@@ -495,7 +501,7 @@ namespace TextEngineTest
             pd.Decode();
             //Ayrıştırlan itemler hesaplanır.
             var result = pd.Items.Compute(new ParDeneme());
-           
+
 
 
         }

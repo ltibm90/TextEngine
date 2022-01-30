@@ -58,6 +58,16 @@ namespace TextEngine.Evulator
         {
             this.Evulator = evulator;
         }
+        protected object EvulateAttributeName(TextElementAttribute attribute, object additionalparams = null)
+        {
+            if (attribute == null || string.IsNullOrEmpty(attribute.Name)) return null;
+            if (attribute.ParDataName == null)
+            {
+                attribute.ParDataName = this.CreatePardecode(attribute.Name);
+            }
+            return this.EvulatePar(attribute.ParDataName, additionalparams);
+
+        }
         protected object EvulateAttribute(TextElementAttribute attribute, object additionalparams = null)
         {
             if (attribute == null || string.IsNullOrEmpty(attribute.Value)) return null;
@@ -68,7 +78,7 @@ namespace TextEngine.Evulator
             return this.EvulatePar(attribute.ParData, additionalparams);
             
         }
-        protected bool ConditionSuccess(TextElement tag, string attr = "*", object vars = null)
+        public bool ConditionSuccess(TextElement tag, string attr = "*", object vars = null)
         {
             ParDecode pardecoder = null;
             if((attr == null || attr == "" || attr == "*") && tag.NoAttrib)

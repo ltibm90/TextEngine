@@ -16,11 +16,11 @@ namespace TextEngine.Misc
                 if (exclude != null && exclude.Contains(item.Name)) continue;
                 if(item.Value == null)
                 {
-                    sb.Append(" " + item.Name);
+                    sb.Append(" " + item.GetQuotedName());
                 }
                 else
                 {
-                    sb.Append(" " + item.Name + "=\"" + item.Value.Replace("\"", "\\\"") + "\"");
+                    sb.Append(" " + item.GetQuotedName() + "=\"" + item.Value.Replace("\"", "\\\"") + "\"");
 
                 }
             }

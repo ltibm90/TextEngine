@@ -12,33 +12,58 @@ namespace TextEngine.Evulator
         public override TextEvulateResult Render(TextElement tag, object vars)
         {
             if (string.IsNullOrEmpty(tag.ElemAttr.FirstAttribute?.Name)) return null;
-            var name = tag.ElemAttr.FirstAttribute.Name;
-		    var cr = this.ConditionSuccess(tag, "if", vars);
-            if (!cr) return null;
+            if(tag.ElemAttr.FirstAttribute ==null || !this.ConditionSuccess(tag, "if", vars)) return null;
+            bool globalnoprint = tag.GetAttribute("noprint", "0") == "1";
+            var attrResult = this.EvulateAttributeName(tag.ElemAttr.FirstAttribute, vars);
+            string name = attrResult != null ? attrResult.ToString() : "";
+            var teRes = new TextEvulateResult()
+            {
+                Result = TextEvulateResultEnum.EVULATE_NOACTION
+            };
             if (string.IsNullOrEmpty(name)) return null;
-		    var element = this.GetMacroElement(name);
-            if (element != null)
-		    {
-                var newelement = new KeyValues<object>();
-                for (int i = 0; i < element.ElemAttr.Count; i++)
+            var elements = this.GetMacroElements(name);
+            for (int i = 0; i < elements.Count; i++)
+            {
+                var element = elements[i];
+                if (element != null)
                 {
-                    if (element.ElemAttr[i].Name == "name") continue;
-                    newelement[element.ElemAttr[i].Name] = this.EvulateAttribute(element.ElemAttr[i], vars);
+                    var newelement = new KeyValues<object>();
+                    for (int j = 0; j < element.ElemAttr.Count; j++)
+                    {
+                        if (element.ElemAttr[j].Name == "name" || element.ElemAttr[j].Name == "noprint") continue;
+                        newelement[element.ElemAttr[j].Name] = this.EvulateAttribute(element.ElemAttr[i], vars);
+                    }
+                    bool isnoprint = element.GetAttribute("noprint", "0") == "1";
+                    for (int j = 1; j < tag.ElemAttr.Count; j++)
+                    {
+                        var key = tag.ElemAttr[j];
+                        if (key.Name == "noprint") continue;
+                        newelement[key.Name] = this.EvulateAttribute(key, vars);
+                    }
+                    var result = element.EvulateValue(0, 0, newelement);
+                    if (isnoprint) result.Result = TextEvulateResultEnum.EVULATE_NOACTION;
+                    if (elements.Count == 1) return (globalnoprint) ? null : result;
+                    if(!globalnoprint && result.Result == TextEvulateResultEnum.EVULATE_TEXT)
+                    {
+                        teRes.TextContent += result.TextContent;
+                    }
+ 
                 }
-                for (int i = 1; i < tag.ElemAttr.Count; i++)
-                {
-                    var key = tag.ElemAttr[i];
-                    newelement[key.Name] = this.EvulateAttribute(key, vars);
-                }
-                var result = element.EvulateValue(0, 0, newelement);
-                return result;
             }
-            return null;
+
+
+
+            return (globalnoprint) ? null : teRes;
         }
         protected TextElement GetMacroElement(string name)
         {
 
-            return this.Evulator.SavedMacrosList.GetMacro(name); ;
+            return this.Evulator.SavedMacrosList.GetMacro(name);
         }
+        protected List<TextElement> GetMacroElements(string name)
+        {
+            return this.Evulator.SavedMacrosList.GetMacros(name);
+        }
+
     }
 }

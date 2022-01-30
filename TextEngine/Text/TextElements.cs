@@ -58,7 +58,7 @@ namespace TextEngine.Text
         {
             get
             {
-                return inner.Where(e => e.ElemName == name).FirstOrDefault();
+                return inner.SingleOrDefault(e => e.NameEquals(name));
             }
         }
         public TextElement this[int index]
@@ -141,6 +141,23 @@ namespace TextEngine.Text
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.inner.GetEnumerator();
+        }
+        public List<TextElement> GetElementsByName(string name)
+        {
+            return this.inner.Where(m => m.NameEquals(name)).ToList();
+        }
+        public List<TextElement> GetElements(Predicate<TextElement> predicate, int limit = 0)
+        {
+            var list = new List<TextElement>();
+            for (int i = 0; i < this.inner.Count; i++)
+            {
+                if((bool)(predicate?.Invoke(this.inner[i])))
+                {
+                    list.Add(this.inner[i]);
+                    if (limit > 0 && list.Count > limit) break; 
+                }
+            }
+            return list;
         }
         public TextElements FindByXPath(XPathBlock xblock)
         {

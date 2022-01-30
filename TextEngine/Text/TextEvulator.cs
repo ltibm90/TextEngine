@@ -170,13 +170,13 @@ namespace TextEngine.Text
         {
             //* default flags;
             this.TagInfos.Default.Flags = TextElementFlags.TEF_NONE;
-            this.TagInfos["elif"].Flags =  TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_NoAttributedTag;
+            this.TagInfos["elif"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_NoAttributedTag;
             this.TagInfos["else"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["return"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["break"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["continue"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["include"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
-            this.TagInfos["cm"].Flags = TextElementFlags.TEF_AutoClosedTag;
+            this.TagInfos["cm"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_AllowQuoteOnAttributeName;
             this.TagInfos["set"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["unset"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["if"].Flags = TextElementFlags.TEF_NoAttributedTag | TextElementFlags.TEF_ConditionalTag;
@@ -184,6 +184,35 @@ namespace TextEngine.Text
             this.TagInfos["while"].Flags = TextElementFlags.TEF_NoAttributedTag;
             this.TagInfos["do"].Flags = TextElementFlags.TEF_NoAttributedTag;
             this.TagInfos["text"].Flags = TextElementFlags.TEF_NoParse_AllowParam;
+            this.TagInfos["rendersection"].SingleData = this.TagInfos["section"].SingleData = new TextElements();
+            this.TagInfos["rendersection"].Flags |= TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_AllowQuoteOnAttributeName;
+            this.TagInfos["section"].OnTagClosed = m =>
+            {
+                var ev = new SectionEvulator();
+                ev.SetEvulator(m.BaseEvulator);
+                if (!ev.ConditionSuccess(m, "if")) return;
+                if (m.Parent != null && m.Parent.ElemName != "#document")
+                    return;
+
+                if (m.ElemAttr.FirstAttribute != null)
+                {
+                    TextElements sections = m.TagInfo.SingleData as TextElements;
+                    sections.Add(m);
+                }
+                //tag.Parent.SubElements.Remove(tag);
+            };
+            this.TagInfos["macro"].OnTagClosed = m =>
+            {
+                if (!m.ElemAttr.HasAttribute("preload")) 
+                    return;
+                var ev = new MacroEvulator();
+                ev.SetEvulator(m.BaseEvulator);
+                if (!ev.ConditionSuccess(m, "if")) return;
+                var name = m.GetAttribute("name");
+                if (!string.IsNullOrEmpty(name))
+                    m.BaseEvulator.SavedMacrosList.SetMacro(name, m);
+                //tag.Parent.SubElements.Remove(tag);
+            };
         }
         public void InitEvulator()
         {
@@ -207,6 +236,8 @@ namespace TextEngine.Text
             this.EvulatorTypes["while"] = typeof(WhileEvulator);
             this.EvulatorTypes["do"] = typeof(DoEvulator);
             this.EvulatorTypes["text"] = typeof(TextParamEvulator);
+            this.EvulatorTypes["section"] = typeof(SectionEvulator);
+            this.EvulatorTypes["rendersection"] = typeof(RenderSectionEvulator);
         }
 
         public void InitAmpMaps()
