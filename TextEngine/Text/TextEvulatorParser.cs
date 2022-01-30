@@ -716,6 +716,7 @@ namespace TextEngine.Text
                         {
 
                             tagElement.CloseState = TextElementClosedType.TECT_AUTOCLOSED;
+                            tagElement.TagInfo?.OnTagClosed?.Invoke(tagElement);
                         }
                         this.pos = i;
                         return;

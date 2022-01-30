@@ -176,6 +176,16 @@ namespace TextEngine.Text
             this.TagInfos["break"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["continue"].Flags = TextElementFlags.TEF_AutoClosedTag;
             this.TagInfos["include"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
+            this.TagInfos["include"].OnTagClosed = m =>
+            {
+                if (!m.ElemAttr.HasAttribute("preload"))
+                    return;
+                var ev = new IncludeEvulator();
+                ev.SetEvulator(m.BaseEvulator);
+                ev.Render_Default(m, null);
+         
+                //tag.Parent.SubElements.Remove(tag);
+            };
             this.TagInfos["cm"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_AllowQuoteOnAttributeName;
             this.TagInfos["set"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
             this.TagInfos["unset"].Flags = TextElementFlags.TEF_AutoClosedTag | TextElementFlags.TEF_ConditionalTag;
