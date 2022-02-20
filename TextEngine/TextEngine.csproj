@@ -4,23 +4,18 @@
 	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net50;net60</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<Platforms>AnyCPU;x64;x86</Platforms>
-	<Version>1.5.2.3</Version>
+	<Version>1.5.2.4</Version>
 	<Authors>macmillan</Authors>
-	<AssemblyVersion>1.5.2.3</AssemblyVersion>
-	<FileVersion>1.5.2.3</FileVersion>
+	<AssemblyVersion>1.5.2.4</AssemblyVersion>
+	<FileVersion>1.5.2.4</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>Added GetElements and GetElementsByName method to TextElements class
-Added TEF_AllowQuoteOnAttributeName flag to TextElementsFlags
-Added GetQuotedName to TextElementAttribute Class
-Added ParDataName property to TextElementAttribute Class
-Added EvulateAttributeName method to BaseEvulator Class
-Added preload and noprint attribute support to MacroEvulator and IncludeEvulator
-Added SectionEvulator And RenderSectionEvulator Class supports noprint attribute
-Added AllowMultipleNames to SavedMacros Class</PackageReleaseNotes>
+	<PackageReleaseNotes>Fixed IncludeEvulator Preload problem.
+Added Data and DataDictionary property to TextElement</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
-	<PackageId>$(AssemblyName)</PackageId>
+	<PackageId>$(AssemblyName).x86</PackageId>
+	<Product>$(AssemblyName)</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net60|AnyCPU'">

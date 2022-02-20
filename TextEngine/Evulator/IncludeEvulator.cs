@@ -60,14 +60,23 @@ namespace TextEngine.Evulator
         }
         public TextEvulateResult Render_Default(TextElement tag, object vars)
         {
+            int parseType = 0;
+            if (tag.Data != null && tag.Data is int) parseType = (int)tag.Data;
             this.CreateLocals();
-            var loc = this.GetLastDir() + this.EvulateAttribute(tag.ElemAttr["name"], vars)?.ToString();
-            var parse = tag.GetAttribute("parse", "true");
-            if (!File.Exists(loc) || !this.ConditionSuccess(tag, "if", vars)) return null;
-            bool globalnoprint = tag.GetAttribute("noprint", "0") == "1";
-            this.SetLocal("_DIR_", Path.GetDirectoryName(loc));
-            var content = File.ReadAllText(loc);
+            string content = "";
             var result = new TextEvulateResult();
+            string parse = "";
+            bool globalnoprint = tag.GetAttribute("noprint", "0") == "1";
+            if (parseType <= 0)
+            {
+                var loc = this.GetLastDir() + this.EvulateAttribute(tag.ElemAttr["name"], vars)?.ToString();
+                parse = tag.GetAttribute("parse", "true");
+                if (!File.Exists(loc) || !this.ConditionSuccess(tag, "if", vars)) return null;
+                this.SetLocal("_DIR_", Path.GetDirectoryName(loc));
+                content = File.ReadAllText(loc);
+
+            }
+ 
 
             if (parse == "false")
             {
@@ -76,8 +85,7 @@ namespace TextEngine.Evulator
             }
             else
             {
-                int parseType = 0;
-                if (tag.TagInfo.SingleData != null && tag.TagInfo.SingleData is int) parseType = (int) tag.TagInfo.SingleData;
+   
                 if (parseType <= 0)
                 {
                     var tempelem = new TextElement
@@ -130,7 +138,7 @@ namespace TextEngine.Evulator
                 }
                 if (parseType <= 0)
                 {
-                    tag.TagInfo.SingleData = 1;
+                    tag.Data = 1;
                     return null;
                 }
              

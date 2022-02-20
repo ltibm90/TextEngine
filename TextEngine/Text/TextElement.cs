@@ -11,6 +11,7 @@ namespace TextEngine.Text
     {
         public TextElement()
         {
+            this.DataDictionary = new Dictionary<string, object>();
             this.ElementType = TextElementType.ElementNode;
             this.SubElements = new TextElements();
             this.ElemAttr = new TextElementAttributes();
@@ -974,5 +975,7 @@ namespace TextEngine.Text
             return null;
             
         }
+        public object Data { get; set; }
+        public Dictionary<string, object> DataDictionary { get; set; }
     }
 }
