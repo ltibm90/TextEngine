@@ -174,5 +174,9 @@ namespace TextEngine.Text
             }
             return elements;
         }
+        public bool Exists(TextElement element)
+        {
+            return this.Contains(element);
+        }
     }
 }

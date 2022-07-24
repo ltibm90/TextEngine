@@ -9,12 +9,11 @@ namespace TextEngine.Macros
     public class SavedMacros : TextElements
     {
         public bool AllowMultipleNames { get; set; }
-        private List<TextElement> macros = new List<TextElement>();
         private int GetMacroIndex(string name)
         {
-            for (int i = 0; i < macros.Count; i++)
+            for (int i = 0; i < this.Count; i++)
             {
-                if (macros[i].GetAttribute("name") == name) return i;
+                if (this[i].GetAttribute("name") == name) return i;
             }
             return -1;
         }
@@ -22,7 +21,7 @@ namespace TextEngine.Macros
         {
             var index = GetMacroIndex(name);
             if (index == -1) return null;
-            return macros[index];
+            return this[index];
         }
         public List<TextElement> GetMacros(string name)
         {
@@ -30,21 +29,25 @@ namespace TextEngine.Macros
         }
         public void SetMacro(string name, TextElement tag)
         {
+            if (this.Exists(tag))
+            {
+                return;
+            }
             if(!AllowMultipleNames)
             {
                 var index = GetMacroIndex(name);
                 if (index == -1)
                 {
-                    macros.Add(tag);
+                    this.Add(tag);
                 }
                 else
                 {
-                    macros[index] = tag;
+                    this[index] = tag;
                 }
             }
             else
             {
-                macros.Add(tag);
+                this.Add(tag);
             }
 
         }

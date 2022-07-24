@@ -66,7 +66,6 @@ namespace TextEngine.Evulator
                 attribute.ParDataName = this.CreatePardecode(attribute.Name);
             }
             return this.EvulatePar(attribute.ParDataName, additionalparams);
-
         }
         protected object EvulateAttribute(TextElementAttribute attribute, object additionalparams = null)
         {

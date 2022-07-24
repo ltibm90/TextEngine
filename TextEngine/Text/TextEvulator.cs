@@ -205,7 +205,10 @@ namespace TextEngine.Text
                 if (m.ElemAttr.FirstAttribute != null)
                 {
                     TextElements sections = m.TagInfo.SingleData as TextElements;
-                    sections.Add(m);
+                    if(!sections.Exists(m))
+                    {
+                        sections.Add(m);
+                    }
                 }
                 //tag.Parent.SubElements.Remove(tag);
             };
