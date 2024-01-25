@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using pf = TextEngine.ParDecoder;
 
 namespace TextEngine.Extensions
 {
@@ -22,6 +23,14 @@ namespace TextEngine.Extensions
             string low = input.ToLower();
             if (low == "true") return true;
             return false;
+        }
+        public static string ParFormat(this string input, object data = null)
+        {
+            return pf.ParFormat.Format(input, data); 
+        }
+        public static string ParFormatEx(this string input, object data = null, Action<pf.ParDecodeAttributes> onInitialise = null)
+        {
+            return pf.ParFormat.FormatEx(input, data);
         }
     }
 }
