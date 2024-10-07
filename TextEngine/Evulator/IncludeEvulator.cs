@@ -8,11 +8,12 @@ namespace TextEngine.Evulator
 {
     public class IncludeEvulator : BaseEvulator
     {
+        public static char DirectorySeperator = Path.DirectorySeparatorChar;
         private string GetLastDir()
         {
             var value = this.Evulator.LocalVariables.GetValue("_DIR_");
             if (value == null || string.IsNullOrEmpty(value.ToString())) return string.Empty;
-            return value.ToString() + Path.PathSeparator;
+            return value.ToString() + DirectorySeperator;
         }
         public TextEvulateResult Render_Parse(TextElement tag, object vars)
         {
