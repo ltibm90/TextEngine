@@ -294,5 +294,31 @@ namespace TextEngine.Text
             if (autoparse && this.NeedParse) this.Parse();
             return this.Elements.EvulateValue(0, 0, vars);
         }
+        public static TextEvulator Create(string content, EvulatorInstanceOptions options = null)
+        {
+            options = options ?? new EvulatorInstanceOptions();
+            TextEvulator te = new TextEvulator(content, options.ContentIsFile);
+            te.GlobalParameters = options.GlobalParameters;
+            te.LeftTag = options.LeftRightTag[0];
+            te.LeftTag = options.LeftRightTag[1];
+            return te;
+        }
+        public static string EvulateString(string content, EvulatorInstanceOptions options = null)
+        {
+            options = options ?? new EvulatorInstanceOptions();
+            TextEvulator te = new TextEvulator(content, options.ContentIsFile);
+            te.GlobalParameters = options.GlobalParameters;
+            te.LeftTag = options.LeftRightTag[0];
+            te.LeftTag = options.LeftRightTag[1];
+            return te.EvulateValue().TextContent.ToString();
+        }
+        public static string EvulateString(string content, object globalParameters = null, string leftRightChar = "[]")
+        {
+            TextEvulator te = new TextEvulator(content);
+            te.GlobalParameters = globalParameters;
+            te.LeftTag = leftRightChar[0];
+            te.LeftTag = leftRightChar[1];
+            return te.EvulateValue().TextContent.ToString();
+        }
     }
 }

@@ -1,17 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net472;net50;net60;net70</TargetFrameworks>
+	<TargetFrameworks>netcoreapp2.2;netcoreapp3.0;netcoreapp3.1;net452;net472;net50;net60;net70;net80</TargetFrameworks>
 	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 	<Platforms>AnyCPU;x64;x86</Platforms>
-	<Version>1.5.2.6</Version>
+	<Version>1.5.3.0</Version>
 	<Authors>macmillan</Authors>
-	<AssemblyVersion>1.5.2.6</AssemblyVersion>
-	<FileVersion>1.5.2.6</FileVersion>
+	<AssemblyVersion>1.5.3.0</AssemblyVersion>
+	<FileVersion>1.5.3.0</FileVersion>
 	<PackageProjectUrl>https://github.com/ltibm90/TextEngine</PackageProjectUrl>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<RepositoryUrl>https://github.com/ltibm90/TextEngine</RepositoryUrl>
-	<PackageReleaseNotes>.net70</PackageReleaseNotes>
+	<PackageReleaseNotes>.net80 
+Added Create, EvulateString methods to TextEvulator class
+minor fixing.</PackageReleaseNotes>
 	<Description>Template/BBCode Engine</Description>
 	<PackageId>$(AssemblyName)</PackageId>
 	<Product>$(AssemblyName)</Product>

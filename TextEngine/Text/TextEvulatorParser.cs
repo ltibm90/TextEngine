@@ -16,7 +16,7 @@ namespace TextEngine.Text
         {
             get
             {
-                return this.Text.Length;
+                return this.Text == null ? 0 : this.Text.Length;
             }
         }
         private TextEvulator evulator;

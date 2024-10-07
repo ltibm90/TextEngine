@@ -12,7 +12,7 @@ namespace TextEngine.Evulator
         {
             var value = this.Evulator.LocalVariables.GetValue("_DIR_");
             if (value == null || string.IsNullOrEmpty(value.ToString())) return string.Empty;
-            return value.ToString() + "\\";
+            return value.ToString() + Path.PathSeparator;
         }
         public TextEvulateResult Render_Parse(TextElement tag, object vars)
         {
